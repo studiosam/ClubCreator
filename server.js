@@ -7,6 +7,7 @@ const PORT = 3000;
 // Array to store club suggestions from teachers
 let clubsThatNeedCoSponsors = [];
 let clubsToBeApproved = [];
+let approvedClubs = [];
 
 // Middleware to parse URL-encoded bodies (as sent by HTML forms)
 app.use(express.json());
