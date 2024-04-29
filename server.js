@@ -45,7 +45,7 @@ app.post("/submit", (req, res) => {
     !Number.isInteger(coSponsorsNeeded) ||
     !Number.isInteger(maxCapacity)
   ) {
-    return res.status(400).send("All fields are required.");
+    return res.status(400).send("Something wrong");
   }
 
   const newClub = {
