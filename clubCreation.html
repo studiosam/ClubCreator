@@ -12,14 +12,19 @@
   <form action="/submit" method="post">
     <label for="teacherFirstName">First Name:</label>
     <input type="text" id="teacherFirstName" name="teacherFirstName" required>
+    <br>
     <label for="teacherLastName">Last Name:</label>
     <input type="text" id="teacherLastName" name="teacherLastName" required>
+    <br>
     <label for="preferredClub">Club you would like to host:</label>
     <input type="text" id="preferredClub" name="preferredClub" required>
+    <br>
     <label for="coSponsorsNeeded">How many co-sponsors do you need?</label>
     <input type="number" min=0 max=5 default=0 id="coSponsorsNeeded" name="coSponsorsNeeded" required>
+    <br>
     <label for="maxCapacity">How many students do you have equipment for?</label>
     <input type="number" min=5 id="maxCapacity" name="maxCapacity" required>
+    <br>
     <button type="submit">Submit</button>
   </form>
 </body>
