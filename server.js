@@ -43,8 +43,8 @@ app.post("/submit", (req, res) => {
     !teacherFirstName ||
     !teacherLastName ||
     !preferredClub ||
-    !Number.isInteger(coSponsorsNeeded) ||
-    !Number.isInteger(maxCapacity)
+    !coSponsorsNeeded ||
+    !maxCapacity
   ) {
     return res.status(400).send("Something wrong");
   }
@@ -62,6 +62,7 @@ app.post("/submit", (req, res) => {
   }
   clubsToBeApproved.push(newClub);
 
+  console.log(clubsToBeApproved);
   res.send("Club suggestion submitted successfully!");
 });
 
