@@ -61,11 +61,7 @@ app.post("/submit", (req, res) => {
     clubsThatNeedCoSponsors.push(newClub);
   }
   clubsToBeApproved.push(newClub);
-<<<<<<< HEAD
-
-=======
   console.log(clubsThatNeedCoSponsors);
->>>>>>> 462549fff62ee92ff18f85fffc065f1cc301bd23
   console.log(clubsToBeApproved);
   res.send("Club suggestion submitted successfully!");
 });
