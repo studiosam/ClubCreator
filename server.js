@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
+const bodyParser = require('body-parser');
 const path = require("path");
+const db = require('./database');  // Import your database functions
 const app = express();
 const PORT = 3000;
 
@@ -12,6 +14,8 @@ let approvedClubs = [];
 // Middleware to parse URL-encoded bodies (as sent by HTML forms)
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // CORS middleware for allowing cross-origin requests
 app.use(cors());
@@ -61,7 +65,6 @@ app.post("/submit", (req, res) => {
     clubsThatNeedCoSponsors.push(newClub);
   }
   clubsToBeApproved.push(newClub);
-
   console.log(clubsThatNeedCoSponsors);
   console.log(clubsToBeApproved);
   res.send("Club suggestion submitted successfully!");
