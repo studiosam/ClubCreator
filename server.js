@@ -1,16 +1,13 @@
 const express = require("express");
 const cors = require("cors");
-const bodyParser = require('body-parser');
 const path = require("path");
-const db = require('./database');  // Import your database functions
+const db = require("./database.js");  // Import your database functions
 const app = express();
 const PORT = 3000;
 
 // Middleware to parse URL-encoded bodies (as sent by HTML forms)
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
 
 // CORS middleware for allowing cross-origin requests
 app.use(cors());
@@ -23,6 +20,9 @@ app.get("/", (req, res) => {
 // Serve the clubCreation.html file
 app.get("/clubCreation.html", (req, res) => {
   res.sendFile(path.join(__dirname, "clubCreation.html")); // Make sure the path matches your file structure
+});
+app.get("/createAccount.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "createAccount.html")); // Make sure the path matches your file structure
 });
 
 // API endpoint to get the list of clubs
@@ -67,6 +67,27 @@ app.post("/addClub", (req, res) => {
     }
     res.send("Club submitted successfully");
   })
+});
+
+//Create Account
+
+app.post("/create", (req, res) => {
+  console.log("Received POST request to /create");
+
+  const userInfo = req.body
+  console.log(userInfo)
+  db.addUser(userInfo)
+  res.send(userInfo)
+  // if (!username || !password) {
+  //   return res.status(400).send("Something wrong");
+  // }
+  // const { username, password } = req.body;
+  // db.createAccount(newAccount, (err, result) => {
+  //   if (err) {
+  //     return res.status(500).send("Failed to create account");
+  //   }
+  //   res.send("Account created successfully");
+  // })
 });
 
 // Start the server

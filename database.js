@@ -25,22 +25,21 @@ function initializeDatabase() {
                 minSlots10 INTEGER,
                 minSlots9 INTEGER,
                 maxSlots INTEGER,
-                location INTEGER,
-                FOREIGN KEY (teacher1) REFERENCES teachers(id),
-                FOREIGN KEY (teacher2) REFERENCES teachers(id),
-                FOREIGN KEY (location) REFERENCES locations(id)
+                location INTEGER
             );
         `);
 
         // Create the 'teachers' table
         db.run(`
-            CREATE TABLE IF NOT EXISTS teachers (
+            CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 firstName TEXT NOT NULL,
                 lastName TEXT NOT NULL,
                 club INTEGER,
                 room TEXT,
-                FOREIGN KEY (club) REFERENCES clubs(id)
+                email TEXT,
+                password TEXT,
+                isTeacher BOOLEAN
             );
         `);
 
@@ -57,8 +56,8 @@ function initializeDatabase() {
     });
 }
 
-function addClub(clubData, callback) {
-    const { clubName, clubDescription, maxSlots, teachers } = clubData;
+function addClub(club, callback) {
+    const { clubName, clubDescription, maxSlots, teachers } = club;
     const sql = `INSERT INTO clubs (clubName, clubDescription, maxSlots) VALUES (?, ?, ?)`;
     db.run(sql, [clubName, clubDescription, maxSlots], function (err) {
         if (err) {
@@ -82,6 +81,13 @@ function addClub(clubData, callback) {
     });
 }
 
+function addUser(user) {
+
+    const sql = `INSERT INTO users (firstName, lastName, email, password, isTeacher) VALUES (?, ?, ?, ?, ?)`;
+    db.run(sql, [user.firstName, user.lastName, user.email, user.password, user.isTeacher])
+
+}
+
 function closeDatabase() {
     db.close((err) => {
         if (err) {
@@ -94,6 +100,7 @@ function closeDatabase() {
 
 module.exports = {
     addClub,
-    closeDatabase
+    closeDatabase,
+    addUser
     // Export other database functions here
 };

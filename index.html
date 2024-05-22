@@ -9,18 +9,14 @@
 
 <body>
   <h1>RBHS Clubs</h1>
-  <h2>
-    <a href="clubCreation.html"> Create a Club </a>
-  </h2>
-  <h2>
-    <a href="coSponsorClub.html"> Co-Sponsor Existing Club </a>
-  </h2>
-  <h2>
-    <a href="clubApproval.html"> Approve Clubs </a>
-  </h2>
-  <h2>
-    <a href="clubSelection.html"> Select Club </a>
-  </h2>
+  <form action="http://localhost:3000/login" method="post">
+    <label for="email">Email Address:</label>
+    <input type="email" id="email" name="email" required>
+    <label for="password">Password:</label>
+    <input type="text" id="password" name="password" required>
+    <br>
+  </form>
+  <button type="submit">Login</button>
 </body>
 
 </html>
