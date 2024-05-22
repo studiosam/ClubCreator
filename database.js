@@ -58,13 +58,26 @@ function initializeDatabase() {
 }
 
 function addClub(clubData, callback) {
-    const { clubName, clubDescription, maxSlots } = clubData;
+    const { clubName, clubDescription, maxSlots, teachers } = clubData;
     const sql = `INSERT INTO clubs (clubName, clubDescription, maxSlots) VALUES (?, ?, ?)`;
-    db.run(sql, [clubName, clubDescription, maxSlots], function(err) {
+    db.run(sql, [clubName, clubDescription, maxSlots], function (err) {
         if (err) {
             callback(err, null);
         } else {
-            callback(null, { id: this.lastID });
+            const clubId = this.lastID;
+            const teacherInsertions = teachers.map(teacher => {
+                return new Promise((resolve, reject) => {
+                    const { firstName, lastName, room } = teacher;
+                    db.run(`INSERT INTO teachers (firstName, lastName, clubId, room) VALUES (?, ?, ?, ?)`,
+                        [firstName, lastName, clubId, room], function (err) {
+                            if (err) reject(err);
+                            else resolve(this.lastID);
+                        });
+                });
+            });
+            Promise.all(teacherInsertions)
+                .then(() => callback(null, { id: clubId }))
+                .catch(callback);
         }
     });
 }

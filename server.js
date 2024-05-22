@@ -6,11 +6,6 @@ const db = require('./database');  // Import your database functions
 const app = express();
 const PORT = 3000;
 
-// Array to store club suggestions from teachers
-let clubsThatNeedCoSponsors = [];
-let clubsToBeApproved = [];
-let approvedClubs = [];
-
 // Middleware to parse URL-encoded bodies (as sent by HTML forms)
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -19,7 +14,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // CORS middleware for allowing cross-origin requests
 app.use(cors());
-
 
 // Serve the index.html file for the root URL
 app.get("/", (req, res) => {
@@ -33,11 +27,17 @@ app.get("/clubCreation.html", (req, res) => {
 
 // API endpoint to get the list of clubs
 app.get("/getClubsThatNeedCoSponsors", (req, res) => {
-  res.json(clubsThatNeedCoSponsors); // Sends the array of clubs as JSON
+  db.getAllClubs((err, clubs) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    const clubsThatNeedCoSponsors = clubs.filter(club => club.coSponsorsNeeded > 0);
+    res.json(clubsThatNeedCoSponsors); // Sends the array of clubs as JSON
+  });
 });
 
 // POST route to handle form submission from clubCreation.html
-app.post("/submit", (req, res) => {
+app.post("/addClub", (req, res) => {
   console.log("Received POST request to /submit");
 
   const { teacherFirstName, teacherLastName, preferredClub, coSponsorsNeeded, maxCapacity } =
@@ -61,13 +61,12 @@ app.post("/submit", (req, res) => {
     maxCapacity
   };
 
-  if (newClub.coSponsorsNeeded > 0) {
-    clubsThatNeedCoSponsors.push(newClub);
-  }
-  clubsToBeApproved.push(newClub);
-  console.log(clubsThatNeedCoSponsors);
-  console.log(clubsToBeApproved);
-  res.send("Club suggestion submitted successfully!");
+  db.addClub(newClub, (err, result) => {
+    if (err) {
+      return res.status(500).send("Failed to add new club");
+    }
+    res.send("Club submitted successfully");
+  })
 });
 
 // Start the server
