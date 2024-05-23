@@ -81,6 +81,10 @@ function addClub(club, callback) {
     });
 }
 
+
+
+// function to check for email address already connected to account
+
 function addUser(user) {
 
     const sql = `INSERT INTO users (firstName, lastName, email, password, isTeacher) VALUES (?, ?, ?, ?, ?)`;

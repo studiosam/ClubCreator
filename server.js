@@ -3,6 +3,7 @@ const cors = require("cors");
 const path = require("path");
 const db = require("./database.js");  // Import your database functions
 const app = express();
+const bcrypt = require('bcrypt');
 const PORT = 3000;
 
 // Middleware to parse URL-encoded bodies (as sent by HTML forms)
@@ -71,11 +72,15 @@ app.post("/addClub", (req, res) => {
 
 //Create Account
 
-app.post("/create", (req, res) => {
+app.post("/create", async (req, res) => {
   console.log("Received POST request to /create");
 
   const userInfo = req.body
   console.log(userInfo)
+
+  userInfo.password = await encryptPassword(userInfo.password)
+
+
   db.addUser(userInfo)
   res.send(userInfo)
   // if (!username || !password) {
@@ -94,3 +99,18 @@ app.post("/create", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+async function encryptPassword(password) {
+  try {
+    // Generate a salt
+    const salt = await bcrypt.genSalt(10);
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // Return the hashed password
+    return hashedPassword;
+  } catch (error) {
+    console.error('Error encrypting password:', error);
+  }
+}
