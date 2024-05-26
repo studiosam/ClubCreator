@@ -81,19 +81,37 @@ app.post("/create", async (req, res) => {
   userInfo.password = await encryptPassword(userInfo.password)
 
 
-  db.addUser(userInfo)
-  res.send(userInfo)
-  // if (!username || !password) {
-  //   return res.status(400).send("Something wrong");
-  // }
-  // const { username, password } = req.body;
-  // db.createAccount(newAccount, (err, result) => {
-  //   if (err) {
-  //     return res.status(500).send("Failed to create account");
-  //   }
-  //   res.send("Account created successfully");
-  // })
+
+  const userCheckData = await db.checkUser(userInfo.email)
+
+  if (userCheckData.userExists === true) {
+    res.send("User already exists")
+  } else {
+    db.addUser(userInfo)
+    res.send(userInfo)
+  }
 });
+
+app.post("/login", async (req, res) => {
+
+  const email = req.body.email.toLowerCase()
+  const password = req.body.password
+  console.log(email, password)
+  const userCheckData = await db.checkUser(email)
+
+  if (userCheckData.userExists === true) {
+    const hashedPassword = userCheckData.password
+    if (await bcrypt.compare(password, hashedPassword)) {
+      console.log('COORECT')
+      res.send(`Welcome ${email}`)
+    } else {
+      res.send("fucking idiot")
+    }
+  }
+
+
+
+})
 
 // Start the server
 app.listen(PORT, () => {

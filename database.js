@@ -6,58 +6,44 @@ const db = new sqlite3.Database('./school_clubs.db', sqlite3.OPEN_READWRITE | sq
         console.error('Error opening database:', err.message);
     } else {
         console.log('Database connected.');
-        initializeDatabase();
     }
 });
-
-function initializeDatabase() {
-    db.serialize(() => {
-        // Create the 'clubs' table
-        db.run(`
-            CREATE TABLE IF NOT EXISTS clubs (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                clubName TEXT NOT NULL,
-                clubDescription TEXT,
-                coSponsorsNeeded INTEGER,                                                                                                 
-                minSlots TEXT,
-                maxSlots INTEGER,
-                location INTEGER,
-                requiredCoSponsors INTEGER NOT NULL,
-                currentCoSponsors INTEGER DEFAULT 0 
-            );
-        `);
-
-        // Create the 'users' table
-        db.run(`
-            CREATE TABLE IF NOT EXISTS users (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                firstName TEXT NOT NULL,
-                lastName TEXT NOT NULL,
-                club INTEGER,
-                room TEXT,
-                email TEXT,
-                password TEXT,
-                isTeacher BOOLEAN
-            );
-        `);
-
-        db.run(`
-            CREATE TABLE IF NOT EXISTS teachers (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                teacherName TEXT NOT NULL,
-                clubId INTEGER,
-                room TEXT,
-                email TEXT,
-                password TEXT,
-                isTeacher BOOLEAN
-            );
-        `);
-    });
-}
 
 function addClub(club) {
 
     const sql = `INSERT INTO (clubName, clubDescription, teachers, minSlots, maxCapacity, location)`
+}
+
+async function getUsers() {
+    return new Promise((resolve, reject) => {
+        const sql = `SELECT email, password FROM users`;
+        db.all(sql, (err, rows) => {
+            if (err) {
+                return reject(err);
+            }
+            resolve(rows);
+        });
+    });
+}
+
+async function checkUser(user) {
+    try {
+        const currentUsers = await getUsers();
+        console.log(currentUsers); // This will now correctly log the users
+        const findUser = currentUsers.find((search) => search.email === user);
+        if (findUser) {
+
+            return {
+                userExists: true,
+                password: findUser.password
+            }
+        } else {
+            return 'nop';
+        }
+    } catch (err) {
+        console.log(err);
+        return 'Error';
+    }
 }
 
 
@@ -84,6 +70,7 @@ function closeDatabase() {
 module.exports = {
     addClub,
     closeDatabase,
-    addUser
+    addUser,
+    checkUser
     // Export other database functions here
 };
