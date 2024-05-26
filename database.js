@@ -18,18 +18,16 @@ function initializeDatabase() {
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 clubName TEXT NOT NULL,
                 clubDescription TEXT,
-                teacher1 INTEGER,
-                teacher2 INTEGER,
-                minSlots12 INTEGER,
-                minSlots11 INTEGER,
-                minSlots10 INTEGER,
-                minSlots9 INTEGER,
+                coSponsorsNeeded INTEGER,                                                                                                 
+                minSlots TEXT,
                 maxSlots INTEGER,
-                location INTEGER
+                location INTEGER,
+                requiredCoSponsors INTEGER NOT NULL,
+                currentCoSponsors INTEGER DEFAULT 0 
             );
         `);
 
-        // Create the 'teachers' table
+        // Create the 'users' table
         db.run(`
             CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -43,42 +41,23 @@ function initializeDatabase() {
             );
         `);
 
-        // Create the 'locations' table
         db.run(`
-            CREATE TABLE IF NOT EXISTS locations (
+            CREATE TABLE IF NOT EXISTS teachers (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                roomNumber TEXT NOT NULL,
-                maxCapacity INTEGER NOT NULL,
+                teacherName TEXT NOT NULL,
                 clubId INTEGER,
-                FOREIGN KEY (clubId) REFERENCES clubs(id)
+                room TEXT,
+                email TEXT,
+                password TEXT,
+                isTeacher BOOLEAN
             );
         `);
     });
 }
 
-function addClub(club, callback) {
-    const { clubName, clubDescription, maxSlots, teachers } = club;
-    const sql = `INSERT INTO clubs (clubName, clubDescription, maxSlots) VALUES (?, ?, ?)`;
-    db.run(sql, [clubName, clubDescription, maxSlots], function (err) {
-        if (err) {
-            callback(err, null);
-        } else {
-            const clubId = this.lastID;
-            const teacherInsertions = teachers.map(teacher => {
-                return new Promise((resolve, reject) => {
-                    const { firstName, lastName, room } = teacher;
-                    db.run(`INSERT INTO teachers (firstName, lastName, clubId, room) VALUES (?, ?, ?, ?)`,
-                        [firstName, lastName, clubId, room], function (err) {
-                            if (err) reject(err);
-                            else resolve(this.lastID);
-                        });
-                });
-            });
-            Promise.all(teacherInsertions)
-                .then(() => callback(null, { id: clubId }))
-                .catch(callback);
-        }
-    });
+function addClub(club) {
+
+    const sql = `INSERT INTO (clubName, clubDescription, teachers, minSlots, maxCapacity, location)`
 }
 
 
