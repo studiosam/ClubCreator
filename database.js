@@ -29,7 +29,6 @@ async function getUsers() {
 async function checkUser(user) {
     try {
         const currentUsers = await getUsers();
-        console.log(currentUsers); // This will now correctly log the users
         const findUser = currentUsers.find((search) => search.email === user);
         if (findUser) {
 
@@ -38,7 +37,7 @@ async function checkUser(user) {
                 password: findUser.password
             }
         } else {
-            return 'nop';
+            return 'User does not exist';
         }
     } catch (err) {
         console.log(err);

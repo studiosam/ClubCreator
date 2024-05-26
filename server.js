@@ -18,12 +18,19 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html")); // Adjust the path to your index.html
 });
 
-// Serve the clubCreation.html file
-app.get("/clubCreation.html", (req, res) => {
-  res.sendFile(path.join(__dirname, "clubCreation.html")); // Make sure the path matches your file structure
+// Serve the create-club.html file
+app.get("/create-club.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "create-club.html")); // Make sure the path matches your file structure
 });
-app.get("/createAccount.html", (req, res) => {
-  res.sendFile(path.join(__dirname, "createAccount.html")); // Make sure the path matches your file structure
+
+// Serve the create-account.html file
+app.get("/create-account.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "create-account.html")); // Make sure the path matches your file structure
+});
+
+// Serve the home-teacher.html file
+app.get('/home-teacher.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'home-teacher.html'));
 });
 
 // API endpoint to get the list of clubs
@@ -102,15 +109,12 @@ app.post("/login", async (req, res) => {
   if (userCheckData.userExists === true) {
     const hashedPassword = userCheckData.password
     if (await bcrypt.compare(password, hashedPassword)) {
-      console.log('COORECT')
-      res.send(`Welcome ${email}`)
+      console.log('Logged in successfully')
+      res.redirect(`/home-teacher.html`)
     } else {
-      res.send("fucking idiot")
+      res.send("Username and password not found")
     }
   }
-
-
-
 })
 
 // Start the server
