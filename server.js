@@ -33,6 +33,50 @@ app.get('/home-teacher.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'home-teacher.html'));
 });
 
+//API endpoint to get the teacher info
+app.get("/getAllTeachers", async (req, res) => {
+  let isTeacher = true;
+  try {
+    const teachers = await db.getAllUsers(isTeacher);
+    teachers.forEach((teacher) => {
+      console.log(`${teacher.firstName} ${teacher.lastName}`);
+
+    })
+    res.json(teachers);
+  } catch (err) {
+    console.error("Error: ", err);
+    res.status(500).send("Error fetching teachers");
+  }
+});
+
+//API endpoint to get the teacher info
+app.get("/getUserInfo", async (req, res) => {
+  let email = req.query.email;
+  try {
+    const user = await db.getUserInfo(email);
+    res.json(user);
+  } catch (err) {
+    console.error("Error: ", err);
+    res.status(500).send("Error fetching teachers");
+  }
+});
+
+//API endpoint to get the student info
+app.get("/getAllStudents", async (req, res) => {
+  let isTeacher = false;
+  try {
+    const student = await db.getAllUsers(isTeacher);
+    student.forEach((student) => {
+      console.log(`${student.firstName} ${student.lastName}`);
+
+    })
+    res.json(student);
+  } catch (err) {
+    console.error("Error: ", err);
+    res.status(500).send("Error fetching students");
+  }
+});
+
 // API endpoint to get the list of clubs
 app.get("/getClubsThatNeedCoSponsors", (req, res) => {
   db.getAllClubs((err, clubs) => {
@@ -78,7 +122,6 @@ app.post("/addClub", (req, res) => {
 });
 
 //Create Account
-
 app.post("/create", async (req, res) => {
   console.log("Received POST request to /create");
 
@@ -87,7 +130,7 @@ app.post("/create", async (req, res) => {
 
   userInfo.password = await encryptPassword(userInfo.password)
 
-
+  userInfo.isTeacher = (userInfo.isTeacher == "true")
 
   const userCheckData = await db.checkUser(userInfo.email)
 
@@ -100,19 +143,18 @@ app.post("/create", async (req, res) => {
 });
 
 app.post("/login", async (req, res) => {
-
   const email = req.body.email.toLowerCase()
   const password = req.body.password
-  console.log(email, password)
   const userCheckData = await db.checkUser(email)
 
   if (userCheckData.userExists === true) {
     const hashedPassword = userCheckData.password
     if (await bcrypt.compare(password, hashedPassword)) {
-      console.log('Logged in successfully')
-      res.redirect(`/home-teacher.html`)
+      const userObject = await db.getUserInfo(email);
+      delete userObject.password;
+      res.send({ body: true, userObject });
     } else {
-      res.send("Username and password not found")
+      res.send({ body: false })
     }
   }
 })

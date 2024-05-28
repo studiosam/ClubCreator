@@ -26,12 +26,24 @@ async function getUsers() {
     });
 }
 
+async function getUserInfo(email) {
+    const sql = `SELECT * FROM users WHERE email = ?`;
+    return new Promise((resolve, reject) => {
+        db.get(sql, [email], (err, row) => {
+            if (err) {
+                return reject(err);
+            } else {
+                resolve(row);
+            }
+        });
+    });
+}
+
 async function checkUser(user) {
     try {
         const currentUsers = await getUsers();
         const findUser = currentUsers.find((search) => search.email === user);
         if (findUser) {
-
             return {
                 userExists: true,
                 password: findUser.password
@@ -45,7 +57,18 @@ async function checkUser(user) {
     }
 }
 
-
+async function getAllUsers(isTeacherBool) {
+    return new Promise((resolve, reject) => {
+        const sql = `SELECT * FROM users WHERE isTeacher = ${isTeacherBool}`
+        db.all(sql, (err, rows) => {
+            if (err) {
+                return reject(err)
+            } else {
+                return resolve(rows)
+            }
+        })
+    })
+}
 
 // function to check for email address already connected to account
 
@@ -70,6 +93,8 @@ module.exports = {
     addClub,
     closeDatabase,
     addUser,
-    checkUser
+    checkUser,
+    getAllUsers,
+    getUserInfo
     // Export other database functions here
 };
