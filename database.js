@@ -20,6 +20,19 @@ async function addClub(newClubInfo) {
     ]);
 }
 
+async function updateClub(clubId, clubChangeInfo) {
+    const { clubName, clubDescription, coSponsorsNeeded, minSlots9, minSlots10, minSlots11, minSlots12, maxSlots, requiredCoSponsors, currentCoSponsors, primaryTeacherId, location, isApproved } = clubChangeInfo
+    const sql = `UPDATE clubs SET clubName = ?, clubDescription = ?, coSponsorsNeeded = ?, minSlots9 = ?, minSlots10 = ?, minSlots11 = ?, minSlots12 = ?, maxSlots = ?, requiredCoSponsors = ?, currentCoSponsors = ?, primaryTeacherId = ?, location = ?, isApproved = ?  WHERE clubId = ?`
+    await new Promise((resolve, reject) => {
+        db.run(sql, [clubName, clubDescription, coSponsorsNeeded, minSlots9, minSlots10, minSlots11, minSlots12, maxSlots, requiredCoSponsors, currentCoSponsors, primaryTeacherId, location, isApproved], function (err) {
+            if (err) {
+                return reject(err);
+            }
+            resolve(this.changes);
+        });
+    });
+}
+
 async function getUsers() {
     return new Promise((resolve, reject) => {
         const sql = `SELECT email, password FROM users`;
@@ -36,6 +49,19 @@ async function getUserInfo(email) {
     const sql = `SELECT * FROM users WHERE email = ?`;
     return new Promise((resolve, reject) => {
         db.get(sql, [email], (err, row) => {
+            if (err) {
+                return reject(err);
+            } else {
+                resolve(row);
+            }
+        });
+    });
+}
+
+async function getClubInfo(clubId) {
+    const sql = `SELECT * FROM clubs WHERE id = ?`;
+    return new Promise((resolve, reject) => {
+        db.get(sql, [clubId], (err, row) => {
             if (err) {
                 return reject(err);
             } else {
@@ -63,7 +89,7 @@ async function checkUser(user) {
     }
 }
 
-async function getAllUsers(isTeacherBool) {
+async function getAllTeachersOrStudents(isTeacherBool) {
     return new Promise((resolve, reject) => {
         const sql = `SELECT * FROM users WHERE isTeacher = ${isTeacherBool}`
         db.all(sql, (err, rows) => {
@@ -122,10 +148,10 @@ async function approveClub(club) {
 }
 
 ////// FIXME//////////////////
-async function updateClub(club) {
+async function updateClubValue(club, key, value) {
     console.log("CLUB=" + club);
-    const sql = `UPDATE clubs SET isApproved = true WHERE clubId = ?`;
-    db.run(sql, [club], function (err) {
+    const sql = `UPDATE clubs SET ${key} = ? WHERE clubId = ?`;
+    db.run(sql, [value, club.clubId], function (err) {
         if (err) {
             return console.error(err.message);
         }
@@ -149,9 +175,10 @@ module.exports = {
     closeDatabase,
     addUser,
     checkUser,
-    getAllUsers,
+    getAllTeachersOrStudents,
     getUserInfo,
     getAllClubs,
+    getClubInfo,
     getUnapprovedClubs,
     approveClub,
     updateClub

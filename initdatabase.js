@@ -19,11 +19,14 @@ function initializeDatabase() {
                 clubDescription TEXT,
                 primaryTeacherId INTEGER,
                 coSponsorsNeeded INTEGER,
-                minSlots INTEGER,
+                minSlots9 INTEGER,
+                minSlots10 INTEGER,
+                minSlots11 INTEGER,
+                minSlots12 INTEGER,
                 maxSlots INTEGER,
                 location TEXT,
                 requiredCoSponsors INTEGER NOT NULL,
-                currentCoSponsors INTEGER DEFAULT 0,
+                currentCoSponsors TEXT,
                 isApproved BOOLEAN DEFAULT FALSE,
                 FOREIGN KEY (primaryTeacherId) REFERENCES users (userId)
             );

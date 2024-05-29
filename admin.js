@@ -29,7 +29,7 @@ async function getAllApprovedClubs() {
         <p>Club : ${club.clubName}</p>
         <p>Club Description : ${club.clubDescription}</p>
 
-        <span>Max Slots: </span><input style="width: 40px" type="number" value="${club.maxSlots}">
+        <span>Maximum Slots: </span><input style="width: 40px" type="number" value="${club.maxSlots}">
         <div>
         <p>Minimum Slots:</p>
         <div id="minSlots">
@@ -37,6 +37,12 @@ async function getAllApprovedClubs() {
         <span>10th Grade: </span><input class = "slots10" style="width: 40px" type="number" value="0">
         <span>11th Grade: </span><input class = "slots11" style="width: 40px" type="number" value="0">
         <span>12th Grade: </span><input class = "slots12" style="width: 40px" type="number" value="0">
+        <span>Maximum Capacity: </span><input class = "maxSlots" style="width: 40px" type="number" value="0">
+        <span>Location: </span><input class = "location" style="width: 40px" type="text">
+        <span>Requested Co-Sponsors: </span><input class = "coSponsorsNeeded" style="width: 40px" type="number" value="0">
+        <span>Needed Co-Sponsors: </span><input class = "coSponsorsRequired" style="width: 40px" type="number" value="${club.coSponsorsRequired - club.currentCoSponsors}">
+        <span>Approved: </span><input class = "isApproved" style="width: 40px" type="checkbox" checked>
+        
         </div>
         </div>
         <button id="approve${club.clubId}" class="approveBtn">Confirm</button>
@@ -53,8 +59,8 @@ async function getAllApprovedClubs() {
 
 }
 //////////////FIXME///////////////////////////////
-async function UpdateClubInfo(clubId) {
-    const response = await fetch('http://localhost:3000/updateClubInfo',
+async function updateClubValue(clubId) {
+    const response = await fetch('http://localhost:3000/updateClub',
         {
             method: 'POST',
             headers: {
@@ -73,6 +79,10 @@ async function UpdateClubInfo(clubId) {
         console.log(json.message)
     }
 }
+
+async function updateClub(club, changeData) {
+    const response = await fetch('http://localhost:3000/updateClub')
+}
 ///////////////////////////////////////////////
 async function getAllUnapprovedClubs() {
     const response = await fetch('http://localhost:3000/getAllClubs');
@@ -89,7 +99,6 @@ async function getAllUnapprovedClubs() {
         <p>Club : ${club.clubName}</p>
         <p>Club Description : ${club.clubDescription}</p>
         <span>Max Slots: </span><input style="width: 40px" type="number" value="${club.maxSlots}">
-        
         <button onclick="approveClub(${club.clubId})">Approve</button>
         </div>`
     });
