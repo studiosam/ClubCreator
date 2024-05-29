@@ -9,11 +9,18 @@
 
 <body>
     <h1>RBHS Clubs</h1>
-    <form action="http://localhost:3000/create" method="post">
-        <label>Account Type:
-            <label for="isTeacher">Student <input value="false" name="isTeacher" type="radio"> Teacher <input
-                    value="true" name="isTeacher" type="radio"></label>
-        </label>
+    <form id="createAccount">
+        <fieldset>
+            <legend>Account Type:</legend>
+            <label>
+                <input type="radio" name="isTeacher" value="false" required>
+                Student
+            </label>
+            <label>
+                <input type="radio" name="isTeacher" value="true" required>
+                Teacher
+            </label>
+        </fieldset>
         <br><br>
         <label for="firstName">First Name:</label>
         <input type="text" id="firstName" name="firstName" required>
@@ -32,8 +39,8 @@
         <br>
         <button type="submit">Create Account</button>
     </form>
-
-    <br>
+    <div id="success"></div>
 </body>
+<script src="./newAccount.js"></script>
 
 </html>

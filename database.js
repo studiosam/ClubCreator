@@ -1,7 +1,7 @@
 const sqlite3 = require('sqlite3').verbose();
 
 // Open a database connection
-const db = new sqlite3.Database('./school_clubs.db', sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
+const db = new sqlite3.Database(`C:/Users/Waffles/Desktop/Coding Stuff/Databases/school_clubs.db`, sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
     if (err) {
         console.error('Error opening database:', err.message);
     } else {
@@ -9,9 +9,15 @@ const db = new sqlite3.Database('./school_clubs.db', sqlite3.OPEN_READWRITE | sq
     }
 });
 
-function addClub(club) {
-
-    const sql = `INSERT INTO (clubName, clubDescription, teachers, minSlots, maxCapacity, location)`
+async function addClub(newClubInfo) {
+    const sql = `INSERT INTO clubs (clubName, clubDescription, coSponsorsNeeded, maxSlots, requiredCoSponsors, primaryTeacherId) VALUES (? , ? , ? , ?, ? , ?)`
+    db.run(sql, [newClubInfo.preferredClub,
+    newClubInfo.preferredClubDescription,
+    newClubInfo.coSponsorsNeeded,
+    newClubInfo.maxCapacity,
+    newClubInfo.coSponsorsNeeded,
+    newClubInfo.teacherId
+    ]);
 }
 
 async function getUsers() {
@@ -70,14 +76,63 @@ async function getAllUsers(isTeacherBool) {
     })
 }
 
+async function getAllClubs() {
+    return new Promise((resolve, reject) => {
+        const sql = `SELECT * FROM clubs`
+        db.all(sql, (err, rows) => {
+            if (err) {
+                return reject(err)
+            } else {
+                return resolve(rows)
+            }
+        })
+    })
+}
+
+async function getUnapprovedClubs() {
+    return new Promise((resolve, reject) => {
+        const sql = `SELECT * FROM clubs WHERE isApproved = false`
+        db.all(sql, (err, rows) => {
+            if (err) {
+                return reject(err)
+            } else {
+                return resolve(rows)
+            }
+        })
+    })
+}
 // function to check for email address already connected to account
 
 function addUser(user) {
 
     const sql = `INSERT INTO users (firstName, lastName, email, password, isTeacher) VALUES (?, ?, ?, ?, ?)`;
-    db.run(sql, [user.firstName, user.lastName, user.email, user.password, user.isTeacher])
+    db.run(sql, [user.firstName, user.lastName, user.email, user.password, user.isTeacher]);
 
 }
+
+async function approveClub(club) {
+    console.log("CLUB=" + club);
+    const sql = `UPDATE clubs SET isApproved = true WHERE clubId = ?`;
+    db.run(sql, [club], function (err) {
+        if (err) {
+            return console.error(err.message);
+        }
+        console.log(`Row(s) updated: ${this.changes}`);
+    });
+}
+
+////// FIXME//////////////////
+async function updateClub(club) {
+    console.log("CLUB=" + club);
+    const sql = `UPDATE clubs SET isApproved = true WHERE clubId = ?`;
+    db.run(sql, [club], function (err) {
+        if (err) {
+            return console.error(err.message);
+        }
+        console.log(`Row(s) updated: ${this.changes}`);
+    });
+}
+//////////////////////////
 
 function closeDatabase() {
     db.close((err) => {
@@ -95,6 +150,10 @@ module.exports = {
     addUser,
     checkUser,
     getAllUsers,
-    getUserInfo
+    getUserInfo,
+    getAllClubs,
+    getUnapprovedClubs,
+    approveClub,
+    updateClub
     // Export other database functions here
 };

@@ -1,7 +1,7 @@
 const sqlite3 = require('sqlite3').verbose();
 
 // Open a database connection
-const db = new sqlite3.Database('./school_clubs.db', sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
+const db = new sqlite3.Database(`C:/Users/Waffles/Desktop/Coding Stuff/Databases/school_clubs.db`, sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
     if (err) {
         console.error('Error opening database:', err.message);
     } else {
@@ -10,44 +10,38 @@ const db = new sqlite3.Database('./school_clubs.db', sqlite3.OPEN_READWRITE | sq
 });
 function initializeDatabase() {
     db.serialize(() => {
+        db.run('PRAGMA foreign_keys = ON');
         // Create the 'clubs' table
         db.run(`
             CREATE TABLE IF NOT EXISTS clubs (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                clubId INTEGER PRIMARY KEY AUTOINCREMENT,
                 clubName TEXT NOT NULL,
                 clubDescription TEXT,
-                coSponsorsNeeded INTEGER,                                                                                                 
-                minSlots TEXT,
+                primaryTeacherId INTEGER,
+                coSponsorsNeeded INTEGER,
+                minSlots INTEGER,
                 maxSlots INTEGER,
-                location INTEGER,
+                location TEXT,
                 requiredCoSponsors INTEGER NOT NULL,
-                currentCoSponsors INTEGER DEFAULT 0 
+                currentCoSponsors INTEGER DEFAULT 0,
+                isApproved BOOLEAN DEFAULT FALSE,
+                FOREIGN KEY (primaryTeacherId) REFERENCES users (userId)
             );
         `);
 
         // Create the 'users' table
         db.run(`
             CREATE TABLE IF NOT EXISTS users (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                userId INTEGER PRIMARY KEY AUTOINCREMENT,
                 firstName TEXT NOT NULL,
                 lastName TEXT NOT NULL,
-                club INTEGER,
-                room TEXT,
-                email TEXT,
-                password TEXT,
-                isTeacher BOOLEAN
-            );
-        `);
-
-        db.run(`
-            CREATE TABLE IF NOT EXISTS teachers (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                teacherName TEXT NOT NULL,
                 clubId INTEGER,
                 room TEXT,
                 email TEXT,
                 password TEXT,
-                isTeacher BOOLEAN
+                isTeacher BOOLEAN,
+                isAdmin BOOLEAN DEFAULT FALSE,
+                FOREIGN KEY (clubId) REFERENCES clubs (clubId)
             );
         `);
     });

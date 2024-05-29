@@ -14,40 +14,40 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 // Serve the index.html file for the root URL
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html")); // Adjust the path to your index.html
-});
+// app.get("/", (req, res) => {
+//   res.sendFile(path.join(__dirname, "index.html")); // Adjust the path to your index.html
+// });
 
-// Serve the create-club.html file
-app.get("/create-club.html", (req, res) => {
-  res.sendFile(path.join(__dirname, "create-club.html")); // Make sure the path matches your file structure
-});
+// // Serve the create-club.html file
+// app.get("/create-club.html", (req, res) => {
+//   res.sendFile(path.join(__dirname, "create-club.html")); // Make sure the path matches your file structure
+// });
 
-// Serve the create-account.html file
-app.get("/create-account.html", (req, res) => {
-  res.sendFile(path.join(__dirname, "create-account.html")); // Make sure the path matches your file structure
-});
+// // Serve the create-account.html file
+// app.get("/create-account.html", (req, res) => {
+//   res.sendFile(path.join(__dirname, "create-account.html")); // Make sure the path matches your file structure
+// });
 
-// Serve the home-teacher.html file
-app.get('/home-teacher.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'home-teacher.html'));
-});
+// // Serve the home-teacher.html file
+// app.get('/home-teacher.html', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'home-teacher.html'));
+// });
 
-//API endpoint to get the teacher info
-app.get("/getAllTeachers", async (req, res) => {
-  let isTeacher = true;
-  try {
-    const teachers = await db.getAllUsers(isTeacher);
-    teachers.forEach((teacher) => {
-      console.log(`${teacher.firstName} ${teacher.lastName}`);
+// //API endpoint to get the teacher info
+// app.get("/getAllTeachers", async (req, res) => {
+//   let isTeacher = true;
+//   try {
+//     const teachers = await db.getAllUsers(isTeacher);
+//     teachers.forEach((teacher) => {
+//       console.log(`${teacher.firstName} ${teacher.lastName}`);
 
-    })
-    res.json(teachers);
-  } catch (err) {
-    console.error("Error: ", err);
-    res.status(500).send("Error fetching teachers");
-  }
-});
+//     })
+//     res.json(teachers);
+//   } catch (err) {
+//     console.error("Error: ", err);
+//     res.status(500).send("Error fetching teachers");
+//   }
+// });
 
 //API endpoint to get the teacher info
 app.get("/getUserInfo", async (req, res) => {
@@ -61,7 +61,7 @@ app.get("/getUserInfo", async (req, res) => {
   }
 });
 
-//API endpoint to get the student info
+// //API endpoint to get the student info
 app.get("/getAllStudents", async (req, res) => {
   let isTeacher = false;
   try {
@@ -78,52 +78,51 @@ app.get("/getAllStudents", async (req, res) => {
 });
 
 // API endpoint to get the list of clubs
-app.get("/getClubsThatNeedCoSponsors", (req, res) => {
-  db.getAllClubs((err, clubs) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-    const clubsThatNeedCoSponsors = clubs.filter(club => club.coSponsorsNeeded > 0);
-    res.json(clubsThatNeedCoSponsors); // Sends the array of clubs as JSON
-  });
+app.get("/getUnapprovedClubs", async (req, res) => {
+  try {
+    const unApprovedClubs = await db.getUnapprovedClubs();
+    res.json(unApprovedClubs);
+  } catch (err) {
+    console.error("Error: ", err);
+    res.status(500).send("Error fetching clubs");
+  }
 });
+app.get("/getAllClubs", async (req, res) => {
+  try {
+    const allClubs = await db.getAllClubs();
+    res.json(allClubs);
+  } catch (err) {
+    console.error("Error: ", err);
+    res.status(500).send("Error fetching clubs");
+  }
+});
+
+app.post("/updateClubInfo", async (req, res) => {
+  const clubInfo = req.body;
+  console.log(clubInfo);
+  await db.updateClub(clubInfo.clubId);
+  res.send(clubInfo);
+})
 
 // POST route to handle form submission from clubCreation.html
-app.post("/addClub", (req, res) => {
-  console.log("Received POST request to /submit");
+app.post("/addClub", async (req, res) => {
+  console.log("Received POST request to /addClub");
+  const clubInfo = req.body;
+  console.log(clubInfo);
+  await db.addClub(clubInfo);
+  res.redirect('./home-admin.html');
+})
 
-  const { teacherFirstName, teacherLastName, preferredClub, coSponsorsNeeded, maxCapacity } =
-    req.body;
-
-  if (
-    !teacherFirstName ||
-    !teacherLastName ||
-    !preferredClub ||
-    !coSponsorsNeeded ||
-    !maxCapacity
-  ) {
-    return res.status(400).send("Something wrong");
-  }
-
-  const newClub = {
-    teacherFirstName,
-    teacherLastName,
-    clubName: preferredClub,
-    coSponsorsNeeded,
-    maxCapacity
-  };
-
-  db.addClub(newClub, (err, result) => {
-    if (err) {
-      return res.status(500).send("Failed to add new club");
-    }
-    res.send("Club submitted successfully");
-  })
-});
+app.post("/approveClub", async (req, res) => {
+  const clubInfo = req.body;
+  console.log(clubInfo);
+  await db.approveClub(clubInfo.clubId);
+  res.send(clubInfo);
+})
 
 //Create Account
-app.post("/create", async (req, res) => {
-  console.log("Received POST request to /create");
+app.post("/addAccount", async (req, res) => {
+  console.log("Received POST request to /addAccount");
 
   const userInfo = req.body
   console.log(userInfo)
@@ -137,8 +136,8 @@ app.post("/create", async (req, res) => {
   if (userCheckData.userExists === true) {
     res.send("User already exists")
   } else {
-    db.addUser(userInfo)
-    res.send(userInfo)
+    db.addUser(userInfo);
+    res.send({ body: 'true', user: userInfo });
   }
 });
 

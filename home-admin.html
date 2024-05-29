@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Page</title>
+</head>
+
+<body>
+    <h1>Welcome, Admin!</h1>
+    <h2 id="clubProposals">Club Proposals</h2>
+    <div id="clubProposalList" class="clubList">
+    </div>
+
+
+    <h2 id="approvedClubs">Approved Clubs</h2>
+    <div id="approvedClubList" class="clubList">
+    </div>
+
+    <h2 id="locations">Locations</h2>
+    <a href="create location page">
+        Create Location
+    </a>
+    <div id="locationList" class="clubList">
+    </div>
+    <!-- 
+        -list of unapproved clubs
+        -populated list of clubs submitted for approval
+        assign minimum number of 9, 10, 11, and 12 grade slots, with a default value set
+        override maxCapacity if necessary
+        assign location
+        set teacher's club to the club value
+        
+        -list of approved clubs
+        remove primary sponsor or cosponsor and set to null
+        change number of cosponsors required
+        change maxCapacity
+        change minimum number of 9, 10, 11, and 12 grade slots
+        force assign primary sponsor and/or cosponsors
+        remove club approval and archive
+        unarchive club
+
+        -create locations
+        assign location to teacher => make sure these two stay synced up
+        assign location to club  ===> make sure these two stay synced up
+
+    -->
+
+    <script src="admin.js"></script>
+</body>
+
+</html>
