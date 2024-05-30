@@ -56,18 +56,22 @@ async function getAllApprovedClubs() {
         clubDescription: e.target.parentElement.children.clubDescription,
         primaryTeacherId: 1,
         coSponsorsNeeded: 1,
-        minSlots9:
+        minSlots9: parseInt(
           e.target.parentElement.children.minSlotsWrapper.children.minSlots
-            .children[1],
-        minSlots10:
+            .children[1].value
+        ),
+        minSlots10: parseInt(
           e.target.parentElement.children.minSlotsWrapper.children.minSlots
-            .children[3],
-        minSlots11:
+            .children[3].value
+        ),
+        minSlots11: parseInt(
           e.target.parentElement.children.minSlotsWrapper.children.minSlots
-            .children[5],
-        minSlots12:
+            .children[5].value
+        ),
+        minSlots12: parseInt(
           e.target.parentElement.children.minSlotsWrapper.children.minSlots
-            .children[7],
+            .children[7].value
+        ),
         maxSlots: 5,
         location: null,
         requiredCoSponsors: 1,
@@ -77,8 +81,8 @@ async function getAllApprovedClubs() {
       const clubToUpdate = clubs.filter(
         (obj) => obj.clubId === parseInt(clubId)
       );
-      console.log(clubToUpdate);
-      updateClubValue(clubId, clubToUpdate);
+      console.log(newClubData);
+      updateClubValue(clubId, newClubData);
     });
   });
   getAllUnapprovedClubs(clubs);
