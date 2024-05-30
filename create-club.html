@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RBHS Club Creation</title>
+</head>
+
+<body>
+  <h1>RBHS Club Creation Form</h1>
+  <form id="clubCreation">
+    <label for="preferredClub">Club you would like to host:</label>
+    <input type="text" id="preferredClub" name="preferredClub" required>
+    <br>
+    <label for="preferredClubDescription">Brief desciption of your preferred club:</label>
+    <textarea id="preferredClubDescription" name="preferredClubDescription" required></textarea>
+    <br>
+    <label for="coSponsorsNeeded">How many co-sponsors do you need?</label>
+    <input type="number" min="0" max="5" value="0" id="coSponsorsNeeded" name="coSponsorsNeeded" required>
+    <br>
+    <label for="maxCapacity">How many students do you have equipment for?</label>
+    <input type="number" min="5" id="maxCapacity" name="maxCapacity" required>
+    <br>
+    <button type="submit">Submit</button>
+  </form>
+  <script src="./club.js"></script>
+</body>
+
+</html>
