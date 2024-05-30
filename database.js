@@ -41,7 +41,19 @@ async function updateClub(clubId, clubChangeInfo) {
     location,
     isApproved,
   } = clubChangeInfo;
-  const sql = `UPDATE clubs SET clubName = ?, clubDescription = ?, coSponsorsNeeded = ?, minSlots9 = ?, minSlots10 = ?, minSlots11 = ?, minSlots12 = ?, maxSlots = ?, requiredCoSponsors = ?, currentCoSponsors = ?, primaryTeacherId = ?, location = ?, isApproved = ?  WHERE clubId = ?`;
+  const sql = `UPDATE clubs SET clubName = ?,
+  clubDescription = ?,
+  coSponsorsNeeded = ?,
+  minSlots9 = ?,
+  minSlots10 = ?,
+  minSlots11 = ?,
+  minSlots12 = ?,
+  maxSlots = ?,
+  requiredCoSponsors = ?,
+  currentCoSponsors = ?,
+  primaryTeacherId = ?,
+  location = ?,
+  isApproved = ?  WHERE clubId = ${clubId}`;
   await new Promise((resolve, reject) => {
     db.run(
       sql,
