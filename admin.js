@@ -49,14 +49,11 @@ async function getAllApprovedClubs() {
   document.querySelectorAll(".approveBtn").forEach((element) => {
     element.addEventListener("click", (e) => {
       clubId = e.target.parentElement.id;
-      console.log(
-        e.target.parentElement.children.minSlotsWrapper.children.minSlots
-          .children
-      );
+      console.log(e.target.parentElement.children);
       const newClubData = {
         clubId: clubId,
-        clubName: "ass club",
-        clubDescription: "gay",
+        clubName: e.target.parentElement.children.clubName,
+        clubDescription: e.target.parentElement.children.clubDescription,
         primaryTeacherId: 1,
         coSponsorsNeeded: 1,
         minSlots9:
