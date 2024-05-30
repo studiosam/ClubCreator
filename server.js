@@ -1,9 +1,9 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
-const db = require("./database.js");  // Import your database functions
+const db = require("./database.js"); // Import your database functions
 const app = express();
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
 const PORT = 3000;
 
 // Middleware to parse URL-encoded bodies (as sent by HTML forms)
@@ -32,8 +32,7 @@ app.get("/getAllStudents", async (req, res) => {
     const student = await db.getAllTeachersOrStudents(isTeacher);
     student.forEach((student) => {
       console.log(`${student.firstName} ${student.lastName}`);
-
-    })
+    });
     res.json(student);
   } catch (err) {
     console.error("Error: ", err);
@@ -66,13 +65,13 @@ app.post("/approveClub", async (req, res) => {
   console.log(clubInfo);
   await db.approveClub(clubInfo.clubId);
   res.send(clubInfo);
-})
+});
 
 app.post("/updateClub", async (req, res) => {
   const changeData = req.body;
   console.log(changeData);
-  db.updateClub(changeData);
-})
+  //db.updateClub(changeData);
+});
 
 // POST route to handle form submission from clubCreation.html
 app.post("/addClub", async (req, res) => {
@@ -80,53 +79,53 @@ app.post("/addClub", async (req, res) => {
   const clubInfo = req.body;
   console.log(clubInfo);
   await db.addClub(clubInfo);
-  res.redirect('./home-teacher.html');
-})
+  res.redirect("./home-teacher.html");
+});
 
 app.post("/approveClub", async (req, res) => {
   const clubInfo = req.body;
   console.log(clubInfo);
   await db.approveClub(clubInfo.clubId);
   res.send(clubInfo);
-})
+});
 
 //Create Account
 app.post("/addAccount", async (req, res) => {
   console.log("Received POST request to /addAccount");
 
-  const userInfo = req.body
-  console.log(userInfo)
+  const userInfo = req.body;
+  console.log(userInfo);
 
-  userInfo.password = await encryptPassword(userInfo.password)
+  userInfo.password = await encryptPassword(userInfo.password);
 
-  userInfo.isTeacher = (userInfo.isTeacher == "true")
+  userInfo.isTeacher = userInfo.isTeacher == "true";
 
-  const userCheckData = await db.checkUser(userInfo.email)
+  const userCheckData = await db.checkUser(userInfo.email);
 
   if (userCheckData.userExists === true) {
-    res.send("User already exists")
+    res.send("User already exists");
   } else {
     db.addUser(userInfo);
-    res.send({ body: 'true', user: userInfo });
+    res.send({ body: "true", user: userInfo });
   }
 });
 
 app.post("/login", async (req, res) => {
-  const email = req.body.email.toLowerCase()
-  const password = req.body.password
-  const userCheckData = await db.checkUser(email)
+  const email = req.body.email.toLowerCase();
+  const password = req.body.password;
+  const userCheckData = await db.checkUser(email);
 
   if (userCheckData.userExists === true) {
-    const hashedPassword = userCheckData.password
+    const hashedPassword = userCheckData.password;
     if (await bcrypt.compare(password, hashedPassword)) {
       const userObject = await db.getUserInfo(email);
       delete userObject.password;
       res.send({ body: true, userObject });
     } else {
-      res.send({ body: false })
+      res.send({ body: false });
     }
   }
-})
+});
 
 // Start the server
 app.listen(PORT, () => {
@@ -144,6 +143,6 @@ async function encryptPassword(password) {
     // Return the hashed password
     return hashedPassword;
   } catch (error) {
-    console.error('Error encrypting password:', error);
+    console.error("Error encrypting password:", error);
   }
 }

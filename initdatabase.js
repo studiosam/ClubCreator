@@ -1,18 +1,22 @@
-const sqlite3 = require('sqlite3').verbose();
+const sqlite3 = require("sqlite3").verbose();
 
 // Open a database connection
-const db = new sqlite3.Database(`C:/Users/Waffles/Desktop/Coding Stuff/Databases/school_clubs.db`, sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
+const db = new sqlite3.Database(
+  `../school_clubs.db`,
+  sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE,
+  (err) => {
     if (err) {
-        console.error('Error opening database:', err.message);
+      console.error("Error opening database:", err.message);
     } else {
-        console.log('Database connected.');
+      console.log("Database connected.");
     }
-});
+  }
+);
 function initializeDatabase() {
-    db.serialize(() => {
-        db.run('PRAGMA foreign_keys = ON');
-        // Create the 'clubs' table
-        db.run(`
+  db.serialize(() => {
+    db.run("PRAGMA foreign_keys = ON");
+    // Create the 'clubs' table
+    db.run(`
             CREATE TABLE IF NOT EXISTS clubs (
                 clubId INTEGER PRIMARY KEY AUTOINCREMENT,
                 clubName TEXT NOT NULL,
@@ -32,8 +36,8 @@ function initializeDatabase() {
             );
         `);
 
-        // Create the 'users' table
-        db.run(`
+    // Create the 'users' table
+    db.run(`
             CREATE TABLE IF NOT EXISTS users (
                 userId INTEGER PRIMARY KEY AUTOINCREMENT,
                 firstName TEXT NOT NULL,
@@ -47,6 +51,6 @@ function initializeDatabase() {
                 FOREIGN KEY (clubId) REFERENCES clubs (clubId)
             );
         `);
-    });
+  });
 }
 initializeDatabase();
