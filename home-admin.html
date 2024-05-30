@@ -5,24 +5,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Page</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/css/uikit.min.css" />
+    <link rel="stylesheet" href="./css/styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/js/uikit-icons.min.js"></script>
 </head>
 
 <body>
     <h1>Welcome, Admin!</h1>
-    <h2 id="clubProposals">Club Proposals</h2>
-    <div id="clubProposalList" class="clubList">
-    </div>
+    <div class="uk-container" uk-filter="target: .js-filter; animation: slide">
+        <ul class="uk-subnav uk-subnav-pill">
+            <li uk-filter-control="filter: .club-proposals"><a href="#">
+                    <h2 id="clubProposals">Club Proposals</h2>
+                </a></li>
+            <li uk-filter-control="filter: .approved-clubs"><a href="#">
+                    <h2 id="approvedClubs">Approved Clubs</h2>
+                </a></li>
+            <li uk-filter-control="filter: .locations"><a href="#">
+                    <h2 id="locations">Locations</h2>
+                </a></li>
+        </ul>
+
+        <div id="clubProposalList" class="clubList js-filter uk-grid-column-small uk-grid-row-small" uk-grid>
+        </div>
 
 
-    <h2 id="approvedClubs">Approved Clubs</h2>
-    <div id="approvedClubList" class="clubList">
-    </div>
 
-    <h2 id="locations">Locations</h2>
-    <a href="create location page">
-        Create Location
-    </a>
-    <div id="locationList" class="clubList">
+        <div id="approvedClubList" class="clubList js-filter uk-grid-column-small uk-grid-row-small" uk-grid>
+        </div>
+
+
+
+        <div id="locationList" class="clubList js-filter uk-grid-column-small uk-grid-row-small" uk-grid>
+            <a class="locations" href="create location page">
+                Create Location
+            </a>
+        </div>
     </div>
     <!-- 
         -list of unapproved clubs

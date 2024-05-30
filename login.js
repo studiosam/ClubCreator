@@ -1,17 +1,19 @@
 const form = document.querySelector("#login");
-
+const error = document.querySelector('#error')
 form.addEventListener("submit", (event) => {
     event.preventDefault();
     login();
 })
 
 async function login() {
+    console.log('login');
     const userEmail = form.email.value;
     const formData = new FormData(form);
     formData.set("username", userEmail.toLowerCase().trim());
     const jsonData = new URLSearchParams(formData);
     const response = await fetch("http://127.0.0.1:3000/login", { method: "post", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: jsonData });
     const responseStatus = await response.json();
+    console.log(responseStatus);
     if (responseStatus.body) {
         const user = responseStatus.userObject;
         setUser(user);
@@ -21,6 +23,8 @@ async function login() {
             window.location.href = `https://www.youtube.com/watch?v=dQw4w9WgXcQ`
         }
     } else {
+        document.querySelector('#errormessage').innerHTML = `${responseStatus.error}`;
+        error.style.display = "block"
         console.log("failed login"); // handle failed login on screen
     }
 }
@@ -36,11 +40,20 @@ function setUser(userInfo) {
     localStorage.setItem("user", user);
 }
 
-function getUser() {
+async function getUser() {
+
     const user = JSON.parse(localStorage.getItem("user"));
+
     if (user) {
-        console.log(`User: ${user}`);
+        console.log(`${user}`);
+        if (user.isTeacher) {
+            window.location.href = "./home-teacher.html";
+        } else {
+            window.location.href = "./home-student.html";
+        }
+
     } else {
         console.log(`Nobody is logged in`);
     }
 }
+getUser()

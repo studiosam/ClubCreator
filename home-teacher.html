@@ -5,25 +5,36 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>RBHS Teacher Home Page</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/css/uikit.min.css" />
+    <link rel="stylesheet" href="./css/styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/js/uikit-icons.min.js"></script>
 </head>
 
 <body>
-    <h1>Home Page: Teacher</h1>
-    <br>
-    <div id="userInfo"></div>
-    <!--
+
+    <h1 class="text-center uk-heading-large roboto uk-text-bold">Home Page: Teacher</h1>
+
+    <div class="uk-height-1-1 uk-container">
+        <div id="userInfo"></div>
+        <!--
     ==if no club, display club sponsor options (create club or co-sponsor club)    
 -->
-    <button onclick="window.location.href='./create-club.html'">Create Club for Approval</button>
-    <button onclick="window.location.href='./cosponsor-club.html'">Co-Sponsor Existing Club</button>
-    <script src="./teacher.js"></script>
-    <button onclick="logout()">Logout</button>
-    <!-- 
+        <button class="uk-button" onclick="window.location.href='./create-club.html'">Create Club for Approval</button>
+        <button class="uk-button" onclick="window.location.href='./cosponsor-club.html'">Co-Sponsor Existing
+            Club</button>
+        <script src="./teacher.js"></script>
+        <button class="uk-button uk-button-secondary" onclick="logout()">Logout</button>
+        <!-- 
         change first and last name
         unassign as primary sponsor from club suggestion before approval
         apply to change clubs after approval
         change password
      -->
+    </div>
 </body>
 
 </html>

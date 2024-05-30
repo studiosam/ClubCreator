@@ -61,16 +61,24 @@ app.get("/getAllClubs", async (req, res) => {
 });
 
 app.post("/approveClub", async (req, res) => {
+
   const clubInfo = req.body;
-  console.log(clubInfo);
+  console.log('approveing');
   await db.approveClub(clubInfo.clubId);
   res.send(clubInfo);
 });
 
 app.post("/updateClub", async (req, res) => {
   const changeData = req.body;
-  console.log(changeData);
-  //db.updateClub(changeData);
+  const success = await db.updateClub(changeData.clubId, changeData.newClubData);
+
+  if (success) {
+    res.send({ body: "Success", changeData });
+  } else {
+    res.send("Error");
+  }
+
+
 });
 
 // POST route to handle form submission from clubCreation.html
@@ -78,8 +86,10 @@ app.post("/addClub", async (req, res) => {
   console.log("Received POST request to /addClub");
   const clubInfo = req.body;
   console.log(clubInfo);
-  await db.addClub(clubInfo);
-  res.redirect("./home-teacher.html");
+  try {
+    await db.addClub(clubInfo)
+  } catch (err) { res.send({ body: err }) };
+  res.send({ body: "Success", clubInfo });
 });
 
 app.post("/approveClub", async (req, res) => {
@@ -122,8 +132,10 @@ app.post("/login", async (req, res) => {
       delete userObject.password;
       res.send({ body: true, userObject });
     } else {
-      res.send({ body: false });
+      res.send({ body: false, error: "You have entered a Wrong Password. Please try again." });
     }
+  } else {
+    res.send({ body: false, error: "This User Does Not Exist. Please create an account." });
   }
 });
 

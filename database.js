@@ -23,6 +23,7 @@ async function addClub(newClubInfo) {
     newClubInfo.coSponsorsNeeded,
     newClubInfo.teacherId,
   ]);
+
 }
 
 async function updateClub(clubId, clubChangeInfo) {
@@ -80,6 +81,8 @@ async function updateClub(clubId, clubChangeInfo) {
       }
     );
   });
+
+  return true;
 }
 
 async function getUsers() {
@@ -87,11 +90,14 @@ async function getUsers() {
     const sql = `SELECT email, password FROM users`;
     db.all(sql, (err, rows) => {
       if (err) {
+
         return reject(err);
       }
       resolve(rows);
+
     });
   });
+
 }
 
 async function getUserInfo(email) {
@@ -99,12 +105,15 @@ async function getUserInfo(email) {
   return new Promise((resolve, reject) => {
     db.get(sql, [email], (err, row) => {
       if (err) {
+
         return reject(err);
       } else {
         resolve(row);
+
       }
     });
   });
+
 }
 
 async function getClubInfo(clubId) {
@@ -114,10 +123,13 @@ async function getClubInfo(clubId) {
       if (err) {
         return reject(err);
       } else {
+
         resolve(row);
+
       }
     });
   });
+
 }
 
 async function checkUser(user) {
@@ -134,8 +146,10 @@ async function checkUser(user) {
     }
   } catch (err) {
     console.log(err);
+
     return "Error";
   }
+
 }
 
 async function getAllTeachersOrStudents(isTeacherBool) {
@@ -143,12 +157,15 @@ async function getAllTeachersOrStudents(isTeacherBool) {
     const sql = `SELECT * FROM users WHERE isTeacher = ${isTeacherBool}`;
     db.all(sql, (err, rows) => {
       if (err) {
+
         return reject(err);
       } else {
+
         return resolve(rows);
       }
     });
   });
+
 }
 
 async function getAllClubs() {
@@ -156,12 +173,15 @@ async function getAllClubs() {
     const sql = `SELECT * FROM clubs`;
     db.all(sql, (err, rows) => {
       if (err) {
+
         return reject(err);
       } else {
+
         return resolve(rows);
       }
     });
   });
+
 }
 
 async function getUnapprovedClubs() {
@@ -169,12 +189,15 @@ async function getUnapprovedClubs() {
     const sql = `SELECT * FROM clubs WHERE isApproved = false`;
     db.all(sql, (err, rows) => {
       if (err) {
+
         return reject(err);
       } else {
+
         return resolve(rows);
       }
     });
   });
+
 }
 // function to check for email address already connected to account
 
@@ -187,6 +210,7 @@ function addUser(user) {
     user.password,
     user.isTeacher,
   ]);
+
 }
 
 async function approveClub(club) {
@@ -198,6 +222,7 @@ async function approveClub(club) {
     }
     console.log(`Row(s) updated: ${this.changes}`);
   });
+
 }
 
 ////// FIXME//////////////////
@@ -206,10 +231,12 @@ async function updateClubValue(club, key, value) {
   const sql = `UPDATE clubs SET ${key} = ? WHERE clubId = ?`;
   db.run(sql, [value, club.clubId], function (err) {
     if (err) {
+
       return console.error(err.message);
     }
     console.log(`Row(s) updated: ${this.changes}`);
   });
+
 }
 //////////////////////////
 

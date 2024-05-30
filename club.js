@@ -17,5 +17,16 @@ async function createClub() {
         body: jsonData
     });
     const responseStatus = await response.json();
+    form.reset()
+    if (responseStatus.body === "Success") {
+        document.querySelector('#status-message').innerHTML = `${responseStatus.clubInfo.preferredClub} Successfully Created!`;
+        document.querySelector('#status').classList.add("uk-alert-success");
+        document.querySelector('#status').style.display = "block";
 
+    } else {
+        document.querySelector('#status-message').innerHTML = `Error : ${responseStatus.body}`;
+        document.querySelector('#status').classList.add("uk-alert-danger");
+
+        document.querySelector('#status').style.display = "block";
+    }
 }

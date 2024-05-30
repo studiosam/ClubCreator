@@ -2,6 +2,7 @@ function getUser() {
     const user = JSON.parse(localStorage.getItem("user"))
     if (user) {
         console.log(`User: ${user.firstName} ${user.lastName}`);
+        console.log(user)
         if (!user.isTeacher) {
             window.location.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
         }
