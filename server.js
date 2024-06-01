@@ -61,24 +61,27 @@ app.get("/getAllClubs", async (req, res) => {
 });
 
 app.post("/approveClub", async (req, res) => {
-
   const clubInfo = req.body;
-  console.log('approveing');
+  console.log(clubInfo);
   await db.approveClub(clubInfo.clubId);
-  res.send(clubInfo);
+
+  res.send({ body: "Success", clubInfo });
 });
 
 app.post("/updateClub", async (req, res) => {
   const changeData = req.body;
-  const success = await db.updateClub(changeData.clubId, changeData.newClubData);
+  if (changeData.isApproved === "true") {
+    changeData.isApproved = true;
+  } else if (changeData.isApproved === "false") {
+    changeData.isApproved = false;
+  }
+  const success = await db.updateClub(changeData);
 
   if (success) {
     res.send({ body: "Success", changeData });
   } else {
     res.send("Error");
   }
-
-
 });
 
 // POST route to handle form submission from clubCreation.html
@@ -87,16 +90,11 @@ app.post("/addClub", async (req, res) => {
   const clubInfo = req.body;
   console.log(clubInfo);
   try {
-    await db.addClub(clubInfo)
-  } catch (err) { res.send({ body: err }) };
+    await db.addClub(clubInfo);
+  } catch (err) {
+    res.send({ body: err });
+  }
   res.send({ body: "Success", clubInfo });
-});
-
-app.post("/approveClub", async (req, res) => {
-  const clubInfo = req.body;
-  console.log(clubInfo);
-  await db.approveClub(clubInfo.clubId);
-  res.send(clubInfo);
 });
 
 //Create Account
@@ -132,10 +130,16 @@ app.post("/login", async (req, res) => {
       delete userObject.password;
       res.send({ body: true, userObject });
     } else {
-      res.send({ body: false, error: "You have entered a Wrong Password. Please try again." });
+      res.send({
+        body: false,
+        error: "You have entered a Wrong Password. Please try again.",
+      });
     }
   } else {
-    res.send({ body: false, error: "This User Does Not Exist. Please create an account." });
+    res.send({
+      body: false,
+      error: "This User Does Not Exist. Please create an account.",
+    });
   }
 });
 

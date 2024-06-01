@@ -1,31 +1,89 @@
-* {
-    box-sizing: border-box;
+.hidden {
+  display: none;
 }
 
-.hidden {
-    display: none;
-}
 .text-center {
-    text-align: center;
+  text-align: center;
 }
+
 .wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    flex-direction: column;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  flex-direction: column;
 }
 
 .roboto {
-    font-family: "Roboto", sans-serif !important;
+  font-family: "Roboto", sans-serif !important;
 }
 
 body {
-    font-family: "Roboto Slab", serif;
-    height: 100vh;
-    width: 100vw;
+  font-family: "Roboto Slab", serif;
+  height: 100vh;
+  width: 100vw;
 }
 
 .blue {
-    color: #007bff!important;
+  color: #007bff !important;
+}
+
+.minSlots {
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.maxSlots {
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+  align-items: center;
+}
+
+.approval {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.coSponsors {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+input:focus,
+textarea:focus {
+  background: rgba(0, 0, 0, 0.11) !important;
+  border-radius: 5px;
+}
+
+.approved-clubs-badge,
+.club-proposals-badge {
+  background-color: #52bb81;
+  position: absolute;
+  top: 0;
+  right: -16px;
+}
+
+.uk-subnav-pill > .uk-active > a {
+  background: none !important;
+  border-bottom: 3px solid rgb(60, 138, 255);
+  padding: 0;
+  margin: 0;
+}
+
+.notification-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+#logo {
+  height: 150px;
 }

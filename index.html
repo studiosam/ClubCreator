@@ -1,55 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RBHS Club Manager</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/css/uikit.min.css"
+    />
+    <link rel="stylesheet" href="./css/styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/js/uikit-icons.min.js"></script>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RBHS Club Manager</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/css/uikit.min.css" />
-  <link rel="stylesheet" href="./css/styles.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/js/uikit.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/js/uikit-icons.min.js"></script>
-</head>
-
-<body>
-  <div class="uk-width-1 wrapper">
-    <h1 class="roboto uk-heading-large text-center uk-text-bold">RBHS Clubs</h1>
-    <div class="uk-container uk-width-1-2 uk-align-center">
-      <form class="" id="login">
-        <label class="" for="email">Email Address:</label>
-        <div class="uk-margin-small">
-          <div class="uk-inline uk-width-1">
-            <span class="uk-form-icon" uk-icon="icon: user"></span>
-            <input class="uk-input" type="email" id="email" name="email" required>
+  <body>
+    <div class="uk-width-1 wrapper">
+      <img src="/img/rbhs.png" ></img>
+      <h1 class="roboto uk-heading-large text-center uk-text-bold">
+        RBHS Clubs
+      </h1>
+      <div class="uk-container uk-align-center">
+        <form class="" id="login">
+          <label class="" for="email">Email Address:</label>
+          <div class="uk-margin-small">
+            <div class="uk-inline uk-width-1">
+              <span class="uk-form-icon" uk-icon="icon: user"></span>
+              <input
+                class="uk-input"
+                type="email"
+                id="email"
+                name="email"
+                required
+              />
+            </div>
           </div>
-        </div>
-        <label class="" for="password">Password:</label>
-        <div class="uk-margin-small">
-          <div class="uk-inline uk-width-1">
-            <span class="uk-form-icon" uk-icon="icon: lock"></span>
-            <input class="uk-input" type="password" id="password" name="password" required>
+          <label class="" for="password">Password:</label>
+          <div class="uk-margin-small">
+            <div class="uk-inline uk-width-1">
+              <span class="uk-form-icon" uk-icon="icon: lock"></span>
+              <input
+                class="uk-input"
+                type="password"
+                id="password"
+                name="password"
+                required
+              />
+            </div>
           </div>
-        </div>
 
-        <button class="uk-button uk-button-primary uk-margin-small-top uk-align-center uk-width-1"
-          type="submit">Login</button>
-        <div id="error" class="uk-alert-danger hidden" uk-alert>
-          <a href class="uk-alert-close" uk-close></a>
-          <p id="errormessage"></p>
+          <button
+            class="uk-button uk-button-primary uk-margin-small-top uk-align-center uk-width-1"
+            type="submit"
+          >
+            Login
+          </button>
+          <div id="error" class="uk-alert-danger hidden" uk-alert>
+            <a href class="uk-alert-close" uk-close></a>
+            <p id="errormessage"></p>
+          </div>
+        </form>
+        <div class="text-center">
+          <p>You must create an account before you can log in.</p>
+          <button
+            class="uk-button uk-button-secondary"
+            onclick="window.location.href='./create-account.html'"
+          >
+            Create Account
+          </button>
         </div>
-      </form>
-      <div class="text-center">
-        <p>You must create an account before you can log in.</p>
-        <button class="uk-button uk-button-secondary" onclick="window.location.href='./create-account.html'">Create
-          Account</button>
       </div>
-
     </div>
-  </div>
-  <script src="./login.js"></script>
-</body>
-
+    <script src="./login.js"></script>
+  </body>
 </html>
