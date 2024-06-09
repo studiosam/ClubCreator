@@ -85,6 +85,17 @@ async function updateClub(clubChangeInfo) {
   return true;
 }
 
+async function deleteClub(clubId) {
+  const sql = `DELETE FROM clubs WHERE clubId =?`;
+  db.run(sql, [clubId], function (err) {
+    if (err) {
+      return console.error(err.message);
+    }
+    console.log(`Row(s) deleted: ${this.changes}`);
+  });
+  return true;
+}
+
 async function getUsers() {
   return new Promise((resolve, reject) => {
     const sql = `SELECT email, password FROM users`;
@@ -111,7 +122,7 @@ async function getUserInfo(email) {
 }
 
 async function getClubInfo(clubId) {
-  const sql = `SELECT * FROM clubs WHERE id = ?`;
+  const sql = `SELECT * FROM clubs WHERE clubId = ?`;
   return new Promise((resolve, reject) => {
     db.get(sql, [clubId], (err, row) => {
       if (err) {
@@ -154,7 +165,18 @@ async function getAllTeachersOrStudents(isTeacherBool) {
     });
   });
 }
-
+async function getAllUsers() {
+  return new Promise((resolve, reject) => {
+    const sql = `SELECT * FROM users`;
+    db.all(sql, (err, rows) => {
+      if (err) {
+        return reject(err);
+      } else {
+        return resolve(rows);
+      }
+    });
+  });
+}
 async function getAllClubs() {
   return new Promise((resolve, reject) => {
     const sql = `SELECT * FROM clubs`;
@@ -239,5 +261,7 @@ module.exports = {
   getUnapprovedClubs,
   approveClub,
   updateClub,
+  deleteClub,
+  getAllUsers,
   // Export other database functions here
 };

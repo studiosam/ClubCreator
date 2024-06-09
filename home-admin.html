@@ -21,55 +21,117 @@
   </head>
 
   <body>
-    <h1>Welcome, Admin!</h1>
-    <div class="uk-container" uk-filter="target: .js-filter; animation: slide">
-      <ul
-        class="uk-subnav uk-subnav-divider notification-wrapper uk-subnav-pill"
-      >
-        <li class="uk-active" uk-filter-control="filter: .club-proposals">
-          <a class="text-center" href="#">
-            <h2 id="clubProposals">Club Proposals</h2>
-            <span class="uk-badge club-proposals-badge">1</span>
-          </a>
-        </li>
-        <li uk-filter-control="filter: .approved-clubs">
-          <a class="notification-wrapper" href="#">
-            <h2 id="approvedClubs">Approved Clubs</h2>
-            <span class="uk-badge approved-clubs-badge">0</span>
-          </a>
-        </li>
-        <li uk-filter-control="filter: .locations">
-          <a href="#">
-            <h2 id="locations">Locations</h2>
-          </a>
-        </li>
-      </ul>
-
-      <div
-        id="clubProposalList"
-        class="club-proposals js-filter uk-grid-column-small uk-grid-row-small"
-        uk-grid
-        uk-sortable
-      >
-        No Club Proposals
+    <div class="uk-flex">
+      <div id="side-nav" class="text-center">
+        <img
+          class="uk-margin-medium-top uk-margin-medium-bottom"
+          src="./img/rbhs.png"
+        />
+        <ul class="dash-nav uk-nav uk-margin-small-top">
+          <li class="uk-active">
+            <a href="home-teacher.html"
+              ><span uk-icon="home"></span>Dashboard</a
+            >
+          </li>
+          <li>
+            <a href="create-club.html"
+              ><span uk-icon="plus"></span>Create Club</a
+            >
+          </li>
+          <li>
+            <a href="#"><span uk-icon="users"></span>Co-Sponsor</a>
+          </li>
+          <li>
+            <a href="#"><span uk-icon="cog"></span>Account Settings</a>
+          </li>
+        </ul>
       </div>
+      <div id="right">
+        <div class="menu-panel">
+          <p id="user-name">Name</p>
+          <button class="uk-button logout-button" onclick="logout()">
+            Logout
+          </button>
+        </div>
+        <!--MAIN DASHBOARD PANEL START-->
+        <h1 class="uk-margin-medium-left">Welcome, Admin!</h1>
+        <div
+          class="uk-container"
+          uk-filter="target: .js-filter; animation: slide"
+        >
+          <ul
+            class="uk-subnav uk-subnav-divider notification-wrapper uk-subnav-pill"
+          >
+            <li class="uk-active" uk-filter-control="filter: .club-proposals">
+              <a class="text-center" href="#">
+                <h2 id="clubProposals">Club Proposals</h2>
+                <span class="uk-badge club-proposals-badge">1</span>
+              </a>
+            </li>
+            <li uk-filter-control="filter: .approved-clubs">
+              <a class="notification-wrapper" href="#">
+                <h2 id="approvedClubs">Approved Clubs</h2>
+                <span class="uk-badge approved-clubs-badge">0</span>
+              </a>
+            </li>
+            <li uk-filter-control="filter: .locations">
+              <a href="#">
+                <h2 id="locations">Locations</h2>
+              </a>
+            </li>
+          </ul>
 
-      <div
-        id="approvedClubList"
-        class="approved-clubs clubList js-filter uk-grid-column-small uk-grid-row-small"
-        uk-grid
-        uk-sortable
-      >
-        No Approved Clubs
-      </div>
+          <div
+            id="clubProposalList"
+            class="club-proposals js-filter uk-grid-column-small uk-grid-row-small"
+            uk-grid
+            uk-sortable
+          >
+            No Club Proposals
+          </div>
 
-      <div
-        id="locationList"
-        class="clubList js-filter uk-grid-column-small uk-grid-row-small"
-        uk-grid
-        uk-sortable
-      >
-        <a class="locations" href="create location page"> Create Location </a>
+          <div
+            id="approvedClubList"
+            class="approved-clubs clubList js-filter uk-grid-column-small uk-grid-row-small"
+            uk-grid
+            uk-sortable
+          >
+            No Approved Clubs
+          </div>
+
+          <div
+            id="locationList"
+            class="clubList js-filter uk-grid-column-small uk-grid-row-small"
+            uk-grid
+            uk-sortable
+          >
+            <a class="locations" href="create location page">
+              Create Location
+            </a>
+          </div>
+          <div id="delete-confirmation" uk-modal>
+            <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
+              <h2 class="uk-modal-title roboto">ARE YOU SURE?</h2>
+              <p id="delete-confirmation-body">ASS</p>
+              <p class="uk-text-right">
+                <button
+                  class="uk-button uk-button-primary uk-modal-close"
+                  type="button"
+                >
+                  Cancel
+                </button>
+                <button
+                  id="delete-btn"
+                  class="uk-button uk-button-danger uk-modal-close"
+                  type="button"
+                >
+                  Delete
+                </button>
+              </p>
+            </div>
+          </div>
+        </div>
+        <!--MAIN DASHBOARD PANEL END-->
       </div>
     </div>
 
@@ -96,5 +158,6 @@
 
     -->
     <script src="admin.js"></script>
+    <script src="userData.js"></script>
   </body>
 </html>

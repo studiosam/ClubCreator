@@ -1,13 +1,18 @@
 const isAdmin = JSON.parse(localStorage.getItem("user"));
-// if (isAdmin.isAdmin === 0) {
-//     document.body.innerHTML = '<h1>NOT AN ADMIN</h1>';
-
-// }
+const user = JSON.parse(localStorage.getItem("user"));
+document.querySelector(
+  "#user-name"
+).innerHTML = `${user.firstName} ${user.lastName}`;
 const approvedClubList = document.querySelector("#approvedClubList");
 const clubProposals = document.querySelector("#clubProposalList");
 
+if (isAdmin.isAdmin === 0) {
+  document.body.innerHTML = "<h1>NOT AN ADMIN</h1>";
+}
+
 (async () => {
   await getAllApprovedClubs();
+  await buildAdminMenu();
 })();
 async function getAllApprovedClubs() {
   const response = await fetch("http://localhost:3000/getAllClubs");
@@ -24,9 +29,9 @@ async function getAllApprovedClubs() {
     approvedClubList.innerHTML = "";
   }
   filteredClubs.forEach((club) => {
-    approvedClubList.innerHTML += `<form id="form${
+    approvedClubList.innerHTML += `<form class="approved-clubs  uk-width-1-2@m" id="form${
       club.clubId
-    }" <div class="uk-card uk-width-1-2@m approved-clubs">
+    }"><div id="club-${club.clubId}" class="uk-card">
     <div id="${
       club.clubId
     }" class=" uk-card uk-card-default uk-card-body uk-card-hover">
@@ -56,31 +61,31 @@ async function getAllApprovedClubs() {
         <div id="minSlotsWrapper">
         <p class="text-center uk-text-bold uk-margin-medium-top">Minimum Slots:</p>
         <div id="minSlots-${club.clubId}" class="minSlots">
-        <div class="">
+        <div class="text-center">
         <span class="">9th Grade: </span><input name="minSlots9" id = "${
           club.clubId
-        }-minslots9" class = "slots9 uk-input uk-form-width-small" type="number" value="${
+        }-minslots9" class = "slots9 uk-input" type="number" value="${
       club.minSlots9
     }">
         </div>
-        <div class="">
+        <div class="text-center">
         <span class="">10th Grade: </span><input name="minSlots10" id = "${
           club.clubId
-        }-minslots10" class = "slots10 uk-input uk-form-width-small" type="number" value="${
+        }-minslots10" class = "slots10 uk-input" type="number" value="${
       club.minSlots10
     }">
         </div>
-        <div class="">
+        <div class="text-center">
         <span class="">11th Grade: </span><input name="minSlots11" id = "${
           club.clubId
-        }-minslots11" class = "slots11 uk-input uk-form-width-small" type="number" value="${
+        }-minslots11" class = "slots11 uk-input" type="number" value="${
       club.minSlots11
     }">
         </div>
-        <div class="">
+        <div class="text-center">
         <span class="">12th Grade: </span><input name="minSlots12" id = "${
           club.clubId
-        }-minslots12" class = "slots12 uk-input uk-form-width-small" type="number" value="${
+        }-minslots12" class = "slots12 uk-input" type="number" value="${
       club.minSlots12
     }">
         </div>
@@ -119,10 +124,13 @@ async function getAllApprovedClubs() {
         <button type="button" id="approve${
           club.clubId
         }" class="uk-button uk-button-secondary uk-width-1 approveBtn">Confirm</button>
+        <button class="delete" uk-toggle="target: #delete-confirmation" type="button">
+        <img id="delete-link-${
+          club.clubId
+        }" src="/img/trash-can.png" width="40px">
+        </button>
         </div>
         </div>
-  
-        <div id="success"></div>
         </div></form>
         `;
   });
@@ -184,7 +192,7 @@ async function getAllUnapprovedClubs(clubs) {
     clubProposals.innerHTML = "";
   }
   filteredClubs.forEach((club) => {
-    clubProposals.innerHTML += `<div class="uk-card uk-width-1-3@m club-proposals">
+    clubProposals.innerHTML += `<div id="club-${club.clubId}" class="uk-card uk-width-1-2 club-proposals uk-container-expand">
     <div class="uk-card uk-card-default uk-card-body uk-card-hover">
     <div class="uk-card-badge uk-label uk-label-warning">Unapproved</div>
     <div class="uk-card-header">   
@@ -196,11 +204,51 @@ async function getAllUnapprovedClubs(clubs) {
         </div>
         <div class="uk-card-footer text-center">
         <button class="uk-button uk-button-primary uk-width-1" onclick="approveClub(${club.clubId},'${club.clubName}')">Approve</button>
+        <div>
+        <button class="delete" uk-toggle="target: #delete-confirmation" type="button">
+        <img id="delete-link-${club.clubId}" src="/img/trash-can.png" width="40px">
+        </button>
+        </div>
         </div>
         </div>
         </div>
         `;
   });
+  document.querySelectorAll(".delete").forEach((element) => {
+    element.addEventListener("click", (e) => {
+      clubId = e.target.id.match(/\D(\d+)$/)[1];
+      const clubName = document.querySelector(`#club-${clubId} h2`).innerHTML;
+      document.querySelector(
+        "#delete-confirmation-body"
+      ).innerHTML = `<span class="red">Delete</span> ${clubName}?`;
+      document
+        .querySelector("#delete-btn")
+        .setAttribute("onClick", `deleteClub(${clubId},"${clubName}")`);
+    });
+  });
+}
+
+async function deleteClub(clubId, clubName) {
+  const response = await fetch("http://localhost:3000/deleteClub", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      clubId: clubId,
+      clubName: clubName,
+    }),
+  });
+  const json = await response.json();
+  console.log(json);
+  if (json.body === "Success") {
+    console.log("Success");
+    UIkit.notification({
+      message: `${clubName} has been deleted!`,
+      status: "success",
+    });
+    await getAllApprovedClubs();
+  }
 }
 async function approveClub(clubId, clubName) {
   const response = await fetch("http://localhost:3000/approveClub", {
@@ -224,4 +272,14 @@ async function approveClub(clubId, clubName) {
     await getAllApprovedClubs();
     console.log(json.clubInfo.clubName);
   }
+}
+
+async function buildAdminMenu() {
+  const menu = document.querySelector(".dash-nav");
+  menu.innerHTML += `<div class= "text-center"><hr class="uk-margin-medium-right uk-margin-top">
+  <li><p class="uk-margin-medium-right">ADMIN MENU</p></li>
+  </div>
+  <li><a class="gold" href="http://127.0.0.1:3000/users/students"><span uk-icon="icon: pencil"></span>Students</a></li>
+  <li><a class="gold" href="http://127.0.0.1:3000/users/teachers"><span uk-icon="icon: database"></span>Teachers</a></li>
+`;
 }

@@ -15,19 +15,30 @@
 }
 
 .roboto {
-  font-family: "Roboto", sans-serif !important;
+  font-family: "Roboto Slab", sans-serif !important;
 }
 
 body {
   font-family: "Roboto Slab", serif;
-  height: 100vh;
-  width: 100vw;
+  min-height: 100vh;
+  width: 100%;
+  color: azure;
+  background-color: #0e0e11;
 }
 
 .blue {
   color: #007bff !important;
 }
+.white {
+  color: azure;
+}
+.gold {
+  color: goldenrod !important;
+}
 
+.red {
+  color: rgb(192, 43, 43);
+}
 .minSlots {
   display: flex;
   gap: 5px;
@@ -86,4 +97,108 @@ textarea:focus {
 
 #logo {
   height: 150px;
+}
+
+#side-nav {
+  background-color: #191f36;
+  width: 19rem;
+  min-height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  overflow-x: hidden;
+}
+
+#right {
+  margin-left: 19rem;
+}
+
+#side-nav a {
+  color: azure;
+  font-size: 1.2rem;
+}
+#side-nav .uk-active a {
+  color: rgb(79, 236, 236);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: azure;
+}
+#user-name {
+  margin: 0;
+  margin-right: 15px;
+}
+.menu-panel {
+  padding-right: 0;
+  display: flex;
+  background-color: #252525;
+  height: 70px;
+  width: 100%;
+  justify-content: end;
+  align-items: center;
+}
+
+.logout-button {
+  background-color: #16458d;
+  height: 100%;
+}
+
+#right {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.horizontal {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  justify-content: center;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.uk-icon {
+  padding-right: 7px;
+}
+
+#pending-clubs,
+#current-clubs {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #0e0e11;
+}
+
+.uk-card-header {
+  background-color: azure;
+}
+.uk-card-header h3 {
+  color: #0e0e11 !important;
+}
+
+.dash-nav {
+  padding-left: 35px;
+}
+
+.delete {
+  color: rgb(192, 43, 43);
+  margin-top: 25px;
+  cursor: pointer;
+}
+
+.uk-modal-body {
+  background-color: #0e0e11;
+}
+
+.uk-radio:checked {
+  background-color: #52bb81;
 }

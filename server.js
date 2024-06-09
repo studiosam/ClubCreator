@@ -39,6 +39,19 @@ app.get("/getAllStudents", async (req, res) => {
     res.status(500).send("Error fetching students");
   }
 });
+app.get("/getAllUsers", async (req, res) => {
+  let isTeacher = req.query.isTeacher || false;
+  try {
+    const users = await db.getAllTeachersOrStudents(isTeacher);
+    users.forEach((user) => {
+      console.log(`${user.firstName} ${user.lastName}`);
+    });
+    res.json(users);
+  } catch (err) {
+    console.error("Error: ", err);
+    res.status(500).send("Error fetching Users");
+  }
+});
 
 // API endpoint to get the list of clubs
 app.get("/getUnapprovedClubs", async (req, res) => {
@@ -57,6 +70,48 @@ app.get("/getAllClubs", async (req, res) => {
   } catch (err) {
     console.error("Error: ", err);
     res.status(500).send("Error fetching clubs");
+  }
+});
+app.get("/club-info/:club", async (req, res) => {
+  let clubId = req.params.club;
+  if (req.query.view) {
+    console.log(req.query);
+    const clubInfo = await db.getClubInfo(clubId);
+    res.send(clubInfo);
+  } else {
+    res.redirect(`http://127.0.0.1:5500/club-info.html?club-id=${clubId}`);
+  }
+});
+app.get("/users/:type", async (req, res) => {
+  let isTeacher = false;
+  let userType = req.params.type;
+  if (userType === "teachers") {
+    isTeacher = true;
+  }
+
+  try {
+    const users = await db.getAllTeachersOrStudents(isTeacher);
+    users.forEach((user) => {
+      console.log(`${user.firstName} ${user.lastName}`);
+    });
+    if (users.length > 0) {
+      res.send(users);
+    } else {
+      res.send({ body: "No users found" });
+    }
+  } catch (err) {
+    console.error("Error: ", err);
+    res.status(500).send("Error fetching Users");
+  }
+});
+
+app.post("/deleteClub", async (req, res) => {
+  const clubId = req.body.clubId;
+  const deleted = await db.deleteClub(clubId);
+  if (deleted) {
+    res.send({ body: "Success" });
+  } else {
+    res.send({ body: "Error" });
   }
 });
 
@@ -103,7 +158,8 @@ app.post("/addAccount", async (req, res) => {
 
   const userInfo = req.body;
   console.log(userInfo);
-
+  userInfo.firstName = await capitalizeName(userInfo.firstName);
+  userInfo.lastName = await capitalizeName(userInfo.lastName);
   userInfo.password = await encryptPassword(userInfo.password);
 
   userInfo.isTeacher = userInfo.isTeacher == "true";
@@ -161,4 +217,8 @@ async function encryptPassword(password) {
   } catch (error) {
     console.error("Error encrypting password:", error);
   }
+}
+
+async function capitalizeName(name) {
+  return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
 }

@@ -20,13 +20,15 @@
   </head>
 
   <body>
-    <div class="uk-flex">
-      <div id="side-nav" class="text-center">
+    <div class="uk-height-1-1 uk-flex">
+      <div id="side-nav" class="text-center uk-height-1-1">
         <img
           class="uk-margin-medium-top uk-margin-medium-bottom"
           src="./img/rbhs.png"
         />
-        <ul class="dash-nav uk-nav uk-margin-small-top">
+        <ul
+          class="dash-nav uk-nav uk-nav-default uk-nav-left uk-margin-small-top"
+        >
           <li class="uk-active">
             <a href="home-teacher.html"
               ><span uk-icon="home"></span>Dashboard</a
@@ -53,48 +55,18 @@
           </button>
         </div>
         <!--MAIN DASHBOARD PANEL START-->
-        <div id="main-dashboard-panel" class="uk-container uk-container-expand uk-padding uk-margin-remove">
-          <div>
-            <ul id="dashboard-overview" class="horizontal">
-              <li>
-                <div class="uk-card uk-card-default uk-card-body text-center uk-border-rounded">
-                  <h3 class="uk-card-title uk-text-bold roboto blue">CURRENT CLUBS</h3>
-                  <p id="current-clubs" class="dash-num">0</p">
-                </div>
-              </li>
-              <li>
-                <div class="uk-card uk-card-default uk-card-body text-center uk-border-rounded">
-                  <h3 class="uk-card-title uk-text-bold roboto gold">PENDING CLUB APPROVALS</h3>
-                  <p id="pending-clubs" class="dash-num">0</p">
-                </div>
-              </li>
-            </ul>
-            
-          </div>
-          <div class="uk-section uk-padding-remove-bottom uk-margin-medium-bottom">
-            <div class="uk-container uk-margin-remove">
-              <div>
-                <div class="uk-card uk-card-default">
-                  <div class="uk-card-header">
-                      <h3 class="uk-card-title roboto">My Clubs</h3>
-                  </div>
-                  <div id="my-clubs"class="uk-card-body"></div>
-                  <div class="uk-card-footer"></div>
-              </div>
-              </div>
-            </div>
-          </div>
-          <div class="uk-section uk-padding-remove">
-            <div class="uk-container uk-margin-remove">
-              <div>
-                <div class="uk-card uk-card-default">
-                  <div class="uk-card-header">
-                      <h3 class="uk-card-title roboto">Unapproved Clubs</h3>
-                  </div>
-                  <div id="unapproved-clubs"class="uk-card-body"></div>
-                  <div class="uk-card-footer"></div>
-              </div>
-              </div>
+        <div class="uk-section">
+          <div class="uk-container">
+            <div class="uk-card uk-card-body uk-card-default">
+              <h3 id="clubName" class="uk-card-title">Name</h3>
+              <table class="uk-table uk-table-striped">
+                <thead>
+                  <tr>
+                    <th id="clubDescription">Description</th>
+                  </tr>
+                </thead>
+                <tbody id="clubData"></tbody>
+              </table>
             </div>
           </div>
         </div>
@@ -110,7 +82,6 @@
         apply to change clubs after approval
         change password
      -->
-    <script src="./teacher.js"></script>
-    <script src="userData.js"></script>
+    <script src="./clubInfo.js"></script>
   </body>
 </html>

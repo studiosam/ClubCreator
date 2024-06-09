@@ -1,44 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RBHS Club Creation</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/css/uikit.min.css"
+    />
+    <link rel="stylesheet" href="./css/styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/js/uikit-icons.min.js"></script>
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RBHS Club Creation</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/css/uikit.min.css" />
-  <link rel="stylesheet" href="./css/styles.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/js/uikit.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/js/uikit-icons.min.js"></script>
-</head>
-
-<body>
-  <h1 class="uk-heading-large uk-text-bold text-center roboto">RBHS Club Creation Form</h1>
-  <div class="uk-container uk-width-1-2 uk-align-center">
-    <form class="" id="clubCreation">
-      <label for="preferredClub">Club you would like to host:</label>
-      <input class="uk-input" type="text" id="preferredClub" name="preferredClub" required>
-      <br>
-      <label for="preferredClubDescription">Brief desciption of your preferred club:</label>
-      <textarea class="uk-textarea" id="preferredClubDescription" name="preferredClubDescription" required></textarea>
-      <br>
-      <label for="coSponsorsNeeded">How many co-sponsors do you need?</label>
-      <input class="uk-input" type="number" min="0" max="5" value="0" id="coSponsorsNeeded" name="coSponsorsNeeded"
-        required>
-      <br>
-      <label for="maxCapacity">How many students do you have equipment for?</label>
-      <input class="uk-input" type="number" min="5" id="maxCapacity" name="maxCapacity" required>
-      <br>
-      <button class="uk-button uk-button-primary uk-margin-small-top" type="submit">Submit</button>
-    </form>
-    <div id="status" class="hidden" uk-alert>
-      <a href class="uk-alert-close" uk-close></a>
-      <p id="status-message"></p>
+  <body>
+    <div class="uk-flex">
+      <div id="side-nav" class="text-center">
+        <img
+          class="uk-margin-medium-top uk-margin-medium-bottom"
+          src="./img/rbhs.png"
+        />
+        <ul
+          class="dash-nav uk-nav uk-nav-default uk-nav-left uk-margin-small-top"
+        >
+          <li class="uk-active">
+            <a href="home-teacher.html"
+              ><span uk-icon="home"></span>Dashboard</a
+            >
+          </li>
+          <li>
+            <a href="create-club.html"
+              ><span uk-icon="plus"></span>Create Club</a
+            >
+          </li>
+          <li>
+            <a href="#"
+              ><span uk-icon="users"></span>Co-Sponsor</a
+            >
+          </li>
+          <li>
+            <a href="#"><span uk-icon="cog"></span>Account Settings</a>
+          </li>
+        </ul>
+      </div>
+      <div id="right">
+        <div class="menu-panel">
+          <p id="user-name">Name</p>
+          <button class="uk-button logout-button" onclick="logout()">
+            Logout
+          </button>
+        </div>
+        <!--MAIN DASHBOARD PANEL START-->
+        <h1 class="uk-heading-large uk-text-bold text-center roboto white">
+          RBHS Club Creation Form
+        </h1>
+        <div class="uk-container uk-width-1-2 uk-align-center">
+          <form class="" id="clubCreation">
+            <label for="preferredClub">Club you would like to host:</label>
+            <input
+              class="uk-input"
+              type="text"
+              id="preferredClub"
+              name="preferredClub"
+              required
+            />
+            <br />
+            <label for="preferredClubDescription"
+              >Brief desciption of your preferred club:</label
+            >
+            <textarea
+              class="uk-textarea"
+              id="preferredClubDescription"
+              name="preferredClubDescription"
+              required
+            ></textarea>
+            <br />
+            <label for="coSponsorsNeeded"
+              >How many co-sponsors do you need?</label
+            >
+            <input
+              class="uk-input"
+              type="number"
+              min="0"
+              max="5"
+              value="0"
+              id="coSponsorsNeeded"
+              name="coSponsorsNeeded"
+              required
+            />
+            <br />
+            <label for="maxCapacity"
+              >How many students do you have equipment for?</label
+            >
+            <input
+              class="uk-input"
+              type="number"
+              min="5"
+              id="maxCapacity"
+              name="maxCapacity"
+              required
+            />
+            <br />
+            <button
+              class="uk-button uk-button-primary uk-margin-small-top"
+              type="submit"
+            >
+              Submit
+            </button>
+          </form>
+          <div id="status" class="hidden" uk-alert>
+            <a href class="uk-alert-close" uk-close></a>
+            <p id="status-message"></p>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-  <script src="./club.js"></script>
-</body>
+        <!--MAIN DASHBOARD PANEL END-->
+      </div>
+    </div>
+       
 
+    <script src="./club.js"></script>
+    <script src="userData.js"></script>
+  </body>
 </html>
