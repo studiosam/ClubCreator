@@ -16,14 +16,25 @@ app.use(cors());
 //API endpoint to get the teacher info
 app.get("/getUserInfo", async (req, res) => {
   let email = req.query.email;
+  let userId = req.query.userId
+  console.log(email);
+  console.log(userId);
   try {
-    const user = await db.getUserInfo(email);
-    res.json(user);
+    if (userId) {
+      const user = await db.getUserInfo(userId, 'userId');
+      res.send(user);
+    } else if (email) {
+      const user = await db.getUserInfo(email, 'email');
+      res.send(user);
+    } else {
+      res.status(400).send("Bad Request: Either userId or email must be provided.");
+    }
   } catch (err) {
-    console.error("Error: ", err);
-    res.status(500).send("Error fetching teachers");
+    console.error("Error fetching user info:", err);
+    res.status(500).send("Error fetching user info");
   }
 });
+
 
 // //API endpoint to get the student info
 app.get("/getAllStudents", async (req, res) => {
@@ -125,6 +136,9 @@ app.post("/approveClub", async (req, res) => {
 
 app.post("/updateClub", async (req, res) => {
   const changeData = req.body;
+  const clubInfo = await db.getClubInfo(changeData.clubId)
+  const teacherIdToNull = clubInfo.primaryTeacherId
+  await db.removeClubFromUser(teacherIdToNull)
   if (changeData.isApproved === "true") {
     changeData.isApproved = true;
   } else if (changeData.isApproved === "false") {
@@ -137,6 +151,24 @@ app.post("/updateClub", async (req, res) => {
   } else {
     res.send("Error");
   }
+});
+app.post("/updateUser", async (req, res) => {
+  const changeData = req.body;
+  const updateUser = await db.updateUser(changeData)
+  if (updateUser === "Success") {
+    res.send({ body: "Success", updatedUserData: updateUser })
+  } else {
+    res.send({ body: "Error" })
+  };
+});
+
+app.post("/setClubPrefs", async (req, res) => {
+  const clubPrefs = req.body.clubOrder
+  const studentId = req.body.student
+
+  const updateUser = await db.updateClubPrefs(clubPrefs, studentId)
+  console.log(updateUser)
+  res.send({ body: "Success", updatedUserData: updateUser });
 });
 
 // POST route to handle form submission from clubCreation.html
@@ -182,7 +214,7 @@ app.post("/login", async (req, res) => {
   if (userCheckData.userExists === true) {
     const hashedPassword = userCheckData.password;
     if (await bcrypt.compare(password, hashedPassword)) {
-      const userObject = await db.getUserInfo(email);
+      const userObject = await db.getUserInfo(email, 'email');
       delete userObject.password;
       res.send({ body: true, userObject });
     } else {

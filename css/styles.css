@@ -6,6 +6,13 @@
   text-align: center;
 }
 
+.change{
+  text-decoration: underline;
+  color: rgb(53, 139, 168);
+  font-weight: bold;
+  cursor: pointer;
+}
+
 .wrapper {
   display: flex;
   justify-content: center;
@@ -201,4 +208,13 @@ ul {
 
 .uk-radio:checked {
   background-color: #52bb81;
+}
+
+.club-choice {
+  display: flex;
+  align-items: start;
+}
+.club-input{
+  margin-top: 10px !important;
+  margin-right: 10px !important;
 }

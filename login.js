@@ -7,9 +7,9 @@ form.addEventListener("submit", (event) => {
 
 async function login() {
     console.log('login');
-    const userEmail = form.email.value;
+    const userEmail = form.email.value.toLowerCase().trim();
     const formData = new FormData(form);
-    formData.set("username", userEmail.toLowerCase().trim());
+    formData.set("username", userEmail);
     const jsonData = new URLSearchParams(formData);
     const response = await fetch("http://127.0.0.1:3000/login", { method: "post", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: jsonData });
     const responseStatus = await response.json();
@@ -20,7 +20,7 @@ async function login() {
         if (user.isTeacher) {
             window.location.href = `./home-teacher.html`;
         } else {
-            window.location.href = `https://www.youtube.com/watch?v=dQw4w9WgXcQ`
+            window.location.href = `./home-student.html`;
         }
     } else {
         document.querySelector('#errormessage').innerHTML = `${responseStatus.error}`;

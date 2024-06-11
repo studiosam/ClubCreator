@@ -14,15 +14,23 @@ const db = new sqlite3.Database(
 );
 
 async function addClub(newClubInfo) {
-  const sql = `INSERT INTO clubs (clubName, clubDescription, coSponsorsNeeded, maxSlots, requiredCoSponsors, primaryTeacherId) VALUES (? , ? , ? , ?, ? , ?)`;
-  db.run(sql, [
-    newClubInfo.preferredClub,
-    newClubInfo.preferredClubDescription,
-    newClubInfo.coSponsorsNeeded,
-    newClubInfo.maxCapacity,
-    newClubInfo.coSponsorsNeeded,
-    newClubInfo.teacherId,
-  ]);
+  try {
+    console.log('Starting addClub function with newClubInfo:', newClubInfo);
+
+
+    const sqlInsert = `INSERT INTO clubs (clubName, clubDescription, coSponsorsNeeded, maxSlots, requiredCoSponsors, primaryTeacherId) VALUES (?, ?, ?, ?, ?, ?)`;
+    const insertResult = await run(sqlInsert, [
+      newClubInfo.preferredClub,
+      newClubInfo.preferredClubDescription,
+      newClubInfo.coSponsorsNeeded,
+      newClubInfo.maxCapacity,
+      newClubInfo.coSponsorsNeeded,
+      newClubInfo.teacherId
+    ]);
+
+  } catch (err) {
+    console.error('Error in addClub function:', err.message);
+  }
 }
 
 async function updateClub(clubChangeInfo) {
@@ -80,6 +88,74 @@ async function updateClub(clubChangeInfo) {
         resolve(this.changes);
       }
     );
+    const sqlAddId = `UPDATE users SET clubId = ? WHERE userId = ?`;
+    db.run(sqlAddId, [clubId, primaryTeacherId]);
+  });
+
+  return true;
+}
+
+async function updateClubPrefs(clubPrefsString, studentId) {
+  const sql = `UPDATE users SET clubPreferences = ? WHERE userId = ${studentId}`;
+  await new Promise((resolve, reject) => {
+    db.run(
+      sql,
+      [clubPrefsString].toString(),
+      function (err) {
+        if (err) {
+          return reject(err);
+        }
+        resolve(this.changes);
+        return 'Success'
+      }
+    );
+  });
+}
+
+async function updateUser(userChangeInfo) {
+  const {
+    firstName,
+    lastName,
+    clubId,
+    room,
+    email,
+    password,
+    isTeacher,
+    isAdmin,
+    clubPreferences,
+  } = userChangeInfo;
+  const sql = `UPDATE users SET firstName = ?,
+  lastName = ?,
+  clubId = ?,
+  room = ?,
+  email = ?,
+  password = ?,
+  isTeacher = ?,
+  isAdmin = ?,
+  clubPreferences = ? WHERE userId = ${userId}`;
+
+  await new Promise((resolve, reject) => {
+    db.run(
+      sql,
+      [
+        firstName,
+        lastName,
+        clubId,
+        room,
+        email,
+        password,
+        isTeacher,
+        isAdmin,
+        clubPreferences
+      ],
+      function (err) {
+        if (err) {
+          return reject(err);
+        }
+        resolve(this.changes);
+      }
+    );
+
   });
 
   return true;
@@ -88,6 +164,17 @@ async function updateClub(clubChangeInfo) {
 async function deleteClub(clubId) {
   const sql = `DELETE FROM clubs WHERE clubId =?`;
   db.run(sql, [clubId], function (err) {
+    if (err) {
+      return console.error(err.message);
+    }
+    console.log(`Row(s) deleted: ${this.changes}`);
+  });
+  return true;
+}
+
+async function deleteUser(userId) {
+  const sql = `DELETE FROM users WHERE userId =?`;
+  db.run(sql, [userId], function (err) {
     if (err) {
       return console.error(err.message);
     }
@@ -108,14 +195,16 @@ async function getUsers() {
   });
 }
 
-async function getUserInfo(email) {
-  const sql = `SELECT * FROM users WHERE email = ?`;
+async function getUserInfo(data, type) {
+  const sql = `SELECT * FROM users WHERE ${type} = ?`;
   return new Promise((resolve, reject) => {
-    db.get(sql, [email], (err, row) => {
+    db.get(sql, [data], (err, row) => {
       if (err) {
         return reject(err);
       } else {
         resolve(row);
+        console.log(row)
+        return row;
       }
     });
   });
@@ -215,10 +304,41 @@ function addUser(user) {
   ]);
 }
 
+async function removeClubFromUser(userId) {
+  const sql = `UPDATE users SET clubId = null WHERE userId = ?`;
+  db.run(sql, [userId], function (err) {
+    if (err) {
+      return console.error(err.message);
+    }
+    console.log(`Row(s) updated: ${this.changes}`);
+  });
+}
+
 async function approveClub(club) {
   console.log("CLUB=" + club);
   const sql = `UPDATE clubs SET isApproved = true WHERE clubId = ?`;
   db.run(sql, [club], function (err) {
+    if (err) {
+      return console.error(err.message);
+    }
+    console.log(`Row(s) updated: ${this.changes}`);
+  });
+
+  const sqlSelect = `SELECT * FROM clubs WHERE clubId = ?`;
+  const row = await get(sqlSelect, [club]);
+
+  const teacherId = row.primaryTeacherId;
+
+
+  const sqlAddId = `UPDATE users SET clubId = ? WHERE userId = ?`;
+  await run(sqlAddId, [club, teacherId]);
+
+  console.log(`User with ID ${teacherId} updated with clubId ${club}`);
+}
+
+function setAdmin() {
+  const sql = `UPDATE users SET isAdmin = true WHERE userId = ?`;
+  db.run(sql, [31], function (err) {
     if (err) {
       return console.error(err.message);
     }
@@ -230,13 +350,14 @@ async function approveClub(club) {
 async function updateClubValue(club, key, value) {
   console.log("CLUB=" + club);
   const sql = `UPDATE clubs SET ${key} = ? WHERE clubId = ?`;
-  db.run(sql, [value, club.clubId], function (err) {
+  db.run(sql, [value, club], function (err) {
     if (err) {
       return console.error(err.message);
     }
     console.log(`Row(s) updated: ${this.changes}`);
   });
 }
+// updateClubValue(1, 'primaryTeacherId', 2)
 //////////////////////////
 
 function closeDatabase() {
@@ -254,6 +375,8 @@ module.exports = {
   closeDatabase,
   addUser,
   checkUser,
+  updateUser,
+  deleteUser,
   getAllTeachersOrStudents,
   getUserInfo,
   getAllClubs,
@@ -263,5 +386,36 @@ module.exports = {
   updateClub,
   deleteClub,
   getAllUsers,
+  updateClubPrefs,
+  removeClubFromUser
   // Export other database functions here
 };
+
+
+function run(sql, params = []) {
+  return new Promise((resolve, reject) => {
+    db.run(sql, params, function (err) {
+      if (err) {
+        console.error('Error running SQL:', sql, 'Params:', params, 'Error:', err);
+        reject(err);
+      } else {
+        console.log('SQL run successfully:', sql, 'Params:', params);
+        resolve(this);
+      }
+    });
+  });
+}
+
+function get(sql, params = []) {
+  return new Promise((resolve, reject) => {
+    db.get(sql, params, (err, row) => {
+      if (err) {
+        console.error('Error getting SQL:', sql, 'Params:', params, 'Error:', err);
+        reject(err);
+      } else {
+        console.log('SQL get successfully:', sql, 'Params:', params, 'Row:', row);
+        resolve(row);
+      }
+    });
+  });
+}

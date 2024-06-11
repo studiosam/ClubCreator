@@ -30,7 +30,7 @@ function initializeDatabase() {
                 maxSlots INTEGER,
                 location TEXT,
                 requiredCoSponsors INTEGER NOT NULL,
-                currentCoSponsors TEXT,
+                currentCoSponsors INTEGER DEFAULT 0,
                 isApproved BOOLEAN DEFAULT FALSE,
                 FOREIGN KEY (primaryTeacherId) REFERENCES users (userId)
             );
@@ -42,12 +42,14 @@ function initializeDatabase() {
                 userId INTEGER PRIMARY KEY AUTOINCREMENT,
                 firstName TEXT NOT NULL,
                 lastName TEXT NOT NULL,
+                grade INTEGER,
                 clubId INTEGER,
                 room TEXT,
                 email TEXT,
                 password TEXT,
                 isTeacher BOOLEAN,
                 isAdmin BOOLEAN DEFAULT FALSE,
+                clubPreferences TEXT, 
                 FOREIGN KEY (clubId) REFERENCES clubs (clubId)
             );
         `);

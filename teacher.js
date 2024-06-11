@@ -1,6 +1,8 @@
 const user = JSON.parse(localStorage.getItem("user"));
+
 async function getUser() {
   if (user) {
+
     console.log(`User: ${user.firstName} ${user.lastName}`);
     console.log(user);
     if (!user.isTeacher) {
