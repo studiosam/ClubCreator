@@ -20,7 +20,7 @@
             <img class="uk-margin-medium-top uk-margin-medium-bottom" src="./img/rbhs.png" />
             <ul class="dash-nav uk-nav uk-margin-small-top">
                 <li class="uk-active">
-                    <a href="home-teacher.html"><span uk-icon="home"></span>Dashboard</a>
+                    <a id="homepage-link" href="home-student.html"><span uk-icon="home"></span>Dashboard</a>
                 </li>
                 <li>
                     <a href="create-club.html"><span uk-icon="plus"></span>Create Club</a>
@@ -35,9 +35,9 @@
         </div>
         <div id="right">
             <div class="menu-panel">
-                <a href="account-settings.html"><img id="avatar"
-                        class="uk-preserve-width uk-border-circle uk-margin-small-right" src="" width="40" height="40"
-                        alt="user avatar"></a>
+                <a href="account-settings.html"><img
+                        class="uk-preserve-width uk-border-circle uk-margin-small-right avatar" src="" width="40"
+                        height="40" alt="user avatar"></a>
                 <p id="user-name">Name</p>
                 <button class="uk-button logout-button" onclick="logout()">
                     Logout
@@ -47,36 +47,58 @@
             <div id="main-dashboard-panel" class="uk-container uk-container-expand uk-padding uk-margin-remove">
 
                 <form id="uploadForm" enctype="multipart/form-data">
-                    <input type="file" name="avatar" accept="image/*" required />
-                    <button type="submit">Upload</button>
+                    <div class="uk-margin uk-flex uk-flex-column" uk-margin>
+                        <div>
+                            <p class="text-center">Change Avatar</p>
+                        </div>
+                        <div id="avatar-upload">
+                            <img class="avatar settings-avatar" src="" alt="user avatar" width="100px">
+
+                            <div uk-form-custom="target: true">
+
+                                <input id="avatar-input" type="file" name="avatar" accept="image/*"
+                                    aria-label="Custom controls" required />
+                                <button class="uk-button uk-button-default upload-button" type="button"
+                                    tabindex="-1">Select</button>
+
+                            </div>
+                            <button type="submit" class="uk-button uk-button-primary">Upload</button>
+                            <p><span class="green" uk-icon="check"></span>File Selected!</p>
+                        </div>
+                    </div>
                 </form>
                 <img id="upload-avatar" src="" alt="" width="300px">
-                <script>
-
-
-                    document.getElementById('uploadForm').addEventListener('submit', async (e) => {
-                        e.preventDefault();
-                        const formData = new FormData(e.target);
-
-                        formData.set('userId', JSON.parse(localStorage.getItem('user')).userId)
-                        console.log(formData)
-                        const response = await fetch('http://127.0.0.1:3000/upload-avatar', {
-                            method: 'POST',
-                            body: formData
-                        });
-                        const result = await response.json();
-                        if (result.body === "Success") {
-                            UIkit.notification({
-                                message: 'Avatar uploaded successfully!',
-                                status: 'success',
-                                pos: 'center',
-                                timeout: 5000
-                            });
-                            document.getElementById('upload-avatar').src = result.avatarPath;
-                        }
-                    });
-                </script>
             </div>
+            <script>
+
+                document.querySelector("#avatar-input").addEventListener('input', () => {
+                    if (document.querySelector("#avatar-input").value) {
+
+                    }
+                })
+                document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.target);
+
+                    formData.set('userId', JSON.parse(localStorage.getItem('user')).userId)
+                    console.log(formData)
+                    const response = await fetch('http://127.0.0.1:3000/upload-avatar', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const result = await response.json();
+                    if (result.body === "Success") {
+                        UIkit.notification({
+                            message: 'Avatar uploaded successfully!',
+                            status: 'success',
+                            pos: 'center',
+                            timeout: 5000
+                        });
+                        document.getElementById('upload-avatar').src = result.avatarPath;
+                    }
+                });
+            </script>
+
 
             <!--MAIN DASHBOARD PANEL END-->
 

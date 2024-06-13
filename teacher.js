@@ -55,8 +55,4 @@ async function getTeacherDashboard() {
   });
 }
 
-function logout() {
-  localStorage.removeItem("user");
-  console.log("User has been cleared from local storage");
-  window.location.href = "./index.html";
-}
+

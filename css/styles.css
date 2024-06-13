@@ -234,3 +234,22 @@ tbody tr:hover {background-color: rgb(50, 31, 104);}
   color: #154a86;
   
 }
+
+#avatar-upload {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem
+}
+
+.upload-button {
+  background-color: goldenrod;
+  color: aliceblue;
+  
+}
+.settings-avatar{
+  border-radius: 10px;
+}
+.green {
+  color: #52bb81;
+}

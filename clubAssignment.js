@@ -8,40 +8,47 @@ async function getStudents() {
     return users
 }
 
+//get object of all user ids and preference arrays of students without clubs
+
+
 //loop through all students' first choices and apply sorting algorithm
-async function choiceLoop(choiceNumber) {
+async function choiceLoop(thisStudent) {
     //if random student
-    const thisStudent = await getRandomStudent()
-    //if reversingArray
-    // thisStudent = reverseArray function
-    const thisStudentChoice = await getChoice(thisStudent, choiceNumber);
+    if (thisStudent.clubPreferences) {
+        for (let choiceNumber = 0; choiceNumber < thisStudent.clubPreferences.split(',').length; choiceNumber++) {
+            //if reversingArray
+            // thisStudent = reverseArray function
+            const thisStudentChoice = await getChoice(thisStudent, choiceNumber);
 
-    const choiceClubObject = await getClubById(thisStudentChoice);
-    console.log(choiceClubObject);
+            const choiceClubObject = await getClubById(thisStudentChoice);
 
-    //check grade level slots available for student's choice
-    const studentGrade = thisStudent.grade;
-    console.log(studentGrade);
-    const gradeKey = `minSlots${studentGrade}`;
-    const gradeSlotsAvailable = choiceClubObject[gradeKey];
-    console.log(gradeSlotsAvailable)
-    if (gradeSlotsAvailable > 0) {
-        //assign clubId to student
-        console.log('GRADE SLOTS ARE AVALLL?')
-        await db.assignClub(thisStudent, choiceClubObject.clubId);
-        //recalculate minSlots per grade level
-        await db.updateClubValue(choiceClubObject.clubId, gradeKey, gradeSlotsAvailable - 1)
-        await db.updateClubValue(choiceClubObject.clubId, "maxSlots", choiceClubObject.maxSlots - 1)
-        //return true
-    } else {
-        console.log("nevergonnagiveyouupnevergonnaletyoudownnevergonnarunaroudnanddesertyou");
-        //check if we need the queue array
-        //add student name to the queue array or remove it
+
+            //check grade level slots available for student's choice
+            const studentGrade = thisStudent.grade;
+            // console.log(studentGrade);
+            const gradeKey = `minSlots${studentGrade}`;
+            const gradeSlotsAvailable = choiceClubObject[gradeKey];
+            // console.log(gradeSlotsAvailable)
+            if (gradeSlotsAvailable > 0 && thisStudent.clubId === null) {
+                //assign clubId to student
+                // console.log('GRADE SLOTS ARE AVALLL?')
+                await db.assignClub(thisStudent, choiceClubObject.clubId);
+                //recalculate minSlots per grade level
+                await db.updateClubValue(choiceClubObject.clubId, gradeKey, gradeSlotsAvailable - 1)
+                await db.updateClubValue(choiceClubObject.clubId, "maxSlots", choiceClubObject.maxSlots - 1)
+                return true
+            } else {
+                //add student Id to the queue array
+                // console.log('No Slots Bitch')
+                console.log('No Slots Available')
+            }
+        }
     }
 }
 
 //get club object for student's choice
 async function getClubById(id) {
+    // console.log('Get Club By Id', id)
     const response = await fetch(`http://127.0.0.1:3000/getClubById?club=${id}`);
     const club = await response.json();
     return club;
@@ -49,7 +56,10 @@ async function getClubById(id) {
 
 //get the choice of the random student
 async function getChoice(student, ordinant) {
+
+    // console.log(student.clubPreferences)
     if (student.clubPreferences) {
+
         const choice = student.clubPreferences.split(",")[ordinant];
         console.log(`${student.firstName} ${student.lastName} has a choice of club ${choice}`)
         return choice;
@@ -57,38 +67,44 @@ async function getChoice(student, ordinant) {
 }
 
 //select student at random
-async function getRandomStudent() { // **NEED TO CHANGE THIS TO FIND A RANDOM STUDENT WHO DOES NOT ALREADY HAVE A CLUBID **
+async function getRandomStudentOrder() { // **NEED TO CHANGE THIS TO FIND A RANDOM STUDENT WHO DOES NOT ALREADY HAVE A CLUBID **
     const students = await getStudents();
-    const rand = Math.floor(Math.random() * students.length);
-    return students[rand];
+    const studentsWithoutOrder = students.filter((student) => student.clubId === null)
+    if (studentsWithoutOrder.length > 0) {
+        const randomStudentOrder = [];
+        do {
+            const rand = Math.floor(Math.random() * studentsWithoutOrder.length);
+            const randomStudent = studentsWithoutOrder.splice(rand, 1);
+            randomStudentOrder.push(randomStudent);
+        } while (studentsWithoutOrder.length > 0)
+        return randomStudentOrder
+    } else {
+
+        return 'No Students Without Clubs'
+    }
+}
+
+async function choiceRound(studentOrder) {
+    for (let i = 0; i < studentOrder.length; i++) {
+        console.log(studentOrder[i][0].clubId)
+        if (studentOrder[i][0].clubId !== null) {
+            return 'Already Has Club'
+        } else {
+            const choice = await choiceLoop(studentOrder[i][0]);
+            // console.log('Choice', choice);
+        }
+    }
 }
 
 async function main() {
-    const choice = await choiceLoop(1);
-    console.log(choice);
+    const studentOrder = await getRandomStudentOrder();
+    if (studentOrder === 'No Students Without Clubs') {
+        console.log('No Students Without Clubs')
+        return 'No Students Without Clubs'
+    }
+
+    await choiceRound(studentOrder);
+
 }
 
-main();
-
-//check student's first choice
-//if first choice has an opening for their grade level, assign student to that club and remove them from the object
-//if there is no opening, store the id to a queue array
-//loop through second choices in reverse order of the queue array
-//select student at the end of the queue array
-//check student's second choice
-//if second choice has an opening for their grade level, assign student to that club and remove them from the object
-//remove student from queue array
-//loop through third choices and apply sorting algorithm
-//select student at random
-//check student's third choice
-//if third choice has an opening for their grade level, assign student to that club and remove them from the object
-//if there is no opening, store the id to a queue array
-//loop through fourth choices in reverse order of the queue array
-//select student at the end of the queue array
-//check student's fourth choice
-//if fourth choice has an opening for their grade level, assign student to that club and remove them from the object
-//remove student from queue array
-//get array of fifth choices
-//if fifth choice has an opening for their grade level, assign student to that club and remove them from the object
-//i dont know what to do if it doesn't
-//all users in club
+main()

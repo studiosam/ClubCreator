@@ -34,9 +34,3 @@ async function createClub() {
     document.querySelector("#status").style.display = "block";
   }
 }
-
-function logout() {
-  localStorage.removeItem("user");
-  console.log("User has been cleared from local storage");
-  window.location.href = "./index.html";
-}

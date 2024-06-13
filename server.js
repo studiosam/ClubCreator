@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
-
+const fs = require('fs').promises
 const db = require("./database.js"); // Import your database functions
 const app = express();
 const bcrypt = require("bcrypt");
@@ -264,7 +264,16 @@ async function capitalizeName(name) {
 
 
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
+  destination: async (req, file, cb) => {
+    try {
+
+      await fs.access('uploads/');
+    } catch (err) {
+
+      if (err.code === 'ENOENT') {
+        await fs.mkdir('uploads/', { recursive: true });
+      }
+    }
     cb(null, 'uploads/');
   },
   filename: (req, file, cb) => {
@@ -275,10 +284,11 @@ const upload = multer({ storage: storage });
 
 app.post('/upload-avatar', upload.single('avatar'), async (req, res) => {
 
+
   const newAvatarPath = req.file.path;
   const user = parseInt(req.body.userId)
 
-  const avatar = db.uploadAvatar(user, newAvatarPath)
+  const avatar = await db.uploadAvatar(user, newAvatarPath)
   if (avatar) {
     res.send({ body: "Success", avatarPath: newAvatarPath });
   } else {

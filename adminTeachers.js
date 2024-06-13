@@ -58,9 +58,3 @@ function searchTable() {
         row.style.display = match ? '' : 'none';
     }
 }
-
-function logout() {
-    localStorage.removeItem("user");
-    console.log("User has been cleared from local storage");
-    window.location.href = "./index.html";
-}

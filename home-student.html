@@ -20,7 +20,7 @@
       <img class="uk-margin-medium-top uk-margin-medium-bottom" src="./img/rbhs.png" />
       <ul class="dash-nav uk-nav uk-margin-small-top">
         <li class="uk-active">
-          <a href="home-student.html"><span uk-icon="home"></span>Dashboard</a>
+          <a id="homepage-link" href="home-student.html"><span uk-icon="home"></span>Dashboard</a>
         </li>
         <li>
           <a href="account-settings.html"><span uk-icon="cog"></span>Account Settings</a>
@@ -29,17 +29,16 @@
     </div>
     <div id="right">
       <div class="menu-panel">
-        <a href="account-settings.html"><img id="avatar"
-            class="uk-preserve-width uk-border-circle uk-margin-small-right" src="" width="40" height="40"
-            alt="user avatar"></a>
+        <a href="account-settings.html"><img class="uk-preserve-width uk-border-circle uk-margin-small-right avatar"
+            src="" width="40" height="40" alt="user avatar"></a>
         <p id="user-name">Name</p>
         <button class="uk-button logout-button" onclick="logout()">
           Logout
         </button>
       </div>
+
       <!--MAIN DASHBOARD PANEL START-->
       <div id="main-dashboard-panel" class="uk-container uk-container-expand uk-padding uk-margin-remove">
-
         <div class="uk-section uk-padding-remove-bottom uk-margin-medium-bottom">
           <div class="uk-container uk-margin-remove  uk-width-1-1">
             <div class="uk-flex uk-flex-center">

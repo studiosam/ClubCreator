@@ -295,12 +295,13 @@ async function getUnapprovedClubs() {
 // function to check for email address already connected to account
 
 function addUser(user) {
-  const sql = `INSERT INTO users (firstName, lastName, email, password, isTeacher) VALUES (?, ?, ?, ?, ?)`;
+  const sql = `INSERT INTO users (firstName, lastName, email, password, grade, isTeacher) VALUES (?, ?, ?, ?, ?, ?)`;
   db.run(sql, [
     user.firstName,
     user.lastName,
     user.email,
     user.password,
+    user.grade,
     user.isTeacher,
   ]);
 }
@@ -347,6 +348,17 @@ function setAdmin() {
   });
 }
 
+function deleteAllStudentClubs() {
+  const sql = `UPDATE users SET clubId = null WHERE isTeacher = false`;
+  db.run(sql, (err) => {
+    if (err) {
+      console.log(err)
+    }
+    console.log(`Row(s) updated: ${this.changes}`);
+  })
+}
+
+
 // update a single club value
 async function updateClubValue(clubId, key, value) {
   const sql = `UPDATE clubs SET ${key} = ? WHERE clubId = ?`;
@@ -354,19 +366,23 @@ async function updateClubValue(clubId, key, value) {
     if (err) {
       return console.error(err.message);
     }
-    console.log(`Row(s) updated: ${this.changes}`);
+    // console.log(`Row(s) updated: ${this.changes}`);
   });
 }
 
 async function assignClub(student, club) {
 
-  const sqlAddId = `UPDATE users SET clubId = ? WHERE userId = ?`;
-  await run(sqlAddId, [club, student.userId]);
+  if (student.clubId !== null) {
+    console.log(`Club already assigned.`);
 
-  console.log(`User with ID ${student.userId} updated with clubId ${club}`);
+  } else {
+    const sqlAddId = `UPDATE users SET clubId = ? WHERE userId = ?`;
+    await run(sqlAddId, [club, student.userId]);
+    // console.log(`User with ID ${student.userId} updated with clubId ${club}`);
+  }
 }
 
-function uploadAvatar(userId, newAvatarPath) {
+async function uploadAvatar(userId, newAvatarPath) {
   const normalizedPath = path.posix.normalize(newAvatarPath).replace(/\\/g, '/');
 
   db.get('SELECT avatar FROM users WHERE userId = ?', [userId], (err, row) => {
@@ -381,7 +397,7 @@ function uploadAvatar(userId, newAvatarPath) {
       // Delete the old avatar file
       fs.unlink(oldAvatarPath, (err) => {
         if (err) {
-          console.error('Error deleting old avatar:', err.message);
+          console.error('No old Avatar found');
 
         }
 
@@ -476,4 +492,96 @@ function get(sql, params = []) {
       }
     });
   });
+}
+
+
+function getRandomString(length) {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return result;
+}
+
+
+function getRandomEmail() {
+  const domains = ['example.com', 'mail.com', 'test.com'];
+  return `${getRandomString(5)}@${domains[Math.floor(Math.random() * domains.length)]}`;
+}
+
+
+function getRandomGrade() {
+  const grades = [9, 10, 11, 12];
+  return grades[Math.floor(Math.random() * grades.length)];
+}
+
+
+function getRandomPreferences() {
+  const preferences = [];
+  while (preferences.length < 5) {
+    const num = Math.floor(Math.random() * 7) + 1;
+    if (!preferences.includes(num)) {
+      preferences.push(num);
+    }
+  }
+  return preferences.join(',');
+}
+
+async function createRandomGuys(numberOfAccounts) {
+  const sql = `INSERT INTO users (firstName, lastName, email, password, grade, clubPreferences, isTeacher) VALUES (?,?,?,?,?,?,?)`;
+
+  for (let i = 0; i < numberOfAccounts; i++) {
+    const firstName = getRandomString(7);
+    const lastName = getRandomString(7);
+    const email = getRandomEmail();
+    const password = getRandomString(10); // In a real scenario, ensure passwords are hashed
+    const grade = getRandomGrade();
+    const clubPreferences = getRandomPreferences();
+    const isTeacher = false;
+
+    await db.run(sql, [firstName, lastName, email, password, grade, clubPreferences, isTeacher]);
+  }
+
+  console.log(`${numberOfAccounts} random accounts created.`);
+}
+
+
+// createRandomGuys(50).catch(console.error);
+createRandomClubs(10).catch(console.error);
+
+// deleteAllStudentClubs();
+
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+// Function to create a specified number of random clubs
+async function createRandomClubs(numberOfClubs) {
+  const sqlInsert = `INSERT INTO clubs (clubName, clubDescription, coSponsorsNeeded, minSlots9, minSlots10, minSlots11, minSlots12, maxSlots) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+
+  for (let i = 0; i < numberOfClubs; i++) {
+    const clubName = getRandomString(10);
+    const clubDescription = getRandomString(20);
+    const coSponsorsNeeded = 0;
+    const maxSlots = 32;
+    // ensuring required co-sponsors <= co-sponsors needed
+    const primaryTeacherId = getRandomInt(1, 100); // assuming teacher IDs range from 1 to 100
+
+    const newClubInfo = {
+      preferredClub: clubName,
+      preferredClubDescription: clubDescription,
+      coSponsorsNeeded: coSponsorsNeeded,
+      minSlots9: 8,
+      minSlots10: 8,
+      minSlots11: 8,
+      minSlots12: 8,
+      maxCapacity: maxSlots,
+
+    };
+
+    await run(sqlInsert, [newClubInfo]);
+  }
+
+  console.log(`${numberOfClubs} random clubs created.`);
 }
