@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Page</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/css/uikit.min.css" />
+    <link rel="stylesheet" href="./css/styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap" rel="stylesheet" />
+
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/js/uikit-icons.min.js"></script>
+</head>
+
+<body>
+    <div class="uk-flex">
+        <div id="side-nav" class="text-center">
+            <img class="uk-margin-medium-top uk-margin-medium-bottom" src="./img/rbhs.png" />
+            <ul class="dash-nav uk-nav uk-margin-small-top">
+                <li class="uk-active">
+                    <a href="home-teacher.html"><span uk-icon="home"></span>Dashboard</a>
+                </li>
+                <li>
+                    <a href="create-club.html"><span uk-icon="plus"></span>Create Club</a>
+                </li>
+                <li>
+                    <a href="#"><span uk-icon="users"></span>Co-Sponsor</a>
+                </li>
+                <li>
+                    <a href="account-settings.html"><span uk-icon="cog"></span>Account Settings</a>
+                </li>
+            </ul>
+        </div>
+        <div id="right">
+            <div class="menu-panel">
+                <a href="account-settings.html"><img id="avatar"
+                        class="uk-preserve-width uk-border-circle uk-margin-small-right" src="" width="40" height="40"
+                        alt="user avatar"></a>
+                <p id="user-name">Name</p>
+                <button class="uk-button logout-button" onclick="logout()">
+                    Logout
+                </button>
+            </div>
+            <!--MAIN DASHBOARD PANEL START-->
+            <h1 class="uk-margin-medium-left">Welcome, Admin!</h1>
+            <div class="uk-container uk-width-1-1">
+                <div id="search-bar">
+                    <div class="uk-search uk-search-default uk-width-medium">
+                        <span uk-search-icon></span>
+                        <input id="search-input" class="uk-search-input" type="search" placeholder="Search"
+                            aria-label="Search" onkeyup="searchTable()">
+                    </div>
+                </div>
+                <div class="uk-overflow-auto">
+                    <table class="uk-table uk-table-middle uk-table-divider">
+                        <thead>
+                            <tr class="table-heading">
+                                <th class="uk-table-shrink uk-text-nowrap">Select</th>
+                                <th class="uk-table-shrink uk-text-nowrap">Avatar</th>
+                                <th class="uk-table-shrink uk-text-nowrap">User ID</th>
+                                <th class="uk-table-shrink uk-text-nowrap">Name</th>
+                                <th class="uk-table-shrink uk-text-nowrap">Email</th>
+                                <th class="uk-table-shrink uk-text-nowrap">Grade</th>
+                                <th class="uk-table-shrink uk-text-nowrap">Room</th>
+                                <th class="uk-table-shrink uk-text-nowrap">Club</th>
+                            </tr>
+                        </thead>
+                        <tbody id="students-table">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!--MAIN DASHBOARD PANEL END-->
+        </div>
+    </div>
+
+
+    <script src="userData.js"></script>
+    <script src="adminStudents.js"></script>
+</body>
+
+</html>

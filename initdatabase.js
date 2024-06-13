@@ -42,6 +42,7 @@ function initializeDatabase() {
                 userId INTEGER PRIMARY KEY AUTOINCREMENT,
                 firstName TEXT NOT NULL,
                 lastName TEXT NOT NULL,
+                avatar TEXT,
                 grade INTEGER,
                 clubId INTEGER,
                 room TEXT,

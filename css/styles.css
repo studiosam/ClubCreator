@@ -210,6 +210,11 @@ ul {
   background-color: #52bb81;
 }
 
+.uk-checkbox:checked {
+  background-color: #8f2d00;
+  color: #0e0e11;
+}
+
 .club-choice {
   display: flex;
   align-items: start;
@@ -217,4 +222,15 @@ ul {
 .club-input{
   margin-top: 10px !important;
   margin-right: 10px !important;
+}
+
+#search-bar{
+  text-align: end;
+}
+
+tbody tr:hover {background-color: rgb(50, 31, 104);}
+
+.uk-sortable-drag {
+  color: #154a86;
+  
 }

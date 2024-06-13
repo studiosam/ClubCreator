@@ -4,14 +4,30 @@ const userUpdate = fetch(`http://localhost:3000/getUserInfo?userId=${JSON.parse(
     localStorage.setItem("user", JSON.stringify(user))
   })
 
-const userType = JSON.parse(localStorage.getItem("user"));
+const user = JSON.parse(localStorage.getItem("user"));
+if (document.querySelector('#avatar')) {
+  if (user.avatar) {
+
+    document.querySelector('#avatar').src = user.avatar
+  } else {
+    document.querySelector('#avatar').src = `https://ui-avatars.com/api/?name=${user.firstName}+${user.lastName}&background=0D8ABC&color=fff`
+  }
+}
+document.querySelector(
+  "#user-name"
+).innerHTML = `${user.firstName} ${user.lastName}`;
+
 if (user) {
   if (user.isAdmin) {
     buildAdminMenu();
-    document.querySelector("#user-name").classList.add("gold");
-    document.querySelector(
-      "#user-name"
-    ).innerHTML += `<div><a href="home-admin.html">ADMIN</a></div>`;
+    document.querySelector("#user-name").classList.add("gold")
+    document.querySelector("#user-name").innerHTML += `<div><a href="home-admin.html">ADMIN</a></div>`;
+
+  } else if (user.isTeacher) {
+    document.querySelector("#user-name").innerHTML += `<div style="text-align:right"class="blue"><span>Teacher</span></div>`
+  } else {
+    console.log('student')
+    document.querySelector("#user-name").innerHTML += `<div style="text-align:right"class="blue"><span>Student</span></div>`
   }
 }
 
@@ -20,7 +36,7 @@ async function buildAdminMenu() {
   menu.innerHTML += `<div class= "text-center"><hr class="uk-margin-medium-right uk-margin-top">
   <li><p class="uk-margin-medium-right">ADMIN MENU</p></li>
   </div>
-  <li><a class="gold" href="http://127.0.0.1:3000/users/students"><span uk-icon="icon: pencil"></span>Students</a></li>
-  <li><a class="gold" href="http://127.0.0.1:3000/users/teachers"><span uk-icon="icon: database"></span>Teachers</a></li>
+  <li><a class="gold" href="/users-students.html"><span uk-icon="icon: pencil"></span>Students</a></li>
+  <li><a class="gold" href="/users-teachers.html"><span uk-icon="icon: database"></span>Teachers</a></li>
 `;
 }

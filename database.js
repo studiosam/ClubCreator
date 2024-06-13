@@ -1,5 +1,6 @@
 const sqlite3 = require("sqlite3").verbose();
-
+const path = require("path");
+const fs = require('fs');
 // Open a database connection
 const db = new sqlite3.Database(
   `../school_clubs.db`,
@@ -203,7 +204,7 @@ async function getUserInfo(data, type) {
         return reject(err);
       } else {
         resolve(row);
-        console.log(row)
+        // console.log(row)
         return row;
       }
     });
@@ -315,7 +316,7 @@ async function removeClubFromUser(userId) {
 }
 
 async function approveClub(club) {
-  console.log("CLUB=" + club);
+  // console.log("CLUB=" + club);
   const sql = `UPDATE clubs SET isApproved = true WHERE clubId = ?`;
   db.run(sql, [club], function (err) {
     if (err) {
@@ -346,19 +347,73 @@ function setAdmin() {
   });
 }
 
-////// FIXME//////////////////
-async function updateClubValue(club, key, value) {
-  console.log("CLUB=" + club);
+// update a single club value
+async function updateClubValue(clubId, key, value) {
   const sql = `UPDATE clubs SET ${key} = ? WHERE clubId = ?`;
-  db.run(sql, [value, club], function (err) {
+  db.run(sql, [value, clubId], function (err) {
     if (err) {
       return console.error(err.message);
     }
     console.log(`Row(s) updated: ${this.changes}`);
   });
 }
-// updateClubValue(1, 'primaryTeacherId', 2)
-//////////////////////////
+
+async function assignClub(student, club) {
+
+  const sqlAddId = `UPDATE users SET clubId = ? WHERE userId = ?`;
+  await run(sqlAddId, [club, student.userId]);
+
+  console.log(`User with ID ${student.userId} updated with clubId ${club}`);
+}
+
+function uploadAvatar(userId, newAvatarPath) {
+  const normalizedPath = path.posix.normalize(newAvatarPath).replace(/\\/g, '/');
+
+  db.get('SELECT avatar FROM users WHERE userId = ?', [userId], (err, row) => {
+    if (err) {
+      console.error('Error fetching user:', err.message);
+      return { message: 'Database error' };
+    }
+
+    if (row && row.avatar) {
+      const oldAvatarPath = row.avatar;
+
+      // Delete the old avatar file
+      fs.unlink(oldAvatarPath, (err) => {
+        if (err) {
+          console.error('Error deleting old avatar:', err.message);
+
+        }
+
+
+        const sqlUpdate = 'UPDATE users SET avatar = ? WHERE userId = ?';
+        const params = [normalizedPath, userId];
+
+        db.run(sqlUpdate, params, function (err) {
+          if (err) {
+            console.error('Error updating user:', err.message);
+            return { message: 'Database error' };
+          }
+          return true;
+        });
+      });
+    } else {
+      // No old avatar, just update the avatar path
+      const sqlUpdate = 'UPDATE users SET avatar = ? WHERE userId = ?';
+      const params = [normalizedPath, userId];
+
+      db.run(sqlUpdate, params, function (err) {
+        if (err) {
+          console.error('Error updating user:', err.message);
+          return { message: 'Database error' };
+        }
+        return true;
+      });
+    }
+  });
+  return true
+}
+
 
 function closeDatabase() {
   db.close((err) => {
@@ -384,10 +439,13 @@ module.exports = {
   getUnapprovedClubs,
   approveClub,
   updateClub,
+  updateClubValue,
   deleteClub,
   getAllUsers,
   updateClubPrefs,
-  removeClubFromUser
+  removeClubFromUser,
+  assignClub,
+  uploadAvatar
   // Export other database functions here
 };
 

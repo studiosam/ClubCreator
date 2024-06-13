@@ -1,9 +1,11 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
+
 const db = require("./database.js"); // Import your database functions
 const app = express();
 const bcrypt = require("bcrypt");
+const multer = require("multer")
 const PORT = 3000;
 
 // Middleware to parse URL-encoded bodies (as sent by HTML forms)
@@ -17,8 +19,8 @@ app.use(cors());
 app.get("/getUserInfo", async (req, res) => {
   let email = req.query.email;
   let userId = req.query.userId
-  console.log(email);
-  console.log(userId);
+  // console.log(email);
+  // console.log(userId);
   try {
     if (userId) {
       const user = await db.getUserInfo(userId, 'userId');
@@ -36,27 +38,25 @@ app.get("/getUserInfo", async (req, res) => {
 });
 
 
-// //API endpoint to get the student info
+//API endpoint to get the student info
 app.get("/getAllStudents", async (req, res) => {
   let isTeacher = false;
   try {
     const student = await db.getAllTeachersOrStudents(isTeacher);
-    student.forEach((student) => {
-      console.log(`${student.firstName} ${student.lastName}`);
-    });
+
     res.json(student);
   } catch (err) {
     console.error("Error: ", err);
     res.status(500).send("Error fetching students");
   }
 });
+
+
 app.get("/getAllUsers", async (req, res) => {
   let isTeacher = req.query.isTeacher || false;
   try {
     const users = await db.getAllTeachersOrStudents(isTeacher);
-    users.forEach((user) => {
-      console.log(`${user.firstName} ${user.lastName}`);
-    });
+
     res.json(users);
   } catch (err) {
     console.error("Error: ", err);
@@ -83,10 +83,18 @@ app.get("/getAllClubs", async (req, res) => {
     res.status(500).send("Error fetching clubs");
   }
 });
+app.get("/getClubById", async (req, res) => {
+  const clubId = req.query.club
+
+  const clubInfo = await db.getClubInfo(clubId);
+  res.json(clubInfo);
+
+});
+
 app.get("/club-info/:club", async (req, res) => {
   let clubId = req.params.club;
   if (req.query.view) {
-    console.log(req.query);
+    //console.log(req.query);
     const clubInfo = await db.getClubInfo(clubId);
     res.send(clubInfo);
   } else {
@@ -102,9 +110,6 @@ app.get("/users/:type", async (req, res) => {
 
   try {
     const users = await db.getAllTeachersOrStudents(isTeacher);
-    users.forEach((user) => {
-      console.log(`${user.firstName} ${user.lastName}`);
-    });
     if (users.length > 0) {
       res.send(users);
     } else {
@@ -128,7 +133,7 @@ app.post("/deleteClub", async (req, res) => {
 
 app.post("/approveClub", async (req, res) => {
   const clubInfo = req.body;
-  console.log(clubInfo);
+  //console.log(clubInfo);
   await db.approveClub(clubInfo.clubId);
 
   res.send({ body: "Success", clubInfo });
@@ -167,7 +172,7 @@ app.post("/setClubPrefs", async (req, res) => {
   const studentId = req.body.student
 
   const updateUser = await db.updateClubPrefs(clubPrefs, studentId)
-  console.log(updateUser)
+  //console.log(updateUser)
   res.send({ body: "Success", updatedUserData: updateUser });
 });
 
@@ -175,7 +180,7 @@ app.post("/setClubPrefs", async (req, res) => {
 app.post("/addClub", async (req, res) => {
   console.log("Received POST request to /addClub");
   const clubInfo = req.body;
-  console.log(clubInfo);
+  //console.log(clubInfo);
   try {
     await db.addClub(clubInfo);
   } catch (err) {
@@ -189,7 +194,7 @@ app.post("/addAccount", async (req, res) => {
   console.log("Received POST request to /addAccount");
 
   const userInfo = req.body;
-  console.log(userInfo);
+  //console.log(userInfo);
   userInfo.firstName = await capitalizeName(userInfo.firstName);
   userInfo.lastName = await capitalizeName(userInfo.lastName);
   userInfo.password = await encryptPassword(userInfo.password);
@@ -231,6 +236,8 @@ app.post("/login", async (req, res) => {
   }
 });
 
+
+
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
@@ -254,3 +261,27 @@ async function encryptPassword(password) {
 async function capitalizeName(name) {
   return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
 }
+
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname)); // Append the extension
+  }
+});
+const upload = multer({ storage: storage });
+
+app.post('/upload-avatar', upload.single('avatar'), async (req, res) => {
+
+  const newAvatarPath = req.file.path;
+  const user = parseInt(req.body.userId)
+
+  const avatar = db.uploadAvatar(user, newAvatarPath)
+  if (avatar) {
+    res.send({ body: "Success", avatarPath: newAvatarPath });
+  } else {
+    res.send({ body: "Error" });
+  }
+})

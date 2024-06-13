@@ -1,8 +1,4 @@
 let params = new URL(document.location.toString()).searchParams;
-const user = JSON.parse(localStorage.getItem("user"));
-document.querySelector(
-  "#user-name"
-).innerHTML = `${user.firstName} ${user.lastName}`;
 const clubId = params.get("club-id");
 console.log(clubId);
 async function getClubInfo() {

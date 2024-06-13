@@ -1,8 +1,4 @@
 const form = document.querySelector("#clubCreation");
-const user = JSON.parse(localStorage.getItem("user"));
-document.querySelector(
-  "#user-name"
-).innerHTML = `${user.firstName} ${user.lastName}`;
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
   await createClub();

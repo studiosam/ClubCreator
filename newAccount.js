@@ -3,6 +3,19 @@ const successMessage = document.querySelector("#success");
 const successMessageBox = document.querySelector("#successDiv");
 const password = document.querySelector("#password");
 const confirmPassword = document.querySelector("#confirmPassword");
+const isStudent = document.querySelector("#student");
+const isTeacher = document.querySelector("#teacher");
+
+isStudent.addEventListener('change', () => {
+  if (isStudent.checked) {
+    document.querySelector('#student-grade').classList.remove('hidden');
+  }
+})
+isTeacher.addEventListener('change', () => {
+  if (isTeacher.checked) {
+    document.querySelector('#student-grade').classList.add('hidden');
+  }
+})
 confirmPassword.addEventListener("change", () => {
   if (password.value !== confirmPassword.value) {
     successMessageBox.classList.add("uk-alert-danger");

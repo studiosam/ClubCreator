@@ -1,4 +1,3 @@
-const user = JSON.parse(localStorage.getItem("user"));
 async function getUser() {
     if (user) {
         console.log(`User: ${user.firstName} ${user.lastName}`);
@@ -6,11 +5,6 @@ async function getUser() {
         if (user.isTeacher) {
             window.location.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
         }
-
-        document.querySelector(
-            "#user-name"
-        ).innerHTML = `${user.firstName} ${user.lastName}`;
-        //getTeacherDashboard();
     } else {
         console.log(`Nobody is logged in`);
         window.location.href = "/";

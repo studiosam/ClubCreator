@@ -1,12 +1,8 @@
-const isAdmin = JSON.parse(localStorage.getItem("user"));
-const user = JSON.parse(localStorage.getItem("user"));
-document.querySelector(
-  "#user-name"
-).innerHTML = `${user.firstName} ${user.lastName}`;
+
 const approvedClubList = document.querySelector("#approvedClubList");
 const clubProposals = document.querySelector("#clubProposalList");
 
-if (isAdmin.isAdmin === 0) {
+if (user.isAdmin === 0) {
   document.body.innerHTML = "<h1>NOT AN ADMIN</h1>";
 }
 let teachers

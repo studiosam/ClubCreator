@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RBHS Teacher Home Page</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/css/uikit.min.css" />
+    <link rel="stylesheet" href="./css/styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/js/uikit-icons.min.js"></script>
+</head>
+
+<body>
+    <div class="uk-flex">
+        <div id="side-nav" class="text-center">
+            <img class="uk-margin-medium-top uk-margin-medium-bottom" src="./img/rbhs.png" />
+            <ul class="dash-nav uk-nav uk-margin-small-top">
+                <li class="uk-active">
+                    <a href="home-teacher.html"><span uk-icon="home"></span>Dashboard</a>
+                </li>
+                <li>
+                    <a href="create-club.html"><span uk-icon="plus"></span>Create Club</a>
+                </li>
+                <li>
+                    <a href="#"><span uk-icon="users"></span>Co-Sponsor</a>
+                </li>
+                <li>
+                    <a href="account-settings.html"><span uk-icon="cog"></span>Account Settings</a>
+                </li>
+            </ul>
+        </div>
+        <div id="right">
+            <div class="menu-panel">
+                <a href="account-settings.html"><img id="avatar"
+                        class="uk-preserve-width uk-border-circle uk-margin-small-right" src="" width="40" height="40"
+                        alt="user avatar"></a>
+                <p id="user-name">Name</p>
+                <button class="uk-button logout-button" onclick="logout()">
+                    Logout
+                </button>
+            </div>
+            <!--MAIN DASHBOARD PANEL START-->
+            <div id="main-dashboard-panel" class="uk-container uk-container-expand uk-padding uk-margin-remove">
+
+                <form id="uploadForm" enctype="multipart/form-data">
+                    <input type="file" name="avatar" accept="image/*" required />
+                    <button type="submit">Upload</button>
+                </form>
+                <img id="upload-avatar" src="" alt="" width="300px">
+                <script>
+
+
+                    document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+                        e.preventDefault();
+                        const formData = new FormData(e.target);
+
+                        formData.set('userId', JSON.parse(localStorage.getItem('user')).userId)
+                        console.log(formData)
+                        const response = await fetch('http://127.0.0.1:3000/upload-avatar', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const result = await response.json();
+                        if (result.body === "Success") {
+                            UIkit.notification({
+                                message: 'Avatar uploaded successfully!',
+                                status: 'success',
+                                pos: 'center',
+                                timeout: 5000
+                            });
+                            document.getElementById('upload-avatar').src = result.avatarPath;
+                        }
+                    });
+                </script>
+            </div>
+
+            <!--MAIN DASHBOARD PANEL END-->
+
+
+            <!--
+        ==if no club, display club sponsor options (create club or co-sponsor club)    
+    -->
+            <!-- 
+        change first and last name
+        unassign as primary sponsor from club suggestion before approval
+        apply to change clubs after approval
+        change password
+     -->
+            <script src="userData.js"></script>
+</body>
+
+</html>
