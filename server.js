@@ -1,11 +1,11 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
-const fs = require('fs').promises
+const fs = require("fs").promises;
 const db = require("./database.js"); // Import your database functions
 const app = express();
 const bcrypt = require("bcrypt");
-const multer = require("multer")
+const multer = require("multer");
 const PORT = 3000;
 
 // Middleware to parse URL-encoded bodies (as sent by HTML forms)
@@ -18,25 +18,26 @@ app.use(cors());
 //API endpoint to get the teacher info
 app.get("/getUserInfo", async (req, res) => {
   let email = req.query.email;
-  let userId = req.query.userId
+  let userId = req.query.userId;
   // console.log(email);
   // console.log(userId);
   try {
     if (userId) {
-      const user = await db.getUserInfo(userId, 'userId');
+      const user = await db.getUserInfo(userId, "userId");
       res.send(user);
     } else if (email) {
-      const user = await db.getUserInfo(email, 'email');
+      const user = await db.getUserInfo(email, "email");
       res.send(user);
     } else {
-      res.status(400).send("Bad Request: Either userId or email must be provided.");
+      res
+        .status(400)
+        .send("Bad Request: Either userId or email must be provided.");
     }
   } catch (err) {
     console.error("Error fetching user info:", err);
     res.status(500).send("Error fetching user info");
   }
 });
-
 
 //API endpoint to get the student info
 app.get("/getAllStudents", async (req, res) => {
@@ -50,7 +51,6 @@ app.get("/getAllStudents", async (req, res) => {
     res.status(500).send("Error fetching students");
   }
 });
-
 
 app.get("/getAllUsers", async (req, res) => {
   let isTeacher = req.query.isTeacher || false;
@@ -84,11 +84,10 @@ app.get("/getAllClubs", async (req, res) => {
   }
 });
 app.get("/getClubById", async (req, res) => {
-  const clubId = req.query.club
+  const clubId = req.query.club;
 
   const clubInfo = await db.getClubInfo(clubId);
   res.json(clubInfo);
-
 });
 
 app.get("/club-info/:club", async (req, res) => {
@@ -141,9 +140,9 @@ app.post("/approveClub", async (req, res) => {
 
 app.post("/updateClub", async (req, res) => {
   const changeData = req.body;
-  const clubInfo = await db.getClubInfo(changeData.clubId)
-  const teacherIdToNull = clubInfo.primaryTeacherId
-  await db.removeClubFromUser(teacherIdToNull)
+  const clubInfo = await db.getClubInfo(changeData.clubId);
+  const teacherIdToNull = clubInfo.primaryTeacherId;
+  await db.removeClubFromUser(teacherIdToNull);
   if (changeData.isApproved === "true") {
     changeData.isApproved = true;
   } else if (changeData.isApproved === "false") {
@@ -159,19 +158,19 @@ app.post("/updateClub", async (req, res) => {
 });
 app.post("/updateUser", async (req, res) => {
   const changeData = req.body;
-  const updateUser = await db.updateUser(changeData)
+  const updateUser = await db.updateUser(changeData);
   if (updateUser === "Success") {
-    res.send({ body: "Success", updatedUserData: updateUser })
+    res.send({ body: "Success", updatedUserData: updateUser });
   } else {
-    res.send({ body: "Error" })
-  };
+    res.send({ body: "Error" });
+  }
 });
 
 app.post("/setClubPrefs", async (req, res) => {
-  const clubPrefs = req.body.clubOrder
-  const studentId = req.body.student
+  const clubPrefs = req.body.clubOrder;
+  const studentId = req.body.student;
 
-  const updateUser = await db.updateClubPrefs(clubPrefs, studentId)
+  const updateUser = await db.updateClubPrefs(clubPrefs, studentId);
   //console.log(updateUser)
   res.send({ body: "Success", updatedUserData: updateUser });
 });
@@ -219,7 +218,7 @@ app.post("/login", async (req, res) => {
   if (userCheckData.userExists === true) {
     const hashedPassword = userCheckData.password;
     if (await bcrypt.compare(password, hashedPassword)) {
-      const userObject = await db.getUserInfo(email, 'email');
+      const userObject = await db.getUserInfo(email, "email");
       delete userObject.password;
       res.send({ body: true, userObject });
     } else {
@@ -236,7 +235,40 @@ app.post("/login", async (req, res) => {
   }
 });
 
+app.post("/admin-erase", async (req, res) => {
+  if (req.body.isAdmin) {
+    const deleted = db.deleteAllStudentClubs();
+    if (deleted) {
+      res.send({ body: "Success" });
+    }
+  }
+});
 
+app.post("/admin-create-clubs", async (req, res) => {
+  if (req.body.isAdmin) {
+    const created = db.createRandomClubs(10);
+    if (created) {
+      res.send({ body: "Success" });
+    }
+  }
+});
+app.post("/admin-create-students", async (req, res) => {
+  if (req.body.isAdmin) {
+    const created = db.createRandomGuys(50);
+    if (created) {
+      res.send({ body: "Success" });
+    }
+  }
+});
+
+app.post("/admin-erase-students", async (req, res) => {
+  if (req.body.isAdmin) {
+    const deleted = db.deleteAllStudents();
+    if (deleted) {
+      res.send({ body: "Success" });
+    }
+  }
+});
 
 // Start the server
 app.listen(PORT, () => {
@@ -262,36 +294,31 @@ async function capitalizeName(name) {
   return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
 }
 
-
 const storage = multer.diskStorage({
   destination: async (req, file, cb) => {
     try {
-
-      await fs.access('uploads/');
+      await fs.access("uploads/");
     } catch (err) {
-
-      if (err.code === 'ENOENT') {
-        await fs.mkdir('uploads/', { recursive: true });
+      if (err.code === "ENOENT") {
+        await fs.mkdir("uploads/", { recursive: true });
       }
     }
-    cb(null, 'uploads/');
+    cb(null, "uploads/");
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + path.extname(file.originalname)); // Append the extension
-  }
+  },
 });
 const upload = multer({ storage: storage });
 
-app.post('/upload-avatar', upload.single('avatar'), async (req, res) => {
-
-
+app.post("/upload-avatar", upload.single("avatar"), async (req, res) => {
   const newAvatarPath = req.file.path;
-  const user = parseInt(req.body.userId)
+  const user = parseInt(req.body.userId);
 
-  const avatar = await db.uploadAvatar(user, newAvatarPath)
+  const avatar = await db.uploadAvatar(user, newAvatarPath);
   if (avatar) {
     res.send({ body: "Success", avatarPath: newAvatarPath });
   } else {
     res.send({ body: "Error" });
   }
-})
+});

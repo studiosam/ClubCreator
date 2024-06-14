@@ -1,20 +1,23 @@
-const userUpdate = fetch(`http://localhost:3000/getUserInfo?userId=${JSON.parse(localStorage.getItem("user")).userId}`)
+const userUpdate = fetch(
+  `http://localhost:3000/getUserInfo?userId=${
+    JSON.parse(localStorage.getItem("user")).userId
+  }`
+)
   .then((response) => response.json())
   .then((user) => {
-    localStorage.setItem("user", JSON.stringify(user))
-  })
+    localStorage.setItem("user", JSON.stringify(user));
+  });
 
 const user = JSON.parse(localStorage.getItem("user"));
-if (document.querySelector('.avatar')) {
+if (document.querySelector(".avatar")) {
   if (user.avatar) {
-
-    document.querySelectorAll('.avatar').forEach((avatar) => {
-      avatar.src = user.avatar
-    })
+    document.querySelectorAll(".avatar").forEach((avatar) => {
+      avatar.src = user.avatar;
+    });
   } else {
-    document.querySelectorAll('.avatar').forEach((avatar) => {
-      avatar.src = `https://ui-avatars.com/api/?name=${user.firstName}+${user.lastName}&background=0D8ABC&color=fff`
-    })
+    document.querySelectorAll(".avatar").forEach((avatar) => {
+      avatar.src = `https://ui-avatars.com/api/?name=${user.firstName}+${user.lastName}&background=0D8ABC&color=fff`;
+    });
   }
 }
 document.querySelector(
@@ -24,16 +27,22 @@ document.querySelector(
 if (user) {
   if (user.isAdmin) {
     buildAdminMenu();
-    document.querySelector("#user-name").classList.add("gold")
-    document.querySelector("#user-name").innerHTML += `<div><a href="home-admin.html">ADMIN</a></div>`;
-    document.querySelector("#homepage-link").href = 'home-teacher.html'
-
+    document.querySelector("#user-name").classList.add("gold");
+    document.querySelector(
+      "#user-name"
+    ).innerHTML += `<div><a href="home-admin.html">ADMIN</a></div>`;
+    document.querySelector("#homepage-link").href = "home-teacher.html";
   } else if (user.isTeacher) {
-    document.querySelector("#user-name").innerHTML += `<div style="text-align:right"class="blue"><span>Teacher</span></div>`
+    document.querySelector(
+      "#user-name"
+    ).innerHTML += `<div style="text-align:right"class="blue"><span>Teacher</span></div>`;
+    document.querySelector("#homepage-link").href = "home-teacher.html";
   } else {
-    console.log('student')
-    document.querySelector("#user-name").innerHTML += `<div style="text-align:right"class="blue"><span>Student</span></div>`
-    document.querySelector("#homepage-link").href = 'home-student.html'
+    console.log("student");
+    document.querySelector(
+      "#user-name"
+    ).innerHTML += `<div style="text-align:right"class="blue"><span>Student</span></div>`;
+    document.querySelector("#homepage-link").href = "home-student.html";
   }
 }
 

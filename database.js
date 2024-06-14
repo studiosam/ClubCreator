@@ -1,6 +1,7 @@
 const sqlite3 = require("sqlite3").verbose();
 const path = require("path");
-const fs = require('fs');
+const fs = require("fs");
+const fetch = require("node-fetch");
 // Open a database connection
 const db = new sqlite3.Database(
   `../school_clubs.db`,
@@ -16,8 +17,7 @@ const db = new sqlite3.Database(
 
 async function addClub(newClubInfo) {
   try {
-    console.log('Starting addClub function with newClubInfo:', newClubInfo);
-
+    console.log("Starting addClub function with newClubInfo:", newClubInfo);
 
     const sqlInsert = `INSERT INTO clubs (clubName, clubDescription, coSponsorsNeeded, maxSlots, requiredCoSponsors, primaryTeacherId) VALUES (?, ?, ?, ?, ?, ?)`;
     const insertResult = await run(sqlInsert, [
@@ -26,11 +26,10 @@ async function addClub(newClubInfo) {
       newClubInfo.coSponsorsNeeded,
       newClubInfo.maxCapacity,
       newClubInfo.coSponsorsNeeded,
-      newClubInfo.teacherId
+      newClubInfo.teacherId,
     ]);
-
   } catch (err) {
-    console.error('Error in addClub function:', err.message);
+    console.error("Error in addClub function:", err.message);
   }
 }
 
@@ -99,17 +98,13 @@ async function updateClub(clubChangeInfo) {
 async function updateClubPrefs(clubPrefsString, studentId) {
   const sql = `UPDATE users SET clubPreferences = ? WHERE userId = ${studentId}`;
   await new Promise((resolve, reject) => {
-    db.run(
-      sql,
-      [clubPrefsString].toString(),
-      function (err) {
-        if (err) {
-          return reject(err);
-        }
-        resolve(this.changes);
-        return 'Success'
+    db.run(sql, [clubPrefsString].toString(), function (err) {
+      if (err) {
+        return reject(err);
       }
-    );
+      resolve(this.changes);
+      return "Success";
+    });
   });
 }
 
@@ -147,7 +142,7 @@ async function updateUser(userChangeInfo) {
         password,
         isTeacher,
         isAdmin,
-        clubPreferences
+        clubPreferences,
       ],
       function (err) {
         if (err) {
@@ -156,7 +151,6 @@ async function updateUser(userChangeInfo) {
         resolve(this.changes);
       }
     );
-
   });
 
   return true;
@@ -331,7 +325,6 @@ async function approveClub(club) {
 
   const teacherId = row.primaryTeacherId;
 
-
   const sqlAddId = `UPDATE users SET clubId = ? WHERE userId = ?`;
   await run(sqlAddId, [club, teacherId]);
 
@@ -352,12 +345,13 @@ function deleteAllStudentClubs() {
   const sql = `UPDATE users SET clubId = null WHERE isTeacher = false`;
   db.run(sql, (err) => {
     if (err) {
-      console.log(err)
+      console.log(err);
     }
-    console.log(`Row(s) updated: ${this.changes}`);
-  })
-}
 
+    console.log(`Row(s) updated: ${this.changes}`);
+    return true;
+  });
+}
 
 // update a single club value
 async function updateClubValue(clubId, key, value) {
@@ -371,10 +365,8 @@ async function updateClubValue(clubId, key, value) {
 }
 
 async function assignClub(student, club) {
-
   if (student.clubId !== null) {
     console.log(`Club already assigned.`);
-
   } else {
     const sqlAddId = `UPDATE users SET clubId = ? WHERE userId = ?`;
     await run(sqlAddId, [club, student.userId]);
@@ -383,12 +375,14 @@ async function assignClub(student, club) {
 }
 
 async function uploadAvatar(userId, newAvatarPath) {
-  const normalizedPath = path.posix.normalize(newAvatarPath).replace(/\\/g, '/');
+  const normalizedPath = path.posix
+    .normalize(newAvatarPath)
+    .replace(/\\/g, "/");
 
-  db.get('SELECT avatar FROM users WHERE userId = ?', [userId], (err, row) => {
+  db.get("SELECT avatar FROM users WHERE userId = ?", [userId], (err, row) => {
     if (err) {
-      console.error('Error fetching user:', err.message);
-      return { message: 'Database error' };
+      console.error("Error fetching user:", err.message);
+      return { message: "Database error" };
     }
 
     if (row && row.avatar) {
@@ -397,39 +391,36 @@ async function uploadAvatar(userId, newAvatarPath) {
       // Delete the old avatar file
       fs.unlink(oldAvatarPath, (err) => {
         if (err) {
-          console.error('No old Avatar found');
-
+          console.error("No old Avatar found");
         }
 
-
-        const sqlUpdate = 'UPDATE users SET avatar = ? WHERE userId = ?';
+        const sqlUpdate = "UPDATE users SET avatar = ? WHERE userId = ?";
         const params = [normalizedPath, userId];
 
         db.run(sqlUpdate, params, function (err) {
           if (err) {
-            console.error('Error updating user:', err.message);
-            return { message: 'Database error' };
+            console.error("Error updating user:", err.message);
+            return { message: "Database error" };
           }
           return true;
         });
       });
     } else {
       // No old avatar, just update the avatar path
-      const sqlUpdate = 'UPDATE users SET avatar = ? WHERE userId = ?';
+      const sqlUpdate = "UPDATE users SET avatar = ? WHERE userId = ?";
       const params = [normalizedPath, userId];
 
       db.run(sqlUpdate, params, function (err) {
         if (err) {
-          console.error('Error updating user:', err.message);
-          return { message: 'Database error' };
+          console.error("Error updating user:", err.message);
+          return { message: "Database error" };
         }
         return true;
       });
     }
   });
-  return true
+  return true;
 }
-
 
 function closeDatabase() {
   db.close((err) => {
@@ -461,19 +452,29 @@ module.exports = {
   updateClubPrefs,
   removeClubFromUser,
   assignClub,
-  uploadAvatar
+  uploadAvatar,
+  deleteAllStudentClubs,
+  createRandomClubs,
+  createRandomGuys,
+  deleteAllStudents,
   // Export other database functions here
 };
-
 
 function run(sql, params = []) {
   return new Promise((resolve, reject) => {
     db.run(sql, params, function (err) {
       if (err) {
-        console.error('Error running SQL:', sql, 'Params:', params, 'Error:', err);
+        console.error(
+          "Error running SQL:",
+          sql,
+          "Params:",
+          params,
+          "Error:",
+          err
+        );
         reject(err);
       } else {
-        console.log('SQL run successfully:', sql, 'Params:', params);
+        console.log("SQL run successfully:", sql, "Params:", params);
         resolve(this);
       }
     });
@@ -484,38 +485,49 @@ function get(sql, params = []) {
   return new Promise((resolve, reject) => {
     db.get(sql, params, (err, row) => {
       if (err) {
-        console.error('Error getting SQL:', sql, 'Params:', params, 'Error:', err);
+        console.error(
+          "Error getting SQL:",
+          sql,
+          "Params:",
+          params,
+          "Error:",
+          err
+        );
         reject(err);
       } else {
-        console.log('SQL get successfully:', sql, 'Params:', params, 'Row:', row);
+        console.log(
+          "SQL get successfully:",
+          sql,
+          "Params:",
+          params,
+          "Row:",
+          row
+        );
         resolve(row);
       }
     });
   });
 }
 
-
 function getRandomString(length) {
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-  let result = '';
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+  let result = "";
   for (let i = 0; i < length; i++) {
     result += characters.charAt(Math.floor(Math.random() * characters.length));
   }
   return result;
 }
 
-
 function getRandomEmail() {
-  const domains = ['example.com', 'mail.com', 'test.com'];
-  return `${getRandomString(5)}@${domains[Math.floor(Math.random() * domains.length)]}`;
+  const domains = ["example.com", "mail.com", "test.com"];
+  return `${getRandomString(5)}@${domains[Math.floor(Math.random() * domains.length)]
+    }`;
 }
-
 
 function getRandomGrade() {
   const grades = [9, 10, 11, 12];
   return grades[Math.floor(Math.random() * grades.length)];
 }
-
 
 function getRandomPreferences() {
   const preferences = [];
@@ -525,32 +537,55 @@ function getRandomPreferences() {
       preferences.push(num);
     }
   }
-  return preferences.join(',');
+  return preferences.join(",");
 }
 
 async function createRandomGuys(numberOfAccounts) {
   const sql = `INSERT INTO users (firstName, lastName, email, password, grade, clubPreferences, isTeacher) VALUES (?,?,?,?,?,?,?)`;
 
   for (let i = 0; i < numberOfAccounts; i++) {
-    const firstName = getRandomString(7);
-    const lastName = getRandomString(7);
-    const email = getRandomEmail();
-    const password = getRandomString(10); // In a real scenario, ensure passwords are hashed
+    const res = await fetch("https://randomuser.me/api/");
+    const user = await res.json();
+    console.log(
+      `User ${user.results[0].name.first} ${user.results[0].name.last} Created`
+    );
+    const firstName = user.results[0].name.first;
+    const lastName = user.results[0].name.last;
+    const email = user.results[0].email;
+    const password = getRandomString(10);
     const grade = getRandomGrade();
     const clubPreferences = getRandomPreferences();
     const isTeacher = false;
 
-    await db.run(sql, [firstName, lastName, email, password, grade, clubPreferences, isTeacher]);
+    await db.run(sql, [
+      firstName,
+      lastName,
+      email,
+      password,
+      grade,
+      clubPreferences,
+      isTeacher,
+    ]);
   }
 
   console.log(`${numberOfAccounts} random accounts created.`);
 }
 
-
 // createRandomGuys(50).catch(console.error);
-// createRandomClubs(10).catch(console.error);
+// // createRandomClubs(10).catch(console.error);
 
-// deleteAllStudentClubs();
+async function deleteAllStudents() {
+  try {
+    const sqlDelete = `DELETE FROM users WHERE isTeacher = false`;
+
+    const deleteResult = await db.run(sqlDelete);
+
+    console.log("All Students Deleted");
+    return true;
+  } catch (err) {
+    console.error("Error deleting non-teacher users:", err.message);
+  }
+}
 
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -558,11 +593,14 @@ function getRandomInt(min, max) {
 
 // Function to create a specified number of random clubs
 async function createRandomClubs(numberOfClubs) {
-  const sqlInsert = `INSERT INTO clubs (clubName, clubDescription, coSponsorsNeeded, minSlots9, minSlots10, minSlots11, minSlots12, maxSlots, requiredCoSponsors) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-
+  const sqlInsert = `INSERT INTO clubs (clubName, clubDescription, coSponsorsNeeded, minSlots9, minSlots10, minSlots11, minSlots12, maxSlots) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
 
   for (let i = 0; i < numberOfClubs; i++) {
-    const clubName = getRandomString(10);
+    const response = await fetch(
+      "https://random-word-api.herokuapp.com/word?number=2"
+    );
+    const clubNames = await response.json();
+    const clubName = `${clubNames[0]} ${clubNames[1]} Club`;
     const clubDescription = getRandomString(20);
     const coSponsorsNeeded = 0;
     const maxSlots = 32;
@@ -578,21 +616,10 @@ async function createRandomClubs(numberOfClubs) {
       minSlots11: 8,
       minSlots12: 8,
       maxCapacity: maxSlots,
-      requiredCoSponsors: requiredCoSponsors
 
     };
 
-    await db.run(sqlInsert, [
-      newClubInfo.preferredClub,
-      newClubInfo.preferredClubDescription,
-      newClubInfo.coSponsorsNeeded,
-      newClubInfo.minSlots9,
-      newClubInfo.minSlots10,
-      newClubInfo.minSlots11,
-      newClubInfo.minSlots12,
-      newClubInfo.maxCapacity,
-      newClubInfo.requiredCoSponsors
-    ]);
+    await run(sqlInsert, [newClubInfo]);
   }
 
   console.log(`${numberOfClubs} random clubs created.`);
