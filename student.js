@@ -16,8 +16,11 @@ getUser();
 
 async function getStudentDashboard() {
     const response = await fetch("http://localhost:3000/getAllClubs");
-    const clubs = await response.json();
+    const respClubs = await response.json();
 
+    const clubs = await respClubs.filter(
+        (obj) => obj[`minSlots${user.grade}`] > 0
+    );
     const myAssignedClub = await clubs.filter(
         (obj) => obj.clubId === user.clubId
     );
@@ -95,7 +98,7 @@ function selectedClubList(clubs) {
     
           <p class="uk-card-title roboto">${club.clubName}</p>
           <p>${club.clubDescription}</p>
-         
+            
         </a><hr>
         </div>`;
     })

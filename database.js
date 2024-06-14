@@ -530,9 +530,9 @@ function getRandomGrade() {
 }
 
 function getRandomPreferences() {
-  const preferences = [];
+  const preferences = [4, 5, 6];
   while (preferences.length < 5) {
-    const num = Math.floor(Math.random() * 7) + 1;
+    const num = Math.floor(Math.random() * 40) + 1;
     if (!preferences.includes(num)) {
       preferences.push(num);
     }
@@ -593,7 +593,7 @@ function getRandomInt(min, max) {
 
 // Function to create a specified number of random clubs
 async function createRandomClubs(numberOfClubs) {
-  const sqlInsert = `INSERT INTO clubs (clubName, clubDescription, coSponsorsNeeded, minSlots9, minSlots10, minSlots11, minSlots12, maxSlots) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+  const sqlInsert = `INSERT INTO clubs (clubName, clubDescription, coSponsorsNeeded, minSlots9, minSlots10, minSlots11, minSlots12, maxSlots, requiredCoSponsors) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
   for (let i = 0; i < numberOfClubs; i++) {
     const response = await fetch(
@@ -616,10 +616,22 @@ async function createRandomClubs(numberOfClubs) {
       minSlots11: 8,
       minSlots12: 8,
       maxCapacity: maxSlots,
+      requiredCoSponsors: 0,
+
 
     };
 
-    await run(sqlInsert, [newClubInfo]);
+    db.run(sqlInsert, [
+      newClubInfo.preferredClub,
+      newClubInfo.preferredClubDescription,
+      newClubInfo.coSponsorsNeeded,
+      newClubInfo.minSlots9,
+      newClubInfo.minSlots10,
+      newClubInfo.minSlots11,
+      newClubInfo.minSlots12,
+      newClubInfo.maxCapacity,
+      newClubInfo.requiredCoSponsors,
+    ]);
   }
 
   console.log(`${numberOfClubs} random clubs created.`);
