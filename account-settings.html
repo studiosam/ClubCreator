@@ -63,7 +63,7 @@
 
                             </div>
                             <button type="submit" class="uk-button uk-button-primary">Upload</button>
-                            <p><span class="green" uk-icon="check"></span>File Selected!</p>
+                            <p id="selected-confirmation" class="hidden"><span class="green" uk-icon="check"></span>File Selected!</p>
                         </div>
                     </div>
                 </form>
@@ -73,7 +73,7 @@
 
                 document.querySelector("#avatar-input").addEventListener('input', () => {
                     if (document.querySelector("#avatar-input").value) {
-
+document.querySelector('#selected-confirmation').classList.remove('hidden')
                     }
                 })
                 document.getElementById('uploadForm').addEventListener('submit', async (e) => {
