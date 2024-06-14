@@ -1,8 +1,7 @@
 const approvedClubList = document.querySelector("#approvedClubList");
 const clubProposals = document.querySelector("#clubProposalList");
-const deleteAllClubs = document.querySelector("#delete-all-clubs");
 
-deleteAllClubs.addEventListener("click", async () => {
+async function deleteAllClubs() {
   const response = await fetch("http://localhost:3000/admin-erase", {
     method: "POST",
     headers: {
@@ -21,7 +20,68 @@ deleteAllClubs.addEventListener("click", async () => {
       timeout: 5000,
     });
   }
-});
+}
+
+async function deleteAllStudents() {
+  const response = await fetch("http://localhost:3000/admin-erase-students", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      isAdmin: user.isAdmin,
+    }),
+  });
+  const clubs = await response.json();
+  if (clubs.body === "Success") {
+    UIkit.notification({
+      message: "All Students Deleted!",
+      status: "success",
+      pos: "top-center",
+      timeout: 5000,
+    });
+  }
+}
+async function createStudents() {
+  const response = await fetch("http://localhost:3000/admin-create-students", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      isAdmin: user.isAdmin,
+    }),
+  });
+  const clubs = await response.json();
+  if (clubs.body === "Success") {
+    UIkit.notification({
+      message: "50 Random Students!",
+      status: "success",
+      pos: "top-center",
+      timeout: 5000,
+    });
+  }
+}
+async function createClubs() {
+  const response = await fetch("http://localhost:3000/admin-create-clubs", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      isAdmin: user.isAdmin,
+    }),
+  });
+  const clubs = await response.json();
+  if (clubs.body === "Success") {
+    UIkit.notification({
+      message: "50 Random Students!",
+      status: "success",
+      pos: "top-center",
+      timeout: 5000,
+    });
+  }
+}
 
 if (user.isAdmin === 0) {
   document.body.innerHTML = "<h1>NOT AN ADMIN</h1>";

@@ -1,6 +1,7 @@
 const sqlite3 = require("sqlite3").verbose();
 const path = require("path");
 const fs = require("fs");
+const fetch = require("node-fetch");
 // Open a database connection
 const db = new sqlite3.Database(
   `../school_clubs.db`,
@@ -455,6 +456,7 @@ module.exports = {
   deleteAllStudentClubs,
   createRandomClubs,
   createRandomGuys,
+  deleteAllStudents,
   // Export other database functions here
 };
 
@@ -543,10 +545,15 @@ async function createRandomGuys(numberOfAccounts) {
   const sql = `INSERT INTO users (firstName, lastName, email, password, grade, clubPreferences, isTeacher) VALUES (?,?,?,?,?,?,?)`;
 
   for (let i = 0; i < numberOfAccounts; i++) {
-    const firstName = getRandomString(7);
-    const lastName = getRandomString(7);
-    const email = getRandomEmail();
-    const password = getRandomString(10); // In a real scenario, ensure passwords are hashed
+    const res = await fetch("https://randomuser.me/api/");
+    const user = await res.json();
+    console.log(
+      `User ${user.results[0].name.first} ${user.results[0].name.last} Created`
+    );
+    const firstName = user.results[0].name.first;
+    const lastName = user.results[0].name.last;
+    const email = user.results[0].email;
+    const password = getRandomString(10);
     const grade = getRandomGrade();
     const clubPreferences = getRandomPreferences();
     const isTeacher = false;
@@ -568,7 +575,18 @@ async function createRandomGuys(numberOfAccounts) {
 // createRandomGuys(50).catch(console.error);
 // createRandomClubs(10).catch(console.error);
 
-// deleteAllStudentClubs();
+async function deleteAllStudents() {
+  try {
+    const sqlDelete = `DELETE FROM users WHERE isTeacher = false`;
+
+    const deleteResult = await db.run(sqlDelete);
+
+    console.log("All Students Deleted");
+    return true;
+  } catch (err) {
+    console.error("Error deleting non-teacher users:", err.message);
+  }
+}
 
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -576,10 +594,14 @@ function getRandomInt(min, max) {
 
 // Function to create a specified number of random clubs
 async function createRandomClubs(numberOfClubs) {
-  const sqlInsert = `INSERT INTO clubs (clubName, clubDescription, coSponsorsNeeded, minSlots9, minSlots10, minSlots11, minSlots12, maxSlots) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+  const sqlInsert = `INSERT INTO clubs (clubName, clubDescription, coSponsorsNeeded, minSlots9, minSlots10, minSlots11, minSlots12, maxSlots, requiredCoSponsors) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
   for (let i = 0; i < numberOfClubs; i++) {
-    const clubName = getRandomString(10);
+    const response = await fetch(
+      "https://random-word-api.herokuapp.com/word?number=2"
+    );
+    const clubNames = await response.json();
+    const clubName = `${clubNames[0]} ${clubNames[1]} Club`;
     const clubDescription = getRandomString(20);
     const coSponsorsNeeded = 0;
     const maxSlots = 32;
@@ -595,6 +617,7 @@ async function createRandomClubs(numberOfClubs) {
       minSlots11: 8,
       minSlots12: 8,
       maxCapacity: maxSlots,
+      requiredCoSponsors: 0,
     };
 
     db.run(sqlInsert, [

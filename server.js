@@ -237,7 +237,33 @@ app.post("/login", async (req, res) => {
 
 app.post("/admin-erase", async (req, res) => {
   if (req.body.isAdmin) {
-    const deleted = await db.deleteAllStudentClubs;
+    const deleted = db.deleteAllStudentClubs();
+    if (deleted) {
+      res.send({ body: "Success" });
+    }
+  }
+});
+
+app.post("/admin-create-clubs", async (req, res) => {
+  if (req.body.isAdmin) {
+    const created = db.createRandomClubs(10);
+    if (created) {
+      res.send({ body: "Success" });
+    }
+  }
+});
+app.post("/admin-create-students", async (req, res) => {
+  if (req.body.isAdmin) {
+    const created = db.createRandomGuys(50);
+    if (created) {
+      res.send({ body: "Success" });
+    }
+  }
+});
+
+app.post("/admin-erase-students", async (req, res) => {
+  if (req.body.isAdmin) {
+    const deleted = db.deleteAllStudents();
     if (deleted) {
       res.send({ body: "Success" });
     }
