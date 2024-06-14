@@ -346,7 +346,9 @@ function deleteAllStudentClubs() {
     if (err) {
       console.log(err);
     }
+
     console.log(`Row(s) updated: ${this.changes}`);
+    return true;
   });
 }
 
@@ -450,6 +452,9 @@ module.exports = {
   removeClubFromUser,
   assignClub,
   uploadAvatar,
+  deleteAllStudentClubs,
+  createRandomClubs,
+  createRandomGuys,
   // Export other database functions here
 };
 

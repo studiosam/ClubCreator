@@ -235,6 +235,15 @@ app.post("/login", async (req, res) => {
   }
 });
 
+app.post("/admin-erase", async (req, res) => {
+  if (req.body.isAdmin) {
+    const deleted = await db.deleteAllStudentClubs;
+    if (deleted) {
+      res.send({ body: "Success" });
+    }
+  }
+});
+
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

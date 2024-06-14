@@ -89,7 +89,12 @@
                     const result = await response.json();
                     console.log(result)
                     if (result.body === "Success") {
-          
+                        UIkit.notification({
+      message: "Avatar Successfully Updated!",
+      status: "success",
+      pos: "top-center",
+      timeout: 5000,
+    });
                         document.getElementById('upload-avatar').src = result.avatarPath;
                     }
                 });
