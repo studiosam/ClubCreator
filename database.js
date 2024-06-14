@@ -548,7 +548,7 @@ async function createRandomGuys(numberOfAccounts) {
 
 
 // createRandomGuys(50).catch(console.error);
-createRandomClubs(10).catch(console.error);
+// createRandomClubs(10).catch(console.error);
 
 // deleteAllStudentClubs();
 
@@ -558,14 +558,15 @@ function getRandomInt(min, max) {
 
 // Function to create a specified number of random clubs
 async function createRandomClubs(numberOfClubs) {
-  const sqlInsert = `INSERT INTO clubs (clubName, clubDescription, coSponsorsNeeded, minSlots9, minSlots10, minSlots11, minSlots12, maxSlots) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+  const sqlInsert = `INSERT INTO clubs (clubName, clubDescription, coSponsorsNeeded, minSlots9, minSlots10, minSlots11, minSlots12, maxSlots, requiredCoSponsors) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
 
   for (let i = 0; i < numberOfClubs; i++) {
     const clubName = getRandomString(10);
     const clubDescription = getRandomString(20);
     const coSponsorsNeeded = 0;
     const maxSlots = 32;
-    // ensuring required co-sponsors <= co-sponsors needed
+    const requiredCoSponsors = 0;
     const primaryTeacherId = getRandomInt(1, 100); // assuming teacher IDs range from 1 to 100
 
     const newClubInfo = {
@@ -577,10 +578,21 @@ async function createRandomClubs(numberOfClubs) {
       minSlots11: 8,
       minSlots12: 8,
       maxCapacity: maxSlots,
+      requiredCoSponsors: requiredCoSponsors
 
     };
 
-    await run(sqlInsert, [newClubInfo]);
+    await db.run(sqlInsert, [
+      newClubInfo.preferredClub,
+      newClubInfo.preferredClubDescription,
+      newClubInfo.coSponsorsNeeded,
+      newClubInfo.minSlots9,
+      newClubInfo.minSlots10,
+      newClubInfo.minSlots11,
+      newClubInfo.minSlots12,
+      newClubInfo.maxCapacity,
+      newClubInfo.requiredCoSponsors
+    ]);
   }
 
   console.log(`${numberOfClubs} random clubs created.`);
