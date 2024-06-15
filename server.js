@@ -77,7 +77,7 @@ app.get("/getUnapprovedClubs", async (req, res) => {
 app.get("/getAllClubs", async (req, res) => {
   try {
     const allClubs = await db.getAllClubs();
-    res.json(allClubs);
+    res.send(allClubs);
   } catch (err) {
     console.error("Error: ", err);
     res.status(500).send("Error fetching clubs");
@@ -100,6 +100,26 @@ app.get("/club-info/:club", async (req, res) => {
     res.redirect(`http://127.0.0.1:5500/club-info.html?club-id=${clubId}`);
   }
 });
+
+app.get("/users/delete/:id", async (req, res) => {
+  let userId = req.params.id;
+  const deleted = await db.deleteUser(userId);
+  if (deleted) {
+    console.log(`Deleted user ${userId}`);
+    res.send({ body: "Success" });
+  }
+});
+
+app.get("/users/update/:id/:club", async (req, res) => {
+  let userId = req.params.id;
+  let clubId = req.params.club;
+  const added = await db.assignClub(userId, clubId, true);
+  if (added) {
+    console.log(`Club ${clubId} added to user ${userId}`);
+    res.send({ body: "Success" });
+  }
+});
+
 app.get("/users/:type", async (req, res) => {
   let isTeacher = false;
   let userType = req.params.type;
@@ -107,13 +127,24 @@ app.get("/users/:type", async (req, res) => {
     isTeacher = true;
   }
 
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const search = req.query.search || "";
+  const sortBy = req.query.sortBy || "userId";
+  const sortDirection = req.query.sortDirection === "desc" ? "DESC" : "ASC";
+
   try {
-    const users = await db.getAllTeachersOrStudents(isTeacher);
-    if (users.length > 0) {
-      res.send(users);
-    } else {
-      res.send({ body: "No users found" });
-    }
+    const { users, total } = await db.getAllTeachersOrStudents(
+      isTeacher,
+      page,
+      limit,
+      search,
+      sortBy,
+      sortDirection
+    );
+    const totalPages = Math.ceil(total / limit);
+
+    res.send({ users, total, totalPages });
   } catch (err) {
     console.error("Error: ", err);
     res.status(500).send("Error fetching Users");
@@ -237,7 +268,16 @@ app.post("/login", async (req, res) => {
 
 app.post("/admin-erase", async (req, res) => {
   if (req.body.isAdmin) {
-    const deleted = db.deleteAllStudentClubs();
+    const deleted = await db.deleteAllStudentClubs();
+    if (deleted) {
+      res.send({ body: "Success" });
+    }
+  }
+});
+
+app.post("/admin-erase-all-clubs", async (req, res) => {
+  if (req.body.isAdmin) {
+    const deleted = await db.deleteAllClubs();
     if (deleted) {
       res.send({ body: "Success" });
     }
@@ -246,15 +286,17 @@ app.post("/admin-erase", async (req, res) => {
 
 app.post("/admin-create-clubs", async (req, res) => {
   if (req.body.isAdmin) {
-    const created = db.createRandomClubs(10);
+    const created = await db.createRandomClubs(req.body.numOfClubs);
+
     if (created) {
       res.send({ body: "Success" });
     }
   }
 });
 app.post("/admin-create-students", async (req, res) => {
+  console.log(req.body.numOfStudents);
   if (req.body.isAdmin) {
-    const created = db.createRandomGuys(50);
+    const created = await db.createRandomGuys(req.body.numOfStudents);
     if (created) {
       res.send({ body: "Success" });
     }
@@ -263,7 +305,7 @@ app.post("/admin-create-students", async (req, res) => {
 
 app.post("/admin-erase-students", async (req, res) => {
   if (req.body.isAdmin) {
-    const deleted = db.deleteAllStudents();
+    const deleted = await db.deleteAllStudents();
     if (deleted) {
       res.send({ body: "Success" });
     }

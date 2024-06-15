@@ -1,7 +1,7 @@
 const approvedClubList = document.querySelector("#approvedClubList");
 const clubProposals = document.querySelector("#clubProposalList");
-
-async function deleteAllClubs() {
+const socket = new WebSocket("ws://localhost:8080");
+async function deleteAllUserClubs() {
   const response = await fetch("http://localhost:3000/admin-erase", {
     method: "POST",
     headers: {
@@ -15,6 +15,26 @@ async function deleteAllClubs() {
   if (clubs.body === "Success") {
     UIkit.notification({
       message: "All User Clubs Deleted!",
+      status: "success",
+      pos: "top-center",
+      timeout: 5000,
+    });
+  }
+}
+async function deleteAllClubs() {
+  const response = await fetch("http://localhost:3000/admin-erase-all-clubs", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      isAdmin: user.isAdmin,
+    }),
+  });
+  const clubs = await response.json();
+  if (clubs.body === "Success") {
+    UIkit.notification({
+      message: "All Clubs Deleted!",
       status: "success",
       pos: "top-center",
       timeout: 5000,
@@ -43,6 +63,8 @@ async function deleteAllStudents() {
   }
 }
 async function createStudents() {
+  const numOfStudents = document.querySelector("#num-of-rand-students").value;
+
   const response = await fetch("http://localhost:3000/admin-create-students", {
     method: "POST",
     headers: {
@@ -50,12 +72,13 @@ async function createStudents() {
     },
     body: JSON.stringify({
       isAdmin: user.isAdmin,
+      numOfStudents: numOfStudents,
     }),
   });
   const clubs = await response.json();
   if (clubs.body === "Success") {
     UIkit.notification({
-      message: "50 Random Students!",
+      message: `${numOfStudents} Random Students Created!`,
       status: "success",
       pos: "top-center",
       timeout: 5000,
@@ -63,6 +86,7 @@ async function createStudents() {
   }
 }
 async function createClubs() {
+  const numOfClubs = document.querySelector("#num-of-rand-clubs").value;
   const response = await fetch("http://localhost:3000/admin-create-clubs", {
     method: "POST",
     headers: {
@@ -70,12 +94,13 @@ async function createClubs() {
     },
     body: JSON.stringify({
       isAdmin: user.isAdmin,
+      numOfClubs: numOfClubs,
     }),
   });
   const clubs = await response.json();
   if (clubs.body === "Success") {
     UIkit.notification({
-      message: "10 Random Clubs!",
+      message: `${numOfClubs} Random Clubs Created!`,
       status: "success",
       pos: "top-center",
       timeout: 5000,
@@ -123,89 +148,115 @@ async function getAllApprovedClubs() {
           let teacherFirstName = teacherInfo.firstName;
           let teacherLastName = teacherInfo.lastName;
 
-          approvedClubList.innerHTML += `<form class="approved-clubs  uk-width-1-2@m" id="form${club.clubId
-            }"><div id="club-${club.clubId}" class="uk-card">
-    <div id="${club.clubId
-            }" class=" uk-card uk-card-default uk-card-body uk-card-hover">
+          approvedClubList.innerHTML += `<form class="approved-clubs  uk-width-1-2@m" id="form${
+            club.clubId
+          }"><div id="club-${club.clubId}" class="uk-card">
+    <div id="${
+      club.clubId
+    }" class=" uk-card uk-card-default uk-card-body uk-card-hover">
     <div class="uk-card-badge uk-label uk-label-success">Approved</div>
     <div class="uk-card-header">   
-    <h2 class="roboto uk-text-bold uk-card-title blue"id="clubName">${club.clubName
-            }</h2>
+    <h2 class="roboto uk-text-bold uk-card-title blue"id="clubName">${
+      club.clubName
+    }</h2>
     <input type="hidden" name="clubName" value="${club.clubName}">
     </div> 
     <div class="uk-card-body">
-        <p class= "uk-text-bold text-center" id="clubDescription">${club.clubDescription
-            }</p>
-        <input type="hidden" name="clubDescription" value="${club.clubDescription
-            }">
+        <p class= "uk-text-bold text-center" id="clubDescription">${
+          club.clubDescription
+        }</p>
+        <input type="hidden" name="clubDescription" value="${
+          club.clubDescription
+        }">
       <div id="changeTeacher${club.clubId}" class="maxSlots uk-margin">
       <span>Primary Teacher: </span>
              <strong>${teacherFirstName} ${teacherLastName}</strong>
-             <button type="button" onclick="changeTeacher(${club.clubId
-            })" class="change">Change</button>
+             <button type="button" onclick="changeTeacher(${
+               club.clubId
+             })" class="change">Change</button>
             </div>
         
-        <input id="hiddenTeacherId${club.clubId
-            }" type="hidden" name="primaryTeacherId" value="${club.primaryTeacherId
-            }">
+        <input id="hiddenTeacherId${
+          club.clubId
+        }" type="hidden" name="primaryTeacherId" value="${
+            club.primaryTeacherId
+          }">
         <div class="maxSlots">
-        <span>Maximum Slots: </span><input name="maxSlots" id="clubId${club.clubId
-            }-maxSlots" class="uk-input uk-form-width-small" type="number" value="${club.maxSlots
-            }"></div>
+        <span>Maximum Slots: </span><input name="maxSlots" id="clubId${
+          club.clubId
+        }-maxSlots" class="uk-input uk-form-width-small" type="number" value="${
+            club.maxSlots
+          }"></div>
         <div id="minSlotsWrapper">
         <p class="text-center uk-text-bold uk-margin-medium-top">Minimum Slots:</p>
         <div id="minSlots-${club.clubId}" class="minSlots">
         <div class="text-center">
-        <span class="">9th Grade: </span><input name="minSlots9" id = "${club.clubId
-            }-minslots9" class = "slots9 uk-input" type="number" value="${club.minSlots9
-            }">
+        <span class="">9th Grade: </span><input name="minSlots9" id = "${
+          club.clubId
+        }-minslots9" class = "slots9 uk-input" type="number" value="${
+            club.minSlots9
+          }">
         </div>
         <div class="text-center">
-        <span class="">10th Grade: </span><input name="minSlots10" id = "${club.clubId
-            }-minslots10" class = "slots10 uk-input" type="number" value="${club.minSlots10
-            }">
+        <span class="">10th Grade: </span><input name="minSlots10" id = "${
+          club.clubId
+        }-minslots10" class = "slots10 uk-input" type="number" value="${
+            club.minSlots10
+          }">
         </div>
         <div class="text-center">
-        <span class="">11th Grade: </span><input name="minSlots11" id = "${club.clubId
-            }-minslots11" class = "slots11 uk-input" type="number" value="${club.minSlots11
-            }">
+        <span class="">11th Grade: </span><input name="minSlots11" id = "${
+          club.clubId
+        }-minslots11" class = "slots11 uk-input" type="number" value="${
+            club.minSlots11
+          }">
         </div>
         <div class="text-center">
-        <span class="">12th Grade: </span><input name="minSlots12" id = "${club.clubId
-            }-minslots12" class = "slots12 uk-input" type="number" value="${club.minSlots12
-            }">
+        <span class="">12th Grade: </span><input name="minSlots12" id = "${
+          club.clubId
+        }-minslots12" class = "slots12 uk-input" type="number" value="${
+            club.minSlots12
+          }">
         </div>
         </div>
         </div>
         <p class="text-center uk-text-bold uk-margin-medium-top">Co-Sponsors:</p>
         <div class="coSponsors">
         <div class="coSponsors">
-        <span>Total Required: </span><input name="coSponsorsNeeded" id = "clubId${club.coSponsorsNeeded
-            }-coSponsorsNeeded" class = "uk-input uk-width-1-2" type="number" value="${club.coSponsorsNeeded
-            }">
+        <span>Total Required: </span><input name="coSponsorsNeeded" id = "clubId${
+          club.coSponsorsNeeded
+        }-coSponsorsNeeded" class = "uk-input uk-width-1-2" type="number" value="${
+            club.coSponsorsNeeded
+          }">
     </div>
     <div class="coSponsors">
-        <span>Still Needed: </span><input name="requiredCoSponsors" id = "clubId${club.clubId
-            }-coSponsorsRequired" class = "uk-input uk-width-1-2" type="number" value="${club.coSponsorsNeeded - club.currentCoSponsors
-            }">
+        <span>Still Needed: </span><input name="requiredCoSponsors" id = "clubId${
+          club.clubId
+        }-coSponsorsRequired" class = "uk-input uk-width-1-2" type="number" value="${
+            club.coSponsorsNeeded - club.currentCoSponsors
+          }">
     </div>
     </div>
     <div class="text-center approval">
-    <span>Location: </span><input name="location" class = "clubId${club.clubId
-            }-location uk-input uk-form-width-small" type="text">
-    <span>Approved: </span><input name="isApproved" id="is-approved${club.clubId
-            }" class ="isApproved" type="checkbox" checked>
+    <span>Location: </span><input name="location" class = "clubId${
+      club.clubId
+    }-location uk-input uk-form-width-small" type="text">
+    <span>Approved: </span><input name="isApproved" id="is-approved${
+      club.clubId
+    }" class ="isApproved" type="checkbox" checked>
     </div>
         
         
         
         </div>
         <div class="text-center">
-        <button type="button" id="approve${club.clubId
-            }" class="uk-button uk-button-secondary uk-width-1 approveBtn">Confirm</button>
+        <button type="button" id="approve${
+          club.clubId
+        }" class="uk-button uk-button-secondary uk-width-1 approveBtn">Confirm</button>
         <button class="delete" uk-toggle="target: #delete-confirmation" type="button">
-        <img id="delete-link-${club.clubId
-            }" src="/img/trash-can.png" width="40px">
+        <img id="delete-link-${
+          club.clubId
+        }" src="/img/trash-can.png" width="40px">
         </button>
         </div>
         </div>
@@ -400,8 +451,29 @@ async function attachEventListeners() {
   });
 }
 
-function logout() {
-  localStorage.removeItem("user");
-  console.log("User has been cleared from local storage");
-  window.location.href = "./index.html";
-}
+socket.onmessage = function (event) {
+  const createdItem = JSON.parse(event.data);
+  const createdItemContainer = document.getElementById("create-list");
+  const progressBar = document.getElementById("progress-bar");
+  progressBar.classList.remove("hidden");
+  if (createdItem.type === "student") {
+    progressBar.value = createdItem.progress;
+    const studentHTML = `
+    <div class="student">
+      <p>Name: ${createdItem.firstName} ${createdItem.lastName}</p>
+      <p>Email: ${createdItem.email}</p>
+      <p>Grade: ${createdItem.grade}</p>
+      <p>Club Preferences: ${createdItem.clubPreferences}</p>
+    </div>
+  `;
+    createdItemContainer.innerHTML = studentHTML;
+  } else if (createdItem.type === "club") {
+    progressBar.value = createdItem.progress;
+    const studentHTML = `
+    <div class="student">
+      <p>Name: ${createdItem.clubName}</p>
+    </div>
+  `;
+    createdItemContainer.innerHTML = studentHTML;
+  }
+};

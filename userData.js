@@ -49,8 +49,9 @@ if (user) {
 async function buildAdminMenu() {
   const menu = document.querySelector(".dash-nav");
   menu.innerHTML += `<div class= "text-center"><hr class="uk-margin-medium-right uk-margin-top">
-  <li><p class="uk-margin-medium-right">ADMIN MENU</p></li>
+  <a href="home-admin.html"><li><p class="uk-margin-medium-right">ADMIN MENU</p></li></a>
   </div>
+  <li><a class="gold" href="home-admin.html"><span uk-icon="icon: settings"></span>Admin Home</a></li>
   <li><a class="gold" href="/users-students.html"><span uk-icon="icon: pencil"></span>Students</a></li>
   <li><a class="gold" href="/users-teachers.html"><span uk-icon="icon: database"></span>Teachers</a></li>
 `;

@@ -2,6 +2,9 @@ const sqlite3 = require("sqlite3").verbose();
 const path = require("path");
 const fs = require("fs");
 const fetch = require("node-fetch");
+const WebSocket = require("ws");
+const wss = new WebSocket.Server({ port: 8080 });
+
 // Open a database connection
 const db = new sqlite3.Database(
   `../school_clubs.db`,
@@ -237,14 +240,63 @@ async function checkUser(user) {
   }
 }
 
-async function getAllTeachersOrStudents(isTeacherBool) {
+async function getAllTeachersOrStudents(
+  isTeacherBool,
+  page,
+  limit,
+  search,
+  sortBy,
+  sortDirection
+) {
   return new Promise((resolve, reject) => {
-    const sql = `SELECT * FROM users WHERE isTeacher = ${isTeacherBool}`;
-    db.all(sql, (err, rows) => {
+    const offset = (page - 1) * limit;
+    const searchQuery = `%${search}%`;
+
+    const sql = `
+      SELECT * FROM users
+      WHERE isTeacher = ${isTeacherBool} AND (firstName LIKE ? OR lastName LIKE ? OR email LIKE ?)
+      ORDER BY ${sortBy} ${sortDirection}
+      LIMIT ? OFFSET ?
+    `;
+
+    db.all(
+      sql,
+      [searchQuery, searchQuery, searchQuery, limit, offset],
+      (err, rows) => {
+        if (err) {
+          return reject(err);
+        } else {
+          const countSql = `SELECT COUNT(*) as count FROM users WHERE isTeacher = ${isTeacherBool} AND (firstName LIKE ? OR lastName LIKE ? OR email LIKE ?)`;
+          db.get(
+            countSql,
+            [searchQuery, searchQuery, searchQuery],
+            (err, countResult) => {
+              if (err) {
+                return reject(err);
+              } else {
+                return resolve({ users: rows, total: countResult.count });
+              }
+            }
+          );
+        }
+      }
+    );
+  });
+}
+
+async function getTotalUsersCount(isTeacherBool, search) {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      SELECT COUNT(*) as count FROM users
+      WHERE isTeacher = ${isTeacherBool}
+      AND (firstName LIKE ? OR lastName LIKE ? OR email LIKE ?)`;
+
+    const searchPattern = `%${search}%`;
+    db.get(sql, [searchPattern, searchPattern, searchPattern], (err, row) => {
       if (err) {
         return reject(err);
       } else {
-        return resolve(rows);
+        return resolve(row.count);
       }
     });
   });
@@ -353,6 +405,19 @@ function deleteAllStudentClubs() {
   });
 }
 
+async function deleteAllClubs() {
+  try {
+    const sqlDelete = `DELETE FROM clubs`;
+
+    await db.run(sqlDelete);
+
+    console.log("All Clubs Deleted");
+    return true;
+  } catch (err) {
+    console.error("Error deleting clubs:", err.message);
+  }
+}
+
 // update a single club value
 async function updateClubValue(clubId, key, value) {
   const sql = `UPDATE clubs SET ${key} = ? WHERE clubId = ?`;
@@ -364,12 +429,17 @@ async function updateClubValue(clubId, key, value) {
   });
 }
 
-async function assignClub(student, club) {
-  if (student.clubId !== null) {
+async function assignClub(student, club, update) {
+  if (update) {
+    const sqlAddId = `UPDATE users SET clubId = ? WHERE userId = ?`;
+    await run(sqlAddId, [club, student]);
+    return true;
+  } else if (student.clubId !== null) {
     console.log(`Club already assigned.`);
   } else {
     const sqlAddId = `UPDATE users SET clubId = ? WHERE userId = ?`;
     await run(sqlAddId, [club, student.userId]);
+    return true;
     // console.log(`User with ID ${student.userId} updated with clubId ${club}`);
   }
 }
@@ -432,34 +502,6 @@ function closeDatabase() {
   });
 }
 
-module.exports = {
-  addClub,
-  closeDatabase,
-  addUser,
-  checkUser,
-  updateUser,
-  deleteUser,
-  getAllTeachersOrStudents,
-  getUserInfo,
-  getAllClubs,
-  getClubInfo,
-  getUnapprovedClubs,
-  approveClub,
-  updateClub,
-  updateClubValue,
-  deleteClub,
-  getAllUsers,
-  updateClubPrefs,
-  removeClubFromUser,
-  assignClub,
-  uploadAvatar,
-  deleteAllStudentClubs,
-  createRandomClubs,
-  createRandomGuys,
-  deleteAllStudents,
-  // Export other database functions here
-};
-
 function run(sql, params = []) {
   return new Promise((resolve, reject) => {
     db.run(sql, params, function (err) {
@@ -520,8 +562,9 @@ function getRandomString(length) {
 
 function getRandomEmail() {
   const domains = ["example.com", "mail.com", "test.com"];
-  return `${getRandomString(5)}@${domains[Math.floor(Math.random() * domains.length)]
-    }`;
+  return `${getRandomString(5)}@${
+    domains[Math.floor(Math.random() * domains.length)]
+  }`;
 }
 
 function getRandomGrade() {
@@ -566,13 +609,24 @@ async function createRandomGuys(numberOfAccounts) {
       clubPreferences,
       isTeacher,
     ]);
+    const createdUser = {
+      firstName,
+      lastName,
+      email,
+      grade,
+      clubPreferences,
+      progress: ((i + 1) / numberOfAccounts) * 100,
+    };
+    wss.clients.forEach((client) => {
+      if (client.readyState === WebSocket.OPEN) {
+        createdUser.type = "student";
+        client.send(JSON.stringify(createdUser));
+      }
+    });
   }
-
   console.log(`${numberOfAccounts} random accounts created.`);
+  return true;
 }
-
-// createRandomGuys(50).catch(console.error);
-// // createRandomClubs(10).catch(console.error);
 
 async function deleteAllStudents() {
   try {
@@ -593,7 +647,7 @@ function getRandomInt(min, max) {
 
 // Function to create a specified number of random clubs
 async function createRandomClubs(numberOfClubs) {
-  const sqlInsert = `INSERT INTO clubs (clubName, clubDescription, coSponsorsNeeded, minSlots9, minSlots10, minSlots11, minSlots12, maxSlots, requiredCoSponsors) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+  const sqlInsert = `INSERT INTO clubs (clubName, clubDescription, coSponsorsNeeded, minSlots9, minSlots10, minSlots11, minSlots12, maxSlots, requiredCoSponsors,primaryTeacherId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)`;
 
   for (let i = 0; i < numberOfClubs; i++) {
     const response = await fetch(
@@ -617,8 +671,7 @@ async function createRandomClubs(numberOfClubs) {
       minSlots12: 8,
       maxCapacity: maxSlots,
       requiredCoSponsors: 0,
-
-
+      primaryTeacherId: 1,
     };
 
     db.run(sqlInsert, [
@@ -631,8 +684,50 @@ async function createRandomClubs(numberOfClubs) {
       newClubInfo.minSlots12,
       newClubInfo.maxCapacity,
       newClubInfo.requiredCoSponsors,
+      newClubInfo.primaryTeacherId,
     ]);
+    const createdClub = {
+      clubName,
+      progress: ((i + 1) / numberOfClubs) * 100,
+    };
+    wss.clients.forEach((client) => {
+      if (client.readyState === WebSocket.OPEN) {
+        createdClub.type = "club";
+        client.send(JSON.stringify(createdClub));
+      }
+    });
   }
 
   console.log(`${numberOfClubs} random clubs created.`);
+  return true;
 }
+
+module.exports = {
+  addClub,
+  closeDatabase,
+  addUser,
+  checkUser,
+  updateUser,
+  deleteUser,
+  getAllTeachersOrStudents,
+  getUserInfo,
+  getAllClubs,
+  getClubInfo,
+  getUnapprovedClubs,
+  approveClub,
+  updateClub,
+  updateClubValue,
+  deleteClub,
+  getAllUsers,
+  updateClubPrefs,
+  removeClubFromUser,
+  assignClub,
+  uploadAvatar,
+  deleteAllStudentClubs,
+  createRandomClubs,
+  createRandomGuys,
+  deleteAllStudents,
+  getTotalUsersCount,
+  deleteAllClubs,
+  // Export other database functions here
+};

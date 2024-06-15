@@ -49,6 +49,7 @@
         </ul>
       </div>
       <div id="right">
+
         <div class="menu-panel">
           <a href="account-settings.html"
             ><img
@@ -64,6 +65,27 @@
           </button>
         </div>
         <!--MAIN DASHBOARD PANEL START-->
+        <div id="side-panel" class="uk-offcanvas" uk-offcanvas="mode: slide; bg-close:false;esc-close=true">
+          <div class="uk-offcanvas-bar uk-flex uk-flex-column">
+              <button class="uk-offcanvas-close" type="button" uk-close></button>
+              <h3 class="uk-margin-remove-bottom">User Actions</h3>
+              <ul class="uk-nav uk-nav-default uk-margin-top">
+                  
+                  <li class="uk-margin-medium-top">
+                      <p>Add User(s) to Club</p>
+                      <div class="uk-margin-small-top">
+                          <select id="club-select" class="uk-select">
+                              <!-- Options will be populated dynamically -->
+                          </select>
+                          <button class="uk-button uk-button-default uk-margin-small-top" onclick="addToClub()">Add</button>
+                      </div>
+                  </li>
+                  <li style="cursor: pointer;" onclick="deleteSelectedUsers()"><button class="uk-margin-medium-top uk-button uk-button-danger">Delete User(s)</button><img class="uk-margin-medium-top uk-margin-small-left"width="50px" src="img/trash-can.png" alt=""><span id="deletion-items"class="uk-badge"></span></li>
+                  <li class="uk-nav-divider"></li>
+              </ul>
+              
+          </div>
+      </div>
         <h1 class="uk-margin-medium-left">Welcome, Admin!</h1>
         <div class="uk-container uk-width-1-1">
           <div id="search-bar">
@@ -75,7 +97,6 @@
                 type="search"
                 placeholder="Search"
                 aria-label="Search"
-                onkeyup="searchTable()"
               />
             </div>
           </div>
@@ -83,31 +104,38 @@
             <table class="uk-table uk-table-middle uk-table-divider">
               <thead>
                 <tr class="table-heading">
-                  <th class="uk-table-shrink" onclick="sortTable(0)">Select</th>
-                  <th class="uk-table-shrink" onclick="sortTable(1)">Avatar</th>
+                  <th class="uk-table-shrink">Select</th>
+                  <th class="uk-table-shrink">Avatar</th>
                   <th
                     class="uk-table-shrink uk-text-nowrap"
-                    onclick="sortTable(2)"
+                    onclick="sortTable(2, 'userId')"
                   >
                     User ID
                   </th>
-                  <th class="uk-table-shrink" onclick="sortTable(3)">Name</th>
-                  <th class="uk-table-shrink" onclick="sortTable(4)">Email</th>
+                  <th
+                    class="uk-table-shrink"
+                    onclick="sortTable(3, 'firstName')"
+                  >
+                    Name
+                  </th>
+                  <th class="uk-table-shrink" onclick="sortTable(4, 'email')">
+                    Email
+                  </th>
                   <th
                     class="uk-table-shrink uk-text-nowrap"
-                    onclick="sortTable(5)"
+                    onclick="sortTable(5, 'grade')"
                   >
                     Grade
                   </th>
                   <th
                     class="uk-table-shrink uk-text-nowrap"
-                    onclick="sortTable(6)"
+                    onclick="sortTable(6, 'room')"
                   >
                     Room
                   </th>
                   <th
                     class="uk-table-shrink uk-text-nowrap"
-                    onclick="sortTable(7)"
+                    onclick="sortTable(7, 'clubId')"
                   >
                     Club
                   </th>
@@ -115,11 +143,33 @@
               </thead>
               <tbody id="students-table"></tbody>
             </table>
+            <div
+              id="pagination"
+              class="text-center uk-flex uk-flex-center uk-flex-column uk-margin-top"
+            >
+              <div class="text-center" id="page-info"></div>
+              <div class="text-center uk-margin-medium-bottom">
+                <button
+                  class="uk-button uk-button-danger uk-width-small"
+                  id="prev-button"
+                  onclick="previousPage()"
+                >
+                  Previous
+                </button>
+                <button
+                  class="uk-button uk-button-primary uk-width-small"
+                  id="next-button"
+                  onclick="nextPage()"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
           </div>
         </div>
         <!--MAIN DASHBOARD PANEL END-->
       </div>
-    </div>
+    
 
     <script src="userData.js"></script>
     <script src="adminStudents.js"></script>

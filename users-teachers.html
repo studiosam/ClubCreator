@@ -75,7 +75,6 @@
                 type="search"
                 placeholder="Search"
                 aria-label="Search"
-                onkeyup="searchTable()"
               />
             </div>
           </div>
@@ -83,31 +82,38 @@
             <table class="uk-table uk-table-middle uk-table-divider">
               <thead>
                 <tr class="table-heading">
-                  <th class="uk-table-shrink" onclick="sortTable(0)">Select</th>
-                  <th class="uk-table-shrink" onclick="sortTable(1)">Avatar</th>
+                  <th class="uk-table-shrink">Select</th>
+                  <th class="uk-table-shrink">Avatar</th>
                   <th
                     class="uk-table-shrink uk-text-nowrap"
-                    onclick="sortTable(2)"
+                    onclick="sortTable(2, 'userId')"
                   >
                     User ID
                   </th>
-                  <th class="uk-table-shrink" onclick="sortTable(3)">Name</th>
-                  <th class="uk-table-shrink" onclick="sortTable(4)">Email</th>
+                  <th
+                    class="uk-table-shrink"
+                    onclick="sortTable(3, 'firstName')"
+                  >
+                    Name
+                  </th>
+                  <th class="uk-table-shrink" onclick="sortTable(4, 'email')">
+                    Email
+                  </th>
                   <th
                     class="uk-table-shrink uk-text-nowrap"
-                    onclick="sortTable(5)"
+                    onclick="sortTable(5, 'grade')"
                   >
                     Grade
                   </th>
                   <th
                     class="uk-table-shrink uk-text-nowrap"
-                    onclick="sortTable(6)"
+                    onclick="sortTable(6, 'room')"
                   >
                     Room
                   </th>
                   <th
                     class="uk-table-shrink uk-text-nowrap"
-                    onclick="sortTable(7)"
+                    onclick="sortTable(7, 'clubId')"
                   >
                     Club
                   </th>
@@ -115,6 +121,28 @@
               </thead>
               <tbody id="teachers-table"></tbody>
             </table>
+            <div
+              id="pagination"
+              class="text-center uk-flex uk-flex-center uk-flex-column uk-margin-top"
+            >
+              <div class="text-center" id="page-info"></div>
+              <div class="text-center uk-margin-medium-bottom">
+                <button
+                  class="uk-button uk-button-danger uk-width-small"
+                  id="prev-button"
+                  onclick="previousPage()"
+                >
+                  Previous
+                </button>
+                <button
+                  class="uk-button uk-button-primary uk-width-small"
+                  id="next-button"
+                  onclick="nextPage()"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
           </div>
         </div>
         <!--MAIN DASHBOARD PANEL END-->
