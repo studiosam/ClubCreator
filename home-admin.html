@@ -1,217 +1,167 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin Page</title>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/css/uikit.min.css"
-    />
-    <link rel="stylesheet" href="./css/styles.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap"
-      rel="stylesheet"
-    />
 
-    <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/js/uikit.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/js/uikit-icons.min.js"></script>
-  </head>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Page</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/css/uikit.min.css" />
+  <link rel="stylesheet" href="./css/styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap" rel="stylesheet" />
 
-  <body>
-    <div class="uk-flex">
-      <div id="side-nav" class="text-center">
-        <img
-          class="uk-margin-medium-top uk-margin-medium-bottom"
-          src="./img/rbhs.png"
-        />
-        <ul class="dash-nav uk-nav uk-margin-small-top">
-          <li class="uk-active">
-            <a id="homepage-link" href="home-teacher.html"
-              ><span uk-icon="home"></span>Dashboard</a
-            >
-          </li>
-          <li>
-            <a href="create-club.html"
-              ><span uk-icon="plus"></span>Create Club</a
-            >
-          </li>
-          <li>
-            <a href="#"><span uk-icon="users"></span>Co-Sponsor</a>
-          </li>
-          <li>
-            <a href="account-settings.html"
-              ><span uk-icon="cog"></span>Account Settings</a
-            >
-          </li>
-        </ul>
+  <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/js/uikit.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/js/uikit-icons.min.js"></script>
+</head>
+
+<body>
+  <div class="uk-flex">
+    <div id="side-nav" class="text-center">
+      <img class="uk-margin-medium-top uk-margin-medium-bottom" src="./img/rbhs.png" />
+      <ul class="dash-nav uk-nav uk-margin-small-top">
+        <li class="uk-active">
+          <a id="homepage-link" href="home-teacher.html"><span uk-icon="home"></span>Dashboard</a>
+        </li>
+        <li>
+          <a href="create-club.html"><span uk-icon="plus"></span>Create Club</a>
+        </li>
+        <li>
+          <a href="#"><span uk-icon="users"></span>Co-Sponsor</a>
+        </li>
+        <li>
+          <a href="account-settings.html"><span uk-icon="cog"></span>Account Settings</a>
+        </li>
+      </ul>
+    </div>
+    <div id="right">
+      <div class="menu-panel">
+        <a href="account-settings.html"><img class="uk-preserve-width uk-border-circle uk-margin-small-right avatar"
+            src="" width="40" height="40" alt="user avatar" /></a>
+        <p id="user-name">Name</p>
+        <button class="uk-button logout-button" onclick="logout()">
+          Logout
+        </button>
       </div>
-      <div id="right">
-        <div class="menu-panel">
-          <a href="account-settings.html"
-            ><img
-              class="uk-preserve-width uk-border-circle uk-margin-small-right avatar"
-              src=""
-              width="40"
-              height="40"
-              alt="user avatar"
-          /></a>
-          <p id="user-name">Name</p>
-          <button class="uk-button logout-button" onclick="logout()">
-            Logout
-          </button>
-        </div>
-        <!--MAIN DASHBOARD PANEL START-->
-        <h1 class="uk-margin-medium-left">Welcome, Admin!</h1>
-        <div class="uk-flex uk-margin-medium-left">
+      <!--MAIN DASHBOARD PANEL START-->
+      <h1 class="uk-margin-medium-left">Welcome, Admin!</h1>
+      <div class="uk-flex uk-margin-medium-left">
+        <div>
+
+          <div class="uk-flex uk-flex-column">
+            <button class="uk-button uk-button-danger uk-margin uk-width-medium" id="delete-all-clubs"
+              onclick="deleteAllUserClubs()">
+              Delete All User's Clubs
+            </button>
+          </div>
           <div>
-            <div class="uk-flex uk-flex-column">
-              <button
-                class="uk-button uk-button-danger uk-margin uk-width-medium"
-                id="delete-all-clubs"
-                onclick="deleteAllUserClubs()"
-              >
-                Delete All User's Clubs
+            <button class="uk-button uk-button-danger uk-margin uk-width-medium" id="delete-all-students"
+              onclick="deleteAllStudents()">
+              Delete All Students
+            </button>
+          </div>
+          <div>
+            <button class="uk-button uk-button-danger uk-margin uk-width-medium" id="delete-all-students"
+              onclick="deleteAllClubs()">
+              Delete All Clubs
+            </button>
+          </div>
+          <div class="uk-flex">
+            <div>
+              <button class="uk-button uk-button-primary uk-margin uk-margin-small-right uk-width-medium""
+                  id=" create-random-students" onclick="createStudents()">
+                Create Random Students
               </button>
             </div>
             <div>
-              <button
-                class="uk-button uk-button-danger uk-margin uk-width-medium"
-                id="delete-all-students"
-                onclick="deleteAllStudents()"
-              >
-                Delete All Students
-              </button>
+              <input id="num-of-rand-students" class="uk-input uk-width-small" type="number" min="1" value="1"
+                placeholder="Number to Generate" />
             </div>
-            <div>
-              <button
-                class="uk-button uk-button-danger uk-margin uk-width-medium"
-                id="delete-all-students"
-                onclick="deleteAllClubs()"
-              >
-                Delete All Clubs
-              </button>
-            </div>
+          </div>
+          <div>
             <div class="uk-flex">
               <div>
-                <button
-                  class="uk-button uk-button-primary uk-margin uk-margin-small-right uk-width-medium""
-                  id="create-random-students"
-                  onclick="createStudents()"
-                >
-                  Create Random Students
+                <button class="uk-button uk-button-primary uk-margin uk-margin-small-right uk-width-medium"
+                  id="create-random-clubs" onclick="createClubs()">
+                  Create Random Clubs
                 </button>
+                <div>
+                  <button class="uk-button uk-button-primary uk-margin uk-width-medium" id="assign-students"
+                    onclick="assignClubs()">
+                    Assign Clubs
+                  </button>
+                </div>
               </div>
-              <div>
-                <input id="num-of-rand-students" class="uk-input uk-width-small" type="number" min="1" value="1" placeholder="Number to Generate"/>
-              </div>
-            </div>
-            <div>
-              <div class="uk-flex">
-              <div>
-              <button
-                class="uk-button uk-button-primary uk-margin uk-margin-small-right uk-width-medium"
-                id="create-random-clubs"
-                onclick="createClubs()"
-              >
-                Create Random Clubs
-              </button>
-            </div>
-            <div><input id="num-of-rand-clubs" class="uk-input uk-width-small" type="number" min="1" value="1" placeholder="Number to Generate"/></div>
+              <div><input id="num-of-rand-clubs" class="uk-input uk-width-small" type="number" min="1" value="1"
+                  placeholder="Number to Generate" /></div>
             </div>
           </div>
-          </div>
-          <div>
+        </div>
+        <div>
           <div class="uk-margin-large-left uk-width-large" id="create-list">
-  
-            
-          </div>
-          <progress style="height: 25px;" id="progress-bar" class="hidden uk-margin-medium-left uk-progress uk-width-large" value="0" max="100"></progress>
-        </div>
-        </div>
-        <div
-          class="uk-container"
-          uk-filter="target: .js-filter; animation: slide"
-        >
-          <ul
-            class="uk-subnav uk-subnav-divider notification-wrapper uk-subnav-pill"
-          >
-            <li class="uk-active" uk-filter-control="filter: .club-proposals">
-              <a class="text-center" href="#">
-                <h2 id="clubProposals">Club Proposals</h2>
-                <span class="uk-badge club-proposals-badge">1</span>
-              </a>
-            </li>
-            <li uk-filter-control="filter: .approved-clubs">
-              <a class="notification-wrapper" href="#">
-                <h2 id="approvedClubs">Approved Clubs</h2>
-                <span class="uk-badge approved-clubs-badge">0</span>
-              </a>
-            </li>
-            <li uk-filter-control="filter: .locations">
-              <a href="#">
-                <h2 id="locations">Locations</h2>
-              </a>
-            </li>
-          </ul>
 
-          <div
-            id="clubProposalList"
-            class="club-proposals js-filter uk-grid-column-small uk-grid-row-small"
-            uk-grid
-            uk-sortable
-          >
-            No Club Proposals
-          </div>
 
-          <div
-            id="approvedClubList"
-            class="approved-clubs clubList js-filter uk-grid-column-small uk-grid-row-small"
-            uk-grid
-            uk-sortable
-          >
-            No Approved Clubs
           </div>
-
-          <div
-            id="locationList"
-            class="clubList js-filter uk-grid-column-small uk-grid-row-small"
-            uk-grid
-            uk-sortable
-          >
-            <a class="locations" href="create location page">
-              Create Location
-            </a>
-          </div>
-          <div id="delete-confirmation" uk-modal>
-            <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
-              <h2 class="uk-modal-title roboto">ARE YOU SURE?</h2>
-              <p id="delete-confirmation-body">ASS</p>
-              <p class="uk-text-right">
-                <button
-                  class="uk-button uk-button-primary uk-modal-close"
-                  type="button"
-                >
-                  Cancel
-                </button>
-                <button
-                  id="delete-btn"
-                  class="uk-button uk-button-danger uk-modal-close"
-                  type="button"
-                >
-                  Delete
-                </button>
-              </p>
-            </div>
-          </div>
+          <progress style="height: 25px;" id="progress-bar"
+            class="hidden uk-margin-medium-left uk-progress uk-width-large" value="0" max="100"></progress>
         </div>
-        <!--MAIN DASHBOARD PANEL END-->
       </div>
-    </div>
+      <div class="uk-container" uk-filter="target: .js-filter; animation: slide">
+        <ul class="uk-subnav uk-subnav-divider notification-wrapper uk-subnav-pill">
+          <li class="uk-active" uk-filter-control="filter: .club-proposals">
+            <a class="text-center" href="#">
+              <h2 id="clubProposals">Club Proposals</h2>
+              <span class="uk-badge club-proposals-badge">1</span>
+            </a>
+          </li>
+          <li uk-filter-control="filter: .approved-clubs">
+            <a class="notification-wrapper" href="#">
+              <h2 id="approvedClubs">Approved Clubs</h2>
+              <span class="uk-badge approved-clubs-badge">0</span>
+            </a>
+          </li>
+          <li uk-filter-control="filter: .locations">
+            <a href="#">
+              <h2 id="locations">Locations</h2>
+            </a>
+          </li>
+        </ul>
 
-    <!-- 
+        <div id="clubProposalList" class="club-proposals js-filter uk-grid-column-small uk-grid-row-small" uk-grid
+          uk-sortable>
+          No Club Proposals
+        </div>
+
+        <div id="approvedClubList" class="approved-clubs clubList js-filter uk-grid-column-small uk-grid-row-small"
+          uk-grid uk-sortable>
+          No Approved Clubs
+        </div>
+
+        <div id="locationList" class="clubList js-filter uk-grid-column-small uk-grid-row-small" uk-grid uk-sortable>
+          <a class="locations" href="create location page">
+            Create Location
+          </a>
+        </div>
+        <div id="delete-confirmation" uk-modal>
+          <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
+            <h2 class="uk-modal-title roboto">ARE YOU SURE?</h2>
+            <p id="delete-confirmation-body">ASS</p>
+            <p class="uk-text-right">
+              <button class="uk-button uk-button-primary uk-modal-close" type="button">
+                Cancel
+              </button>
+              <button id="delete-btn" class="uk-button uk-button-danger uk-modal-close" type="button">
+                Delete
+              </button>
+            </p>
+          </div>
+        </div>
+      </div>
+      <!--MAIN DASHBOARD PANEL END-->
+    </div>
+  </div>
+
+  <!-- 
         -list of unapproved clubs
         -populated list of clubs submitted for approval
         assign minimum number of 9, 10, 11, and 12 grade slots, with a default value set
@@ -233,7 +183,8 @@
         assign location to club  ===> make sure these two stay synced up
 
     -->
-    <script src="userData.js"></script>
-    <script src="admin.js"></script>
-  </body>
+  <script src="userData.js"></script>
+  <script src="admin.js"></script>
+</body>
+
 </html>

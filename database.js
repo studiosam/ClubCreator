@@ -3,7 +3,7 @@ const path = require("path");
 const fs = require("fs");
 const fetch = require("node-fetch");
 const WebSocket = require("ws");
-const wss = new WebSocket.Server({ port: 8080 });
+// const wss = new WebSocket.Server({ port: 42069 });
 
 // Open a database connection
 const db = new sqlite3.Database(
@@ -240,7 +240,20 @@ async function checkUser(user) {
   }
 }
 
-async function getAllTeachersOrStudents(
+async function getAllTeachersOrStudents(isTeacherBool) {
+  return new Promise((resolve, reject) => {
+    const sql = `SELECT * FROM users WHERE isTeacher = ${isTeacherBool}`;
+    db.all(sql, (err, rows) => {
+      if (err) {
+        return reject(err);
+      } else {
+        // console.log(resolve(rows))
+        return resolve(rows);
+      }
+    });
+  });
+}
+async function getAllTeachersOrStudentsPagination(
   isTeacherBool,
   page,
   limit,
@@ -272,8 +285,10 @@ async function getAllTeachersOrStudents(
             [searchQuery, searchQuery, searchQuery],
             (err, countResult) => {
               if (err) {
+                console.log(err);
                 return reject(err);
               } else {
+                console.log(resolve({ users: rows, total: countResult.count }))
                 return resolve({ users: rows, total: countResult.count });
               }
             }
@@ -429,6 +444,19 @@ async function updateClubValue(clubId, key, value) {
   });
 }
 
+// get students with clubId
+async function getStudentsInClub(clubId) {
+  const isTeacher = false;
+  const students = await getAllTeachersOrStudents(isTeacher);
+  const clubRoster = await students.filter((student) => student.clubId === clubId);
+  console.log(clubRoster.length);
+  return clubRoster;
+}
+
+for (let i = 333; i < 415; i++) {
+  getStudentsInClub(i)
+}
+
 async function assignClub(student, club, update) {
   if (update) {
     const sqlAddId = `UPDATE users SET clubId = ? WHERE userId = ?`;
@@ -562,9 +590,8 @@ function getRandomString(length) {
 
 function getRandomEmail() {
   const domains = ["example.com", "mail.com", "test.com"];
-  return `${getRandomString(5)}@${
-    domains[Math.floor(Math.random() * domains.length)]
-  }`;
+  return `${getRandomString(5)}@${domains[Math.floor(Math.random() * domains.length)]
+    }`;
 }
 
 function getRandomGrade() {
@@ -573,9 +600,11 @@ function getRandomGrade() {
 }
 
 function getRandomPreferences() {
-  const preferences = [4, 5, 6];
+  const startNum = 333
+  const numClubs = 82
+  const preferences = [];
   while (preferences.length < 5) {
-    const num = Math.floor(Math.random() * 40) + 1;
+    const num = Math.floor(Math.random() * numClubs) + startNum;
     if (!preferences.includes(num)) {
       preferences.push(num);
     }
@@ -584,10 +613,11 @@ function getRandomPreferences() {
 }
 
 async function createRandomGuys(numberOfAccounts) {
+
   const sql = `INSERT INTO users (firstName, lastName, email, password, grade, clubPreferences, isTeacher) VALUES (?,?,?,?,?,?,?)`;
 
   for (let i = 0; i < numberOfAccounts; i++) {
-    const res = await fetch("https://randomuser.me/api/");
+    const res = await fetch("https://randomuser.me/api/?nat=us");
     const user = await res.json();
     console.log(
       `User ${user.results[0].name.first} ${user.results[0].name.last} Created`
@@ -617,12 +647,12 @@ async function createRandomGuys(numberOfAccounts) {
       clubPreferences,
       progress: ((i + 1) / numberOfAccounts) * 100,
     };
-    wss.clients.forEach((client) => {
-      if (client.readyState === WebSocket.OPEN) {
-        createdUser.type = "student";
-        client.send(JSON.stringify(createdUser));
-      }
-    });
+    // wss.clients.forEach((client) => {
+    //   if (client.readyState === WebSocket.OPEN) {
+    //     createdUser.type = "student";
+    //     client.send(JSON.stringify(createdUser));
+    //   }
+    // });
   }
   console.log(`${numberOfAccounts} random accounts created.`);
   return true;
@@ -647,6 +677,7 @@ function getRandomInt(min, max) {
 
 // Function to create a specified number of random clubs
 async function createRandomClubs(numberOfClubs) {
+
   const sqlInsert = `INSERT INTO clubs (clubName, clubDescription, coSponsorsNeeded, minSlots9, minSlots10, minSlots11, minSlots12, maxSlots, requiredCoSponsors,primaryTeacherId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)`;
 
   for (let i = 0; i < numberOfClubs; i++) {
@@ -657,7 +688,7 @@ async function createRandomClubs(numberOfClubs) {
     const clubName = `${clubNames[0]} ${clubNames[1]} Club`;
     const clubDescription = getRandomString(20);
     const coSponsorsNeeded = 0;
-    const maxSlots = 32;
+    const maxSlots = 40;
     const requiredCoSponsors = 0;
     const primaryTeacherId = getRandomInt(1, 100); // assuming teacher IDs range from 1 to 100
 
@@ -690,12 +721,12 @@ async function createRandomClubs(numberOfClubs) {
       clubName,
       progress: ((i + 1) / numberOfClubs) * 100,
     };
-    wss.clients.forEach((client) => {
-      if (client.readyState === WebSocket.OPEN) {
-        createdClub.type = "club";
-        client.send(JSON.stringify(createdClub));
-      }
-    });
+    // wss.clients.forEach((client) => {
+    //   if (client.readyState === WebSocket.OPEN) {
+    //     createdClub.type = "club";
+    //     client.send(JSON.stringify(createdClub));
+    //   }
+    // });
   }
 
   console.log(`${numberOfClubs} random clubs created.`);
@@ -704,12 +735,13 @@ async function createRandomClubs(numberOfClubs) {
 
 module.exports = {
   addClub,
-  closeDatabase,
   addUser,
   checkUser,
-  updateUser,
+  closeDatabase,
   deleteUser,
+  updateUser,
   getAllTeachersOrStudents,
+  getAllTeachersOrStudentsPagination,
   getUserInfo,
   getAllClubs,
   getClubInfo,
@@ -729,5 +761,6 @@ module.exports = {
   deleteAllStudents,
   getTotalUsersCount,
   deleteAllClubs,
+  getStudentsInClub
   // Export other database functions here
 };

@@ -1,9 +1,11 @@
-const db = require("./database.js");
+
 const fetch = require("node-fetch");
+const { updateClubValue, assignClub, getStudentsInClub } = require("./database.js")
 
 //get object of all user ids and preference arrays
 async function getStudents() {
     const response = await fetch('http://127.0.0.1:3000/getAllStudents')
+
     const users = await response.json();
     return users
 }
@@ -16,30 +18,52 @@ async function choiceLoop(thisStudent) {
     //if random student
     if (thisStudent.clubPreferences) {
         for (let choiceNumber = 0; choiceNumber < thisStudent.clubPreferences.split(',').length; choiceNumber++) {
-            //if reversingArray
-            // thisStudent = reverseArray function
             const thisStudentChoice = await getChoice(thisStudent, choiceNumber);
-
+            // console.log(`This student Choice = ${thisStudentChoice}`)
             const choiceClubObject = await getClubById(thisStudentChoice);
-
-
-            //check grade level slots available for student's choice
+            // console.log(`Choice Club Object = ${choiceClubObject}`)
+            const clubRoster = await getStudentsInClub(choiceClubObject.clubId);
+            // console.log(`Choice Club Roster = ${clubRoster}`)
             const studentGrade = thisStudent.grade;
-            // console.log(studentGrade);
+            // console.log(`Student Grade = ${studentGrade}`)
             const gradeKey = `minSlots${studentGrade}`;
+            // console.log(`Grade Key = ${gradeKey}`)
             const gradeSlotsAvailable = choiceClubObject[gradeKey];
+            // console.log(`Slots available in this club for that grade = ${gradeSlotsAvailable}`)
+            const studentsInSameGrade = clubRoster.filter((student) => student.grade === thisStudent.grade).length;
+            // console.log(`Students in same grade in this club = ${studentsInSameGrade}`)
+
+
             // console.log(gradeSlotsAvailable)
-            if (gradeSlotsAvailable > 0 && thisStudent.clubId === null) {
-                //assign clubId to student
-                // console.log('GRADE SLOTS ARE AVALLL?')
-                await db.assignClub(thisStudent, choiceClubObject.clubId);
+            if (studentsInSameGrade < gradeSlotsAvailable && thisStudent.clubId === null) {
+                await assignClub(thisStudent, choiceClubObject.clubId);
                 //recalculate minSlots per grade level
-                await db.updateClubValue(choiceClubObject.clubId, gradeKey, gradeSlotsAvailable - 1)
-                await db.updateClubValue(choiceClubObject.clubId, "maxSlots", choiceClubObject.maxSlots - 1)
                 return true
             } else {
                 //add student Id to the queue array
                 // console.log('No Slots Bitch')
+                console.log('No Slots Available')
+            }
+        }
+    }
+}
+
+//loop through all students' first choices and apply sorting algorithm
+async function choiceLoopNoGrade(thisStudent) {
+    //if random student
+    if (thisStudent.clubPreferences) {
+        for (let choiceNumber = 0; choiceNumber < thisStudent.clubPreferences.split(',').length; choiceNumber++) {
+            const thisStudentChoice = await getChoice(thisStudent, choiceNumber);
+            const choiceClubObject = await getClubById(thisStudentChoice);
+            const maxSlotsAvailable = choiceClubObject[`maxSlots`];
+            // console.log(choiceClubObject);
+            const studentRoster = await getStudentsInClub(choiceClubObject.clubId);
+            const studentsInClub = studentRoster.length;
+            // console.log(gradeSlotsAvailable)
+            if (studentsInClub < maxSlotsAvailable && thisStudent.clubId === null) {
+                await assignClub(thisStudent, choiceClubObject.clubId);
+                return true
+            } else {
                 console.log('No Slots Available')
             }
         }
@@ -86,11 +110,23 @@ async function getRandomStudentOrder() { // **NEED TO CHANGE THIS TO FIND A RAND
 
 async function choiceRound(studentOrder) {
     for (let i = 0; i < studentOrder.length; i++) {
-        console.log(studentOrder[i][0].clubId)
+
         if (studentOrder[i][0].clubId !== null) {
             return 'Already Has Club'
         } else {
             const choice = await choiceLoop(studentOrder[i][0]);
+            // console.log('Choice', choice);
+        }
+    }
+}
+
+async function choiceRoundNoGrade(studentOrder) {
+    for (let i = 0; i < studentOrder.length; i++) {
+
+        if (studentOrder[i][0].clubId !== null) {
+            return 'Already Has Club'
+        } else {
+            const choice = await choiceLoopNoGrade(studentOrder[i][0]);
             // console.log('Choice', choice);
         }
     }
@@ -104,7 +140,10 @@ async function main() {
     }
 
     await choiceRound(studentOrder);
-
+    await choiceRoundNoGrade(studentOrder);
+    return true
 }
 
-main()
+module.exports = {
+    main
+}

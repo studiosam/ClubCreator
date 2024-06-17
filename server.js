@@ -3,6 +3,7 @@ const cors = require("cors");
 const path = require("path");
 const fs = require("fs").promises;
 const db = require("./database.js"); // Import your database functions
+const ca = require("./clubAssignment.js");
 const app = express();
 const bcrypt = require("bcrypt");
 const multer = require("multer");
@@ -44,6 +45,16 @@ app.get("/getAllStudents", async (req, res) => {
   let isTeacher = false;
   try {
     const student = await db.getAllTeachersOrStudents(isTeacher);
+    res.send(student);
+  } catch (err) {
+    console.error("Error: ", err);
+    res.status(500).send("Error fetching students");
+  }
+});
+app.get("/getAllStudentsPagination", async (req, res) => {
+  let isTeacher = false;
+  try {
+    const student = await db.getAllTeachersOrStudentsPagination(isTeacher);
 
     res.json(student);
   } catch (err) {
@@ -134,7 +145,7 @@ app.get("/users/:type", async (req, res) => {
   const sortDirection = req.query.sortDirection === "desc" ? "DESC" : "ASC";
 
   try {
-    const { users, total } = await db.getAllTeachersOrStudents(
+    const { users, total } = await db.getAllTeachersOrStudentsPagination(
       isTeacher,
       page,
       limit,
@@ -293,6 +304,7 @@ app.post("/admin-create-clubs", async (req, res) => {
     }
   }
 });
+
 app.post("/admin-create-students", async (req, res) => {
   console.log(req.body.numOfStudents);
   if (req.body.isAdmin) {
@@ -310,6 +322,14 @@ app.post("/admin-erase-students", async (req, res) => {
       res.send({ body: "Success" });
     }
   }
+});
+app.get("/admin-club-assignment", async (req, res) => {
+
+  const clubAssignment = await ca.main();
+  if (clubAssignment) {
+    res.send({ body: "Success" });
+  }
+
 });
 
 // Start the server
