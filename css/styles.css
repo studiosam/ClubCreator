@@ -1,12 +1,14 @@
 .hidden {
   display: none;
 }
-
+.dark {
+  color: #0e0e11;
+}
 .text-center {
   text-align: center;
 }
 
-.change{
+.change {
   text-decoration: underline;
   color: rgb(53, 139, 168);
   font-weight: bold;
@@ -219,37 +221,42 @@ ul {
   display: flex;
   align-items: start;
 }
-.club-input{
+.club-input {
   margin-top: 10px !important;
   margin-right: 10px !important;
 }
 
-#search-bar{
+#search-bar {
   text-align: end;
 }
 
-tbody tr:hover {background-color: rgb(50, 31, 104);}
+tbody tr:hover {
+  background-color: rgb(50, 31, 104);
+}
 
 .uk-sortable-drag {
   color: #154a86;
-  
 }
 
 #avatar-upload {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 1rem
+  gap: 1rem;
 }
 
 .upload-button {
   background-color: goldenrod;
   color: aliceblue;
-  
 }
-.settings-avatar{
+.settings-avatar {
   border-radius: 10px;
 }
 .green {
   color: #52bb81;
+}
+
+.student-attendance-card {
+  background-color: #52bb81;
+  color: #191f36;
 }

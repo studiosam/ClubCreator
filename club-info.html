@@ -1,77 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RBHS Teacher Home Page</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/css/uikit.min.css"
+    />
+    <link rel="stylesheet" href="./css/styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/js/uikit-icons.min.js"></script>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RBHS Teacher Home Page</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/css/uikit.min.css" />
-  <link rel="stylesheet" href="./css/styles.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/js/uikit.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/js/uikit-icons.min.js"></script>
-</head>
-
-<body>
-  <div class="uk-height-1-1 uk-flex">
-    <div id="side-nav" class="text-center uk-height-1-1">
-      <img class="uk-margin-medium-top uk-margin-medium-bottom" src="./img/rbhs.png" />
-      <ul class="dash-nav uk-nav uk-nav-default uk-nav-left uk-margin-small-top">
-        <li class="uk-active">
-          <a href="home-teacher.html"><span uk-icon="home"></span>Dashboard</a>
-        </li>
-        <li>
-          <a href="create-club.html"><span uk-icon="plus"></span>Create Club</a>
-        </li>
-        <li>
-          <a href="#"><span uk-icon="users"></span>Co-Sponsor</a>
-        </li>
-        <li>
-          <a href="#"><span uk-icon="cog"></span>Account Settings</a>
-        </li>
-      </ul>
-    </div>
-    <div id="right">
-      <div class="menu-panel">
-        <a href="account-settings.html"><img class="uk-preserve-width uk-border-circle uk-margin-small-right avatar"
-            src="" width="40" height="40" alt="user avatar"></a>
-        <p id="user-name">Name</p>
-        <button class="uk-button logout-button" onclick="logout()">
-          Logout
-        </button>
+  <body>
+    <div class="uk-height-1-1 uk-flex">
+      <div id="side-nav" class="text-center uk-height-1-1">
+        <img
+          class="uk-margin-medium-top uk-margin-medium-bottom"
+          src="./img/rbhs.png"
+        />
+        <ul
+          class="dash-nav uk-nav uk-nav-default uk-nav-left uk-margin-small-top"
+        >
+          <li class="uk-active">
+            <a id="homepage-link" href="home-teacher.html"
+              ><span uk-icon="home"></span>Dashboard</a
+            >
+          </li>
+          <li>
+            <a href="create-club.html"
+              ><span uk-icon="plus"></span>Create Club</a
+            >
+          </li>
+          <li>
+            <a href="#"><span uk-icon="users"></span>Co-Sponsor</a>
+          </li>
+          <li>
+            <a href="#"><span uk-icon="cog"></span>Account Settings</a>
+          </li>
+        </ul>
       </div>
-      <!--MAIN DASHBOARD PANEL START-->
-      <div class="uk-section">
-        <div class="uk-container">
-          <div class="uk-card uk-card-body uk-card-default">
-            <h3 id="clubName" class="uk-card-title">Name</h3>
-            <table class="uk-table uk-table-striped">
-              <thead>
-                <tr>
-                  <th id="clubDescription">Description</th>
-                </tr>
-              </thead>
-              <tbody id="clubData"></tbody>
-            </table>
+      <div id="right">
+        <div class="menu-panel">
+          <a href="account-settings.html"
+            ><img
+              class="uk-preserve-width uk-border-circle uk-margin-small-right avatar"
+              src=""
+              width="40"
+              height="40"
+              alt="user avatar"
+          /></a>
+          <p id="user-name">Name</p>
+          <button class="uk-button logout-button" onclick="logout()">
+            Logout
+          </button>
+        </div>
+        <!--MAIN DASHBOARD PANEL START-->
+        <div class="uk-section">
+          <div class="uk-container">
+            <div class="uk-card uk-card-body uk-card-default">
+              <h3
+                class="text-center roboto dark uk-text-large uk-text-bold uk-text-uppercase"
+                id="clubName"
+                class="uk-card-title"
+              >
+                Name
+              </h3>
+              <table class="uk-table uk-table-striped">
+                <thead>
+                  <tr>
+                    <th id="clubDescription">Description</th>
+                  </tr>
+                </thead>
+                <tbody id="clubData"></tbody>
+              </table>
+              <div uk-flex uk-flex-center uk-flex-column>
+                <div class="text-center">
+                  <h2 class="roboto dark">Students</h2>
+                  <div
+                    id="club-students"
+                    class="uk-grid-column-small uk-grid-row-small uk-child-width-1-3@s uk-text-center"
+                    uk-grid
+                  ></div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+        <!--MAIN DASHBOARD PANEL END-->
       </div>
-      <!--MAIN DASHBOARD PANEL END-->
     </div>
-  </div>
-  <!--
+    <!--
         ==if no club, display club sponsor options (create club or co-sponsor club)    
     -->
-  <!-- 
+    <!-- 
         change first and last name
         unassign as primary sponsor from club suggestion before approval
         apply to change clubs after approval
         change password
      -->
-  <script src="./clubInfo.js"></script>
-  <script src="userData.js"></script>
-</body>
-
+    <script src="./clubInfo.js"></script>
+    <script src="userData.js"></script>
+  </body>
 </html>

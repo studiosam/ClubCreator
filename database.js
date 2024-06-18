@@ -3,7 +3,7 @@ const path = require("path");
 const fs = require("fs");
 const fetch = require("node-fetch");
 const WebSocket = require("ws");
-// const wss = new WebSocket.Server({ port: 42069 });
+const wss = new WebSocket.Server({ port: 42069 });
 
 // Open a database connection
 const db = new sqlite3.Database(
@@ -288,7 +288,7 @@ async function getAllTeachersOrStudentsPagination(
                 console.log(err);
                 return reject(err);
               } else {
-                console.log(resolve({ users: rows, total: countResult.count }))
+                console.log(resolve({ users: rows, total: countResult.count }));
                 return resolve({ users: rows, total: countResult.count });
               }
             }
@@ -448,14 +448,16 @@ async function updateClubValue(clubId, key, value) {
 async function getStudentsInClub(clubId) {
   const isTeacher = false;
   const students = await getAllTeachersOrStudents(isTeacher);
-  const clubRoster = await students.filter((student) => student.clubId === clubId);
-  console.log(clubRoster.length);
+  const clubRoster = await students.filter(
+    (student) => student.clubId === clubId
+  );
+  // console.log(clubRoster.length);
   return clubRoster;
 }
 
-for (let i = 333; i < 415; i++) {
-  getStudentsInClub(i)
-}
+// for (let i = 333; i < 415; i++) {
+//   getStudentsInClub(i)
+// }
 
 async function assignClub(student, club, update) {
   if (update) {
@@ -590,8 +592,9 @@ function getRandomString(length) {
 
 function getRandomEmail() {
   const domains = ["example.com", "mail.com", "test.com"];
-  return `${getRandomString(5)}@${domains[Math.floor(Math.random() * domains.length)]
-    }`;
+  return `${getRandomString(5)}@${
+    domains[Math.floor(Math.random() * domains.length)]
+  }`;
 }
 
 function getRandomGrade() {
@@ -599,9 +602,11 @@ function getRandomGrade() {
   return grades[Math.floor(Math.random() * grades.length)];
 }
 
-function getRandomPreferences() {
-  const startNum = 333
-  const numClubs = 82
+async function getRandomPreferences() {
+  const allClubs = await getAllClubs();
+
+  const startNum = parseInt(allClubs[0].clubId);
+  const numClubs = allClubs.length;
   const preferences = [];
   while (preferences.length < 5) {
     const num = Math.floor(Math.random() * numClubs) + startNum;
@@ -613,7 +618,6 @@ function getRandomPreferences() {
 }
 
 async function createRandomGuys(numberOfAccounts) {
-
   const sql = `INSERT INTO users (firstName, lastName, email, password, grade, clubPreferences, isTeacher) VALUES (?,?,?,?,?,?,?)`;
 
   for (let i = 0; i < numberOfAccounts; i++) {
@@ -627,7 +631,7 @@ async function createRandomGuys(numberOfAccounts) {
     const email = user.results[0].email;
     const password = getRandomString(10);
     const grade = getRandomGrade();
-    const clubPreferences = getRandomPreferences();
+    const clubPreferences = await getRandomPreferences();
     const isTeacher = false;
 
     await db.run(sql, [
@@ -647,12 +651,12 @@ async function createRandomGuys(numberOfAccounts) {
       clubPreferences,
       progress: ((i + 1) / numberOfAccounts) * 100,
     };
-    // wss.clients.forEach((client) => {
-    //   if (client.readyState === WebSocket.OPEN) {
-    //     createdUser.type = "student";
-    //     client.send(JSON.stringify(createdUser));
-    //   }
-    // });
+    wss.clients.forEach((client) => {
+      if (client.readyState === WebSocket.OPEN) {
+        createdUser.type = "student";
+        client.send(JSON.stringify(createdUser));
+      }
+    });
   }
   console.log(`${numberOfAccounts} random accounts created.`);
   return true;
@@ -677,7 +681,6 @@ function getRandomInt(min, max) {
 
 // Function to create a specified number of random clubs
 async function createRandomClubs(numberOfClubs) {
-
   const sqlInsert = `INSERT INTO clubs (clubName, clubDescription, coSponsorsNeeded, minSlots9, minSlots10, minSlots11, minSlots12, maxSlots, requiredCoSponsors,primaryTeacherId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)`;
 
   for (let i = 0; i < numberOfClubs; i++) {
@@ -721,12 +724,12 @@ async function createRandomClubs(numberOfClubs) {
       clubName,
       progress: ((i + 1) / numberOfClubs) * 100,
     };
-    // wss.clients.forEach((client) => {
-    //   if (client.readyState === WebSocket.OPEN) {
-    //     createdClub.type = "club";
-    //     client.send(JSON.stringify(createdClub));
-    //   }
-    // });
+    wss.clients.forEach((client) => {
+      if (client.readyState === WebSocket.OPEN) {
+        createdClub.type = "club";
+        client.send(JSON.stringify(createdClub));
+      }
+    });
   }
 
   console.log(`${numberOfClubs} random clubs created.`);
@@ -761,6 +764,6 @@ module.exports = {
   deleteAllStudents,
   getTotalUsersCount,
   deleteAllClubs,
-  getStudentsInClub
+  getStudentsInClub,
   // Export other database functions here
 };

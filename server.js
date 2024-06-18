@@ -102,11 +102,18 @@ app.get("/getClubById", async (req, res) => {
 });
 
 app.get("/club-info/:club", async (req, res) => {
-  let clubId = req.params.club;
+  let clubId = parseInt(req.params.club);
+
   if (req.query.view) {
     //console.log(req.query);
     const clubInfo = await db.getClubInfo(clubId);
-    res.send(clubInfo);
+    const getAllStudents = await db.getAllUsers();
+
+    const getClubStudents = getAllStudents.filter(
+      (user) => user.clubId === clubId
+    );
+
+    res.send({ clubInfo: clubInfo, clubStudents: getClubStudents });
   } else {
     res.redirect(`http://127.0.0.1:5500/club-info.html?club-id=${clubId}`);
   }
@@ -306,7 +313,7 @@ app.post("/admin-create-clubs", async (req, res) => {
 });
 
 app.post("/admin-create-students", async (req, res) => {
-  console.log(req.body.numOfStudents);
+  // console.log(req.body.numOfStudents);
   if (req.body.isAdmin) {
     const created = await db.createRandomGuys(req.body.numOfStudents);
     if (created) {
@@ -324,12 +331,10 @@ app.post("/admin-erase-students", async (req, res) => {
   }
 });
 app.get("/admin-club-assignment", async (req, res) => {
-
   const clubAssignment = await ca.main();
   if (clubAssignment) {
     res.send({ body: "Success" });
   }
-
 });
 
 // Start the server
