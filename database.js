@@ -18,15 +18,50 @@ const db = new sqlite3.Database(
   }
 );
 
+async function checkAttendance(clubId, date) {
+
+  return new Promise((resolve, reject) => {
+    const sql = `
+      SELECT studentsPresent, studentsAbsent
+      FROM attendance
+      WHERE clubId = ? AND date = ?
+    `;
+    db.all(sql, [clubId, date], (err, rows) => {
+      if (err) {
+        return reject(err);
+      }
+      resolve(rows);
+      console.log('ROWS', rows)
+
+    });
+  });
+}
+
+async function submitAttendance(presentStudents, absentStudents, clubId, date) {
+  try {
+    const sql = `
+      INSERT INTO attendance (studentsPresent, studentsAbsent, clubId, date)
+      VALUES (?, ?, ?, ?)
+      ON CONFLICT(clubId, date) DO UPDATE SET
+        studentsPresent = excluded.studentsPresent,
+        studentsAbsent = excluded.studentsAbsent
+    `;
+    const insertResult = await run(sql, [presentStudents, absentStudents, clubId, date]);
+    console.log("Attendance submitted successfully.");
+  } catch (err) {
+    console.error("Error inserting or updating attendance:", err);
+  }
+}
+
 async function addClub(newClubInfo) {
   try {
     console.log("Starting addClub function with newClubInfo:", newClubInfo);
 
-    const sqlInsert = `INSERT INTO clubs (clubName, clubDescription, coSponsorsNeeded, maxSlots, requiredCoSponsors, primaryTeacherId) VALUES (?, ?, ?, ?, ?, ?)`;
+    const sqlInsert = `INSERT INTO clubs (clubName, clubDescription, coSponsorsNeeded, maxSlots, requiredCoSponsors, primaryTeacherId) VALUES (?, ?, ?, ?, ?,?)`;
     const insertResult = await run(sqlInsert, [
       newClubInfo.preferredClub,
       newClubInfo.preferredClubDescription,
-      newClubInfo.coSponsorsNeeded,
+      parseInt(newClubInfo.coSponsorsNeeded) + 1,
       newClubInfo.maxCapacity,
       newClubInfo.coSponsorsNeeded,
       newClubInfo.teacherId,
@@ -47,9 +82,8 @@ async function updateClub(clubChangeInfo) {
     minSlots12,
     maxSlots,
     requiredCoSponsors,
-    currentCoSponsors,
     primaryTeacherId,
-    location,
+    room,
     isApproved,
     clubId,
   } = clubChangeInfo;
@@ -62,9 +96,8 @@ async function updateClub(clubChangeInfo) {
   minSlots12 = ?,
   maxSlots = ?,
   requiredCoSponsors = ?,
-  currentCoSponsors = ?,
   primaryTeacherId = ?,
-  location = ?,
+  room = ?,
   isApproved = ?  WHERE clubId = ${clubId}`;
   await new Promise((resolve, reject) => {
     db.run(
@@ -79,9 +112,8 @@ async function updateClub(clubChangeInfo) {
         minSlots12,
         maxSlots,
         requiredCoSponsors,
-        currentCoSponsors,
         primaryTeacherId,
-        location,
+        room,
         isApproved,
       ],
       function (err) {
@@ -93,8 +125,14 @@ async function updateClub(clubChangeInfo) {
     );
     const sqlAddId = `UPDATE users SET clubId = ? WHERE userId = ?`;
     db.run(sqlAddId, [clubId, primaryTeacherId]);
-  });
 
+    const currentTeacher = db.getUser(primaryTeacherId);
+    const currentCoSponsors = db.getTeachersOrStudentsInClub(club, currentTeacher.isTeacher);
+    const numCurrentCoSponsors = currentCoSponsors.length;
+    const updatedRequiredCoSponsor = club.requiredCoSponsors - numCurrentCoSponsors;
+    const sqlSponsorUpdate = `UPDATE clubs SET coSponsorsRequired = ? WHERE clubId = ?`;
+    db.run(sqlSponsorUpdate, [updatedRequiredCoSponsor, club]);
+  });
   return true;
 }
 
@@ -208,6 +246,21 @@ async function getUserInfo(data, type) {
   });
 }
 
+async function getUser(userId) {
+  const sql = `SELECT * FROM users WHERE userId = ${userId}`;
+  return new Promise((resolve, reject) => {
+    db.get(sql, (err, row) => {
+      if (err) {
+        return reject(err);
+      } else {
+        resolve(row);
+        // console.log(row)
+        return row;
+      }
+    });
+  });
+}
+
 async function getClubInfo(clubId) {
   const sql = `SELECT * FROM clubs WHERE clubId = ?`;
   return new Promise((resolve, reject) => {
@@ -241,6 +294,7 @@ async function checkUser(user) {
 }
 
 async function getAllTeachersOrStudents(isTeacherBool) {
+  //console.log(isTeacherBool);
   return new Promise((resolve, reject) => {
     const sql = `SELECT * FROM users WHERE isTeacher = ${isTeacherBool}`;
     db.all(sql, (err, rows) => {
@@ -253,6 +307,7 @@ async function getAllTeachersOrStudents(isTeacherBool) {
     });
   });
 }
+
 async function getAllTeachersOrStudentsPagination(
   isTeacherBool,
   page,
@@ -393,7 +448,14 @@ async function approveClub(club) {
   const teacherId = row.primaryTeacherId;
 
   const sqlAddId = `UPDATE users SET clubId = ? WHERE userId = ?`;
-  await run(sqlAddId, [club, teacherId]);
+  db.run(sqlAddId, [club, teacherId]);
+
+  const currentTeacher = db.getUser(teacherId);
+  const currentCoSponsors = db.getTeachersOrStudentsInClub(club, currentTeacher.isTeacher);
+  const numCurrentCoSponsors = currentCoSponsors.length;
+  const updatedRequiredCoSponsor = club.requiredCoSponsors - numCurrentCoSponsors;
+  const sqlSponsorUpdate = `UPDATE clubs SET coSponsorsRequired = ? WHERE clubId = ?`;
+  await run(sqlSponsorUpdate, [updatedRequiredCoSponsor, club]);
 
   console.log(`User with ID ${teacherId} updated with clubId ${club}`);
 }
@@ -445,18 +507,17 @@ async function updateClubValue(clubId, key, value) {
 }
 
 // get students with clubId
-async function getStudentsInClub(clubId) {
-  const isTeacher = false;
-  const students = await getAllTeachersOrStudents(isTeacher);
-  const clubRoster = await students.filter(
-    (student) => student.clubId === clubId
+async function getTeachersOrStudentsInClub(clubId, userType) {
+  const users = await getAllTeachersOrStudents(userType);
+  const clubRoster = await users.filter(
+    (user) => user.clubId === clubId
   );
   // console.log(clubRoster.length);
   return clubRoster;
 }
 
 // for (let i = 333; i < 415; i++) {
-//   getStudentsInClub(i)
+//   getTeachersOrStudentsInClub(i, true)
 // }
 
 async function assignClub(student, club, update) {
@@ -465,13 +526,23 @@ async function assignClub(student, club, update) {
     await run(sqlAddId, [club, student]);
     return true;
   } else if (student.clubId !== null) {
-    console.log(`Club already assigned.`);
+    const sqlAddId = `UPDATE users SET clubId = ? WHERE userId = ?`;
+    await run(sqlAddId, [club, student.userId]);
   } else {
     const sqlAddId = `UPDATE users SET clubId = ? WHERE userId = ?`;
     await run(sqlAddId, [club, student.userId]);
     return true;
     // console.log(`User with ID ${student.userId} updated with clubId ${club}`);
   }
+}
+async function assignClubToStudent(student, club) {
+
+  const sqlAddId = `UPDATE users SET clubId = ? WHERE userId = ?`;
+  await run(sqlAddId, [club, student]);
+  return true;
+
+  // console.log(`User with ID ${student.userId} updated with clubId ${club}`);
+
 }
 
 async function uploadAvatar(userId, newAvatarPath) {
@@ -509,6 +580,53 @@ async function uploadAvatar(userId, newAvatarPath) {
       // No old avatar, just update the avatar path
       const sqlUpdate = "UPDATE users SET avatar = ? WHERE userId = ?";
       const params = [normalizedPath, userId];
+
+      db.run(sqlUpdate, params, function (err) {
+        if (err) {
+          console.error("Error updating user:", err.message);
+          return { message: "Database error" };
+        }
+        return true;
+      });
+    }
+  });
+  return true;
+}
+async function uploadCover(clubId, newAvatarPath) {
+  const normalizedPath = path.posix
+    .normalize(newAvatarPath)
+    .replace(/\\/g, "/");
+
+  db.get("SELECT coverPhoto FROM clubs WHERE clubId = ?", [clubId], (err, row) => {
+    if (err) {
+      console.error("Error fetching user:", err.message);
+      return { message: "Database error" };
+    }
+
+    if (row && row.coverPhoto) {
+      const oldAvatarPath = row.coverPhoto;
+
+      // Delete the old avatar file
+      fs.unlink(oldAvatarPath, (err) => {
+        if (err) {
+          console.error("No old Avatar found");
+        }
+
+        const sqlUpdate = "UPDATE clubs SET coverPhoto = ? WHERE clubId = ?";
+        const params = [normalizedPath, clubId];
+
+        db.run(sqlUpdate, params, function (err) {
+          if (err) {
+            console.error("Error updating user:", err.message);
+            return { message: "Database error" };
+          }
+          return true;
+        });
+      });
+    } else {
+      // No old avatar, just update the avatar path
+      const sqlUpdate = "UPDATE clubs SET coverPhoto = ? WHERE clubId = ?";
+      const params = [normalizedPath, clubId];
 
       db.run(sqlUpdate, params, function (err) {
         if (err) {
@@ -592,9 +710,8 @@ function getRandomString(length) {
 
 function getRandomEmail() {
   const domains = ["example.com", "mail.com", "test.com"];
-  return `${getRandomString(5)}@${
-    domains[Math.floor(Math.random() * domains.length)]
-  }`;
+  return `${getRandomString(5)}@${domains[Math.floor(Math.random() * domains.length)]
+    }`;
 }
 
 function getRandomGrade() {
@@ -746,6 +863,7 @@ module.exports = {
   getAllTeachersOrStudents,
   getAllTeachersOrStudentsPagination,
   getUserInfo,
+  getUser,
   getAllClubs,
   getClubInfo,
   getUnapprovedClubs,
@@ -758,12 +876,17 @@ module.exports = {
   removeClubFromUser,
   assignClub,
   uploadAvatar,
+  uploadCover,
   deleteAllStudentClubs,
   createRandomClubs,
   createRandomGuys,
   deleteAllStudents,
   getTotalUsersCount,
   deleteAllClubs,
-  getStudentsInClub,
+  getTeachersOrStudentsInClub,
+  submitAttendance,
+  checkAttendance,
+  assignClubToStudent,
+
   // Export other database functions here
 };

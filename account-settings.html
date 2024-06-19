@@ -25,9 +25,6 @@
                 <li>
                     <a href="create-club.html"><span uk-icon="plus"></span>Create Club</a>
                 </li>
-                <li>
-                    <a href="#"><span uk-icon="users"></span>Co-Sponsor</a>
-                </li>
                 <li class="uk-active">
                     <a href="account-settings.html"><span uk-icon="cog"></span>Account Settings</a>
                 </li>
@@ -63,7 +60,8 @@
 
                             </div>
                             <button type="submit" class="uk-button uk-button-primary">Upload</button>
-                            <p id="selected-confirmation" class="hidden"><span class="green" uk-icon="check"></span>File Selected!</p>
+                            <p id="selected-confirmation" class="hidden"><span class="green" uk-icon="check"></span>File
+                                Selected!</p>
                         </div>
                     </div>
                 </form>
@@ -90,11 +88,11 @@
                     console.log(result)
                     if (result.body === "Success") {
                         UIkit.notification({
-      message: "Avatar Successfully Updated!",
-      status: "success",
-      pos: "top-center",
-      timeout: 5000,
-    });
+                            message: "Avatar Successfully Updated!",
+                            status: "success",
+                            pos: "top-center",
+                            timeout: 5000,
+                        });
                         document.getElementById('upload-avatar').src = result.avatarPath;
                     }
                 });

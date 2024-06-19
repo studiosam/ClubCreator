@@ -41,16 +41,22 @@ async function getStudentDashboard() {
         <p><strong class="red">You must select exactly 5 choices.</strong></p>`
 
         clubs.forEach((club) => {
-            allClubs.innerHTML += `<div class="club-choice"><input id="${club.clubId}-${club.clubName}" class="club-input" type="checkbox"><a href="http://127.0.0.1:3000/club-info/${club.clubId}" class="uk-link-text">
+            allClubs.innerHTML += `<div id="student-club-wrapper"><div class="club-choice"><input id="${club.clubId}-${club.clubName}" class="club-input" type="checkbox">
+            <div id="${club.clubId}student-club-cover" class="student-club-cover" style="background-image : url('${club.coverPhoto}')"></div><a href="http://127.0.0.1:3000/club-info/${club.clubId}" class="uk-link-text">
         <div class="club">
           <p class="uk-card-title roboto">${club.clubName}</p>
           </div>
           <p id="${club.clubId}club-description">${club.clubDescription}</p>
-        </div></a><hr>
+          
+        </div></a>
+        
+        </div>
+        <hr>
         `;
         })
         document.querySelector('#card-footer').innerHTML = `<div class="text-center"><button id="submit" class="uk-button uk-button-primary">Submitch</button></div>`
         document.querySelector('#submit').addEventListener('click', async () => {
+
             const checkedClubs = document.querySelectorAll('.club-input:checked');
             if (checkedClubs.length > 5) {
                 UIkit.notification({
@@ -68,17 +74,19 @@ async function getStudentDashboard() {
                 });
             }
             else {
+
                 document.querySelector('#status').style.display = "none"
                 document.querySelector('#status-message').innerHTML = ""
                 console.log(checkedClubs);
                 const clubIds = [];
+
                 checkedClubs.forEach((club) => {
+
                     clubIds.push({
                         clubId: club.id.split('-')[0],
                         clubName: club.id.split('-')[1],
-                        clubDescription: document.getElementById(`${club.id.split('-')[0]}club-description`).innerHTML
+                        clubDescription: document.getElementById(`${club.id.split('-')[0]}club-description`).innerHTML,
                     })
-
                 })
                 selectedClubList(clubIds)
             }
@@ -88,6 +96,7 @@ async function getStudentDashboard() {
 }
 
 function selectedClubList(clubs) {
+    console.log(clubs)
     document.querySelector('#card-footer').innerHTML = `<div class="text-center"><button id="submit-selections" class="uk-button uk-button-primary">Submitch</button></div>`
     const allClubs = document.querySelector("#my-club");
     allClubs.innerHTML = "";
@@ -95,11 +104,14 @@ function selectedClubList(clubs) {
         <p><strong class="red">Put your favorite club at the top.</strong></p>`
     clubs.forEach((club) => {
         allClubs.innerHTML += `<div id="${club.clubId}" class="uk-sortable-handle uk-flex"><span style="margin-top: 9px" class="uk-margin-small-right uk-text-center" uk-icon="icon: table"></span><a href="http://127.0.0.1:3000/club-info/${club.clubId}" class="uk-link-text">
-    
+        <div id="student-club-wrapper">   
+        <div id="student-club-cover" style="background-image : url('${club.coverPhoto}')"></div>
           <p class="uk-card-title roboto">${club.clubName}</p>
           <p>${club.clubDescription}</p>
             
-        </a><hr>
+        </a>
+        </div>
+        <hr>
         </div>`;
     })
     document.querySelector('#submit-selections').addEventListener('click', async () => {

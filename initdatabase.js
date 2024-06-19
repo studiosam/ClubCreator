@@ -28,10 +28,10 @@ function initializeDatabase() {
                 minSlots11 INTEGER,
                 minSlots12 INTEGER,
                 maxSlots INTEGER,
-                location TEXT,
+                room TEXT,
                 requiredCoSponsors INTEGER NOT NULL,
-                currentCoSponsors INTEGER DEFAULT 0,
                 isApproved BOOLEAN DEFAULT FALSE,
+                coverPhoto TEXT,
                 FOREIGN KEY (primaryTeacherId) REFERENCES users (userId)
             );
         `);
@@ -52,6 +52,15 @@ function initializeDatabase() {
                 isAdmin BOOLEAN DEFAULT FALSE,
                 clubPreferences TEXT, 
                 FOREIGN KEY (clubId) REFERENCES clubs (clubId)
+            );
+        `);
+    db.run(`
+            CREATE TABLE IF NOT EXISTS attendance (
+                clubId INTEGER,
+                date TEXT,
+                studentsPresent TEXT,
+                studentsAbsent TEXT,
+                UNIQUE(clubId, date)
             );
         `);
   });

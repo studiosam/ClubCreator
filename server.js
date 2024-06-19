@@ -64,6 +64,7 @@ app.get("/getAllStudentsPagination", async (req, res) => {
 });
 
 app.get("/getAllUsers", async (req, res) => {
+
   let isTeacher = req.query.isTeacher || false;
   try {
     const users = await db.getAllTeachersOrStudents(isTeacher);
@@ -73,6 +74,12 @@ app.get("/getAllUsers", async (req, res) => {
     console.error("Error: ", err);
     res.status(500).send("Error fetching Users");
   }
+});
+
+app.get("/get-cosponsors/:club", async (req, res) => {
+  const club = req.params.club;
+  const cosponsors = await db.getTeachersOrStudentsInClub(club.clubId, true)
+  res.send({ "cosponsors": cosponsors });
 });
 
 // API endpoint to get the list of clubs
@@ -110,7 +117,7 @@ app.get("/club-info/:club", async (req, res) => {
     const getAllStudents = await db.getAllUsers();
 
     const getClubStudents = getAllStudents.filter(
-      (user) => user.clubId === clubId
+      (user) => user.clubId === clubId && !user.isTeacher
     );
 
     res.send({ clubInfo: clubInfo, clubStudents: getClubStudents });
@@ -128,12 +135,43 @@ app.get("/users/delete/:id", async (req, res) => {
   }
 });
 
-app.get("/users/update/:id/:club", async (req, res) => {
-  let userId = req.params.id;
+app.get("/users/update/:user/:club", async (req, res) => {
+  let userId = req.params.user;
   let clubId = req.params.club;
-  const added = await db.assignClub(userId, clubId, true);
+  const club = await db.getClubInfo(clubId);
+  const user = await db.getUser(userId);
+  let oldClub;
+  if (user.clubId) {
+    oldClub = await db.getClubInfo(user.clubId);
+  }
+  const added = await db.assignClub(userId, clubId, user.isTeacher);
+  console.log(club)
+
+
   if (added) {
-    console.log(`Club ${clubId} added to user ${userId}`);
+    console.log(`Club ${clubId} added to user ${user.userId}`);
+    console.log(user.isTeacher);
+    const currentCoSponsors = await db.getTeachersOrStudentsInClub(club.clubId, user.isTeacher);
+    console.log(currentCoSponsors);
+    const numCurrentCoSponsors = currentCoSponsors.length
+    const requiredCoSponsors = club.coSponsorsNeeded - numCurrentCoSponsors
+    await db.updateClubValue(clubId, "requiredCoSponsors", requiredCoSponsors);
+    if (oldClub) {
+      const oldClubCurrentSponsors = await db.getTeachersOrStudentsInClub(oldClub.clubId, user.isTeacher);
+      const oldClubRequiredCoSponsors = oldClub.coSponsorsNeeded - oldClubCurrentSponsors
+      await db.updateClubValue(oldClub.clubId, "requiredCoSponsors", oldClubRequiredCoSponsors);
+    }
+    res.send({ body: "Success" });
+  }
+});
+app.get("/users/updateStudentClub/:user/:club", async (req, res) => {
+  let userId = req.params.user;
+  let clubId = req.params.club;
+
+  const added = await db.assignClubToStudent(userId, clubId);
+
+  if (added) {
+    console.log(`Club ${clubId} added to user ${userId.userId}`);
     res.send({ body: "Success" });
   }
 });
@@ -205,6 +243,35 @@ app.post("/updateClub", async (req, res) => {
     res.send("Error");
   }
 });
+
+app.post("/submit-attendance", async (req, res) => {
+  const { presentStudents,
+    absentStudents,
+    clubId,
+    date
+  } = req.body
+  const success = await db.submitAttendance(presentStudents, absentStudents, clubId, date);
+  if (success) {
+    res.send({ body: "Success" });
+  } else {
+    res.send({ body: "Error" });
+  }
+});
+
+app.get("/check-attendance/:club/:date", async (req, res) => {
+  const clubId = req.params.club;
+
+  const date = req.params.date;
+
+  const students = await db.checkAttendance(clubId, date);
+
+  if (students) {
+    res.send({ body: "Success", students: students });
+  } else {
+    res.send({ body: "Error" });
+  }
+});
+
 app.post("/updateUser", async (req, res) => {
   const changeData = req.body;
   const updateUser = await db.updateUser(changeData);
@@ -383,6 +450,18 @@ app.post("/upload-avatar", upload.single("avatar"), async (req, res) => {
   const user = parseInt(req.body.userId);
 
   const avatar = await db.uploadAvatar(user, newAvatarPath);
+  if (avatar) {
+    res.send({ body: "Success", avatarPath: newAvatarPath });
+  } else {
+    res.send({ body: "Error" });
+  }
+});
+
+app.post("/upload-cover-photo", upload.single("cover"), async (req, res) => {
+  const newAvatarPath = req.file.path;
+  const club = parseInt(req.body.clubId);
+
+  const avatar = await db.uploadCover(club, newAvatarPath);
   if (avatar) {
     res.send({ body: "Success", avatarPath: newAvatarPath });
   } else {

@@ -26,9 +26,7 @@
         <li>
           <a href="create-club.html"><span uk-icon="plus"></span>Create Club</a>
         </li>
-        <li>
-          <a href="#"><span uk-icon="users"></span>Co-Sponsor</a>
-        </li>
+
         <li>
           <a href="account-settings.html"><span uk-icon="cog"></span>Account Settings</a>
         </li>
@@ -108,13 +106,13 @@
       </div>
       <div class="uk-container" uk-filter="target: .js-filter; animation: slide">
         <ul class="uk-subnav uk-subnav-divider notification-wrapper uk-subnav-pill">
-          <li class="uk-active" uk-filter-control="filter: .club-proposals">
+          <li uk-filter-control="filter: .club-proposals">
             <a class="text-center" href="#">
               <h2 id="clubProposals">Club Proposals</h2>
               <span class="uk-badge club-proposals-badge">1</span>
             </a>
           </li>
-          <li uk-filter-control="filter: .approved-clubs">
+          <li class="uk-active" uk-filter-control="filter: .approved-clubs">
             <a class="notification-wrapper" href="#">
               <h2 id="approvedClubs">Approved Clubs</h2>
               <span class="uk-badge approved-clubs-badge">0</span>

@@ -142,7 +142,7 @@ async function addToClub() {
   if (selectedUserIds.length > 0 && clubId) {
     try {
       const updateRequests = selectedUserIds.map((userId) =>
-        fetch(`http://127.0.0.1:3000/users/update/${userId}/${clubId}`)
+        fetch(`http://127.0.0.1:3000/users/updateStudentClub/${userId}/${clubId}`)
       );
 
       await Promise.all(updateRequests);
@@ -226,9 +226,8 @@ async function displayStudents(page, searchQuery = "") {
           <td>${student.email}</td>
           <td class="uk-text-nowrap">${student.grade || "None"}</td>
           <td class="uk-text-nowrap">${student.room || "None"}</td>
-          <td class="uk-text-nowrap uk-table-link"><a href="http://127.0.0.1:5500/club-info.html?club-id=${
-            student.clubId
-          }">${clubName}</a></td>
+          <td class="uk-text-nowrap uk-table-link"><a href="http://127.0.0.1:5500/club-info.html?club-id=${student.clubId
+        }">${clubName}</a></td>
         </tr>`;
     });
     updatePaginationInfo(page, data.total, totalPages);

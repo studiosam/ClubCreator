@@ -1,6 +1,5 @@
-
 const fetch = require("node-fetch");
-const { updateClubValue, assignClub, getStudentsInClub } = require("./database.js")
+const { updateClubValue, assignClub, getTeachersOrStudentsInClub } = require("./database.js")
 
 //get object of all user ids and preference arrays
 async function getStudents() {
@@ -22,7 +21,7 @@ async function choiceLoop(thisStudent) {
             // console.log(`This student Choice = ${thisStudentChoice}`)
             const choiceClubObject = await getClubById(thisStudentChoice);
             // console.log(`Choice Club Object = ${choiceClubObject}`)
-            const clubRoster = await getStudentsInClub(choiceClubObject.clubId);
+            const clubRoster = await getTeachersOrStudentsInClub(choiceClubObject.clubId, thisStudent.isTeacher);
             // console.log(`Choice Club Roster = ${clubRoster}`)
             const studentGrade = thisStudent.grade;
             // console.log(`Student Grade = ${studentGrade}`)
@@ -57,7 +56,7 @@ async function choiceLoopNoGrade(thisStudent) {
             const choiceClubObject = await getClubById(thisStudentChoice);
             const maxSlotsAvailable = choiceClubObject[`maxSlots`];
             // console.log(choiceClubObject);
-            const studentRoster = await getStudentsInClub(choiceClubObject.clubId);
+            const studentRoster = await getTeachersOrStudentsInClub(choiceClubObject.clubId, thisStudent.isTeacher);
             const studentsInClub = studentRoster.length;
             // console.log(gradeSlotsAvailable)
             if (studentsInClub < maxSlotsAvailable && thisStudent.clubId === null) {

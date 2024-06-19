@@ -25,9 +25,7 @@
         <li>
           <a href="create-club.html"><span uk-icon="plus"></span>Create Club</a>
         </li>
-        <li>
-          <a href="#"><span uk-icon="users"></span>Co-Sponsor</a>
-        </li>
+
         <li>
           <a href="account-settings.html"><span uk-icon="cog"></span>Account Settings</a>
         </li>
@@ -66,7 +64,7 @@
           <div>
             <div class="uk-card uk-card-default">
               <div class="uk-card-header">
-                <h3 class="uk-card-title roboto">My Clubs</h3>
+                <h3 class="uk-card-title roboto">My Club</h3>
               </div>
               <div id="my-clubs" class="uk-card-body"></div>
               <div class="uk-card-footer"></div>
@@ -88,18 +86,22 @@
         </div>
       </div>
 
+      <div class="uk-section uk-padding-remove uk-margin-medium-top">
+        <div class="uk-container uk-margin-remove">
+          <div>
+            <div class="uk-card uk-card-default">
+              <div class="uk-card-header">
+                <h3 class="uk-card-title roboto">Co-Sponsor Club</h3>
+              </div>
+              <div id="cosponsor-clubs" class="uk-card-body"></div>
+              <div class="uk-card-footer"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!--MAIN DASHBOARD PANEL END-->
 
-
-      <!--
-        ==if no club, display club sponsor options (create club or co-sponsor club)    
-    -->
-      <!-- 
-        change first and last name
-        unassign as primary sponsor from club suggestion before approval
-        apply to change clubs after approval
-        change password
-     -->
       <script src="userData.js"></script>
       <script src="./teacher.js"></script>
 </body>

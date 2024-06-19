@@ -219,7 +219,8 @@ ul {
 
 .club-choice {
   display: flex;
-  align-items: start;
+  align-items: center;
+
 }
 .club-input {
   margin-top: 10px !important;
@@ -259,4 +260,42 @@ tbody tr:hover {
 .student-attendance-card {
   background-color: #52bb81;
   color: #191f36;
+}
+
+#cover-photo {
+  height: 500px;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.cover-photo-text {
+  color: white;
+  font-size: 5rem;
+}
+.cover-card-text{
+  color: white !important;
+font-size: 2rem;
+}
+
+#cover-photo-card{
+  height: 100px;
+  background-position: center;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.student-club-cover{
+  width: 100px;
+  height: 100px;
+  background-size: cover;
+  margin-right: 25px;
+}
+
+#student-club-wrapper{
+  display: flex;
+  align-items: center;
 }
