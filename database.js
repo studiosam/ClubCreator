@@ -461,7 +461,9 @@ async function approveClub(club) {
     club,
     currentTeacher.isTeacher
   );
-
+  currentCoSponsors = currentCoSponsors.filter((teacher) => {
+    teacher.userId !== teacherId;
+  });
   const numCurrentCoSponsors = currentCoSponsors.length;
   const updatedRequiredCoSponsor =
     clubObject.requiredCoSponsors - numCurrentCoSponsors;

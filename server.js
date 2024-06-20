@@ -64,7 +64,6 @@ app.get("/getAllStudentsPagination", async (req, res) => {
 });
 
 app.get("/getAllUsers", async (req, res) => {
-
   let isTeacher = req.query.isTeacher || false;
   try {
     const users = await db.getAllTeachersOrStudents(isTeacher);
@@ -78,8 +77,8 @@ app.get("/getAllUsers", async (req, res) => {
 
 app.get("/get-cosponsors/:club", async (req, res) => {
   const club = req.params.club;
-  const cosponsors = await db.getTeachersOrStudentsInClub(club.clubId, true)
-  res.send({ "cosponsors": cosponsors });
+  const cosponsors = await db.getTeachersOrStudentsInClub(club.clubId, true);
+  res.send({ cosponsors: cosponsors });
 });
 
 // API endpoint to get the list of clubs
@@ -145,21 +144,31 @@ app.get("/users/update/:user/:club", async (req, res) => {
     oldClub = await db.getClubInfo(user.clubId);
   }
   const added = await db.assignClub(userId, clubId, user.isTeacher);
-  console.log(club)
-
+  console.log(club);
 
   if (added) {
     console.log(`Club ${clubId} added to user ${user.userId}`);
     console.log(user.isTeacher);
-    const currentCoSponsors = await db.getTeachersOrStudentsInClub(club.clubId, user.isTeacher);
-    console.log(currentCoSponsors);
-    const numCurrentCoSponsors = currentCoSponsors.length
-    const requiredCoSponsors = club.coSponsorsNeeded - numCurrentCoSponsors
+    const currentCoSponsors = await db.getTeachersOrStudentsInClub(
+      club.clubId,
+      user.isTeacher
+    );
+    // currentCoSponsors = currentCoSponsors.filter((teacher) => {teacher.userId !== primaryTeacherId})
+    const numCurrentCoSponsors = currentCoSponsors.length;
+    const requiredCoSponsors = club.coSponsorsNeeded - numCurrentCoSponsors;
     await db.updateClubValue(clubId, "requiredCoSponsors", requiredCoSponsors);
     if (oldClub) {
-      const oldClubCurrentSponsors = await db.getTeachersOrStudentsInClub(oldClub.clubId, user.isTeacher);
-      const oldClubRequiredCoSponsors = oldClub.coSponsorsNeeded - oldClubCurrentSponsors
-      await db.updateClubValue(oldClub.clubId, "requiredCoSponsors", oldClubRequiredCoSponsors);
+      const oldClubCurrentSponsors = await db.getTeachersOrStudentsInClub(
+        oldClub.clubId,
+        user.isTeacher
+      );
+      const oldClubRequiredCoSponsors =
+        oldClub.coSponsorsNeeded - oldClubCurrentSponsors;
+      await db.updateClubValue(
+        oldClub.clubId,
+        "requiredCoSponsors",
+        oldClubRequiredCoSponsors
+      );
     }
     res.send({ body: "Success" });
   }
@@ -245,12 +254,13 @@ app.post("/updateClub", async (req, res) => {
 });
 
 app.post("/submit-attendance", async (req, res) => {
-  const { presentStudents,
+  const { presentStudents, absentStudents, clubId, date } = req.body;
+  const success = await db.submitAttendance(
+    presentStudents,
     absentStudents,
     clubId,
     date
-  } = req.body
-  const success = await db.submitAttendance(presentStudents, absentStudents, clubId, date);
+  );
   if (success) {
     res.send({ body: "Success" });
   } else {
