@@ -30,7 +30,7 @@ async function checkAttendance(clubId, date) {
         return reject(err);
       }
       resolve(rows);
-      console.log("ROWS", rows);
+
     });
   });
 }
@@ -58,15 +58,14 @@ async function submitAttendance(presentStudents, absentStudents, clubId, date) {
 
 async function addClub(newClubInfo) {
   try {
-    console.log("Starting addClub function with newClubInfo:", newClubInfo);
 
-    const sqlInsert = `INSERT INTO clubs (clubName, clubDescription, coSponsorsNeeded, maxSlots, requiredCoSponsors, primaryTeacherId) VALUES (?, ?, ?, ?, ?,?)`;
+
+    const sqlInsert = `INSERT INTO clubs (clubName, clubDescription, coSponsorsNeeded, maxSlots, primaryTeacherId) VALUES (?, ?, ?, ?, ?)`;
     const insertResult = await run(sqlInsert, [
       newClubInfo.preferredClub,
       newClubInfo.preferredClubDescription,
-      parseInt(newClubInfo.coSponsorsNeeded) + 1,
-      newClubInfo.maxCapacity,
       newClubInfo.coSponsorsNeeded,
+      newClubInfo.maxCapacity,
       newClubInfo.teacherId,
     ]);
   } catch (err) {
@@ -75,7 +74,7 @@ async function addClub(newClubInfo) {
 }
 
 async function updateClub(clubChangeInfo) {
-  const {
+  let {
     clubName,
     clubDescription,
     coSponsorsNeeded,
@@ -84,12 +83,14 @@ async function updateClub(clubChangeInfo) {
     minSlots11,
     minSlots12,
     maxSlots,
-    requiredCoSponsors,
     primaryTeacherId,
     room,
     isApproved,
     clubId,
   } = clubChangeInfo;
+  if (primaryTeacherId === 'null') {
+    primaryTeacherId = null;
+  }
   const sql = `UPDATE clubs SET clubName = ?,
   clubDescription = ?,
   coSponsorsNeeded = ?,
@@ -98,7 +99,6 @@ async function updateClub(clubChangeInfo) {
   minSlots11 = ?,
   minSlots12 = ?,
   maxSlots = ?,
-  requiredCoSponsors = ?,
   primaryTeacherId = ?,
   room = ?,
   isApproved = ?  WHERE clubId = ${clubId}`;
@@ -114,7 +114,6 @@ async function updateClub(clubChangeInfo) {
         minSlots11,
         minSlots12,
         maxSlots,
-        requiredCoSponsors,
         primaryTeacherId,
         room,
         isApproved,
@@ -129,16 +128,6 @@ async function updateClub(clubChangeInfo) {
     const sqlAddId = `UPDATE users SET clubId = ? WHERE userId = ?`;
     db.run(sqlAddId, [clubId, primaryTeacherId]);
 
-    const currentTeacher = await getUser(primaryTeacherId);
-    const currentCoSponsors = await getTeachersOrStudentsInClub(
-      club,
-      currentTeacher.isTeacher
-    );
-    const numCurrentCoSponsors = currentCoSponsors.length;
-    const updatedRequiredCoSponsor =
-      club.requiredCoSponsors - numCurrentCoSponsors;
-    const sqlSponsorUpdate = `UPDATE clubs SET requiredCoSponsors = ? WHERE clubId = ?`;
-    db.run(sqlSponsorUpdate, [updatedRequiredCoSponsor, club]);
   });
   return true;
 }
@@ -154,6 +143,14 @@ async function updateClubPrefs(clubPrefsString, studentId) {
       return "Success";
     });
   });
+}
+
+async function getCoSponsors(clubId) {
+
+  const allSponsors = await getTeachersOrStudentsInClub(clubId, true);
+  const club = await getClubInfo(clubId);
+  const coSponsors = allSponsors.filter((sponsor) => sponsor.userId !== club.primaryTeacherId)
+  return coSponsors;
 }
 
 async function updateUser(userChangeInfo) {
@@ -456,20 +453,6 @@ async function approveClub(club) {
   const sqlAddId = `UPDATE users SET clubId = ? WHERE userId = ?`;
   db.run(sqlAddId, [club, teacherId]);
 
-  const currentTeacher = await getUser(teacherId);
-  const currentCoSponsors = await getTeachersOrStudentsInClub(
-    club,
-    currentTeacher.isTeacher
-  );
-  currentCoSponsors = currentCoSponsors.filter((teacher) => {
-    teacher.userId !== teacherId;
-  });
-  const numCurrentCoSponsors = currentCoSponsors.length;
-  const updatedRequiredCoSponsor =
-    clubObject.requiredCoSponsors - numCurrentCoSponsors;
-  const sqlSponsorUpdate = `UPDATE clubs SET requiredCoSponsors = ? WHERE clubId = ?`;
-  await run(sqlSponsorUpdate, [updatedRequiredCoSponsor, club]);
-
   console.log(`User with ID ${teacherId} updated with clubId ${club}`);
 }
 
@@ -510,8 +493,22 @@ async function deleteAllClubs() {
 
 // update a single club value
 async function updateClubValue(clubId, key, value) {
+  console.log(`clubId: ${clubId}, key: ${key}, value: ${value}`)
   const sql = `UPDATE clubs SET ${key} = ? WHERE clubId = ?`;
   db.run(sql, [value, clubId], function (err) {
+    if (err) {
+      return console.error(err.message);
+    }
+    console.log(`Row(s) updated: ${this.changes}`);
+  });
+}
+
+async function updateUserValue(userId, key, value) {
+  // if (value === null) {
+  //   value = null
+  // }
+  const sql = `UPDATE users SET ${key} = ? WHERE userId = ?`;
+  db.run(sql, [value, userId], function (err) {
     if (err) {
       return console.error(err.message);
     }
@@ -521,12 +518,27 @@ async function updateClubValue(clubId, key, value) {
 
 // get students with clubId
 async function getTeachersOrStudentsInClub(clubId, userType) {
+
   const users = await getAllTeachersOrStudents(userType);
-  const clubRoster = await users.filter((user) => user.clubId === clubId);
-  // console.log(clubRoster.length);
+
+  const clubRoster = await users.filter((user) => user.clubId === parseInt(clubId));
+
   return clubRoster;
 }
+async function getAllUsersInClub(clubId) {
 
+  return new Promise((resolve, reject) => {
+    const sql = `SELECT * FROM users WHERE clubId = ${clubId}`;
+    db.all(sql, (err, rows) => {
+      if (err) {
+        return reject(err);
+      } else {
+
+        return resolve(rows);
+      }
+    });
+  });
+}
 // for (let i = 333; i < 415; i++) {
 //   getTeachersOrStudentsInClub(i, true)
 // }
@@ -723,9 +735,8 @@ function getRandomString(length) {
 
 function getRandomEmail() {
   const domains = ["example.com", "mail.com", "test.com"];
-  return `${getRandomString(5)}@${
-    domains[Math.floor(Math.random() * domains.length)]
-  }`;
+  return `${getRandomString(5)}@${domains[Math.floor(Math.random() * domains.length)]
+    }`;
 }
 
 function getRandomGrade() {
@@ -812,7 +823,7 @@ function getRandomInt(min, max) {
 
 // Function to create a specified number of random clubs
 async function createRandomClubs(numberOfClubs) {
-  const sqlInsert = `INSERT INTO clubs (clubName, clubDescription, coSponsorsNeeded, minSlots9, minSlots10, minSlots11, minSlots12, maxSlots, requiredCoSponsors,primaryTeacherId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)`;
+  const sqlInsert = `INSERT INTO clubs (clubName, clubDescription, coSponsorsNeeded, minSlots9, minSlots10, minSlots11, minSlots12, maxSlots, primaryTeacherId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
   for (let i = 0; i < numberOfClubs; i++) {
     const response = await fetch(
@@ -835,7 +846,6 @@ async function createRandomClubs(numberOfClubs) {
       minSlots11: 8,
       minSlots12: 8,
       maxCapacity: maxSlots,
-      requiredCoSponsors: 0,
       primaryTeacherId: 1,
     };
 
@@ -848,7 +858,6 @@ async function createRandomClubs(numberOfClubs) {
       newClubInfo.minSlots11,
       newClubInfo.minSlots12,
       newClubInfo.maxCapacity,
-      newClubInfo.requiredCoSponsors,
       newClubInfo.primaryTeacherId,
     ]);
     const createdClub = {
@@ -874,11 +883,13 @@ module.exports = {
   closeDatabase,
   deleteUser,
   updateUser,
+  updateUserValue,
   getAllTeachersOrStudents,
   getAllTeachersOrStudentsPagination,
   getUserInfo,
   getUser,
   getAllClubs,
+  getAllUsersInClub,
   getClubInfo,
   getUnapprovedClubs,
   approveClub,
@@ -901,6 +912,6 @@ module.exports = {
   submitAttendance,
   checkAttendance,
   assignClubToStudent,
-
+  getCoSponsors,
   // Export other database functions here
 };

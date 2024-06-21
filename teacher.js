@@ -1,4 +1,6 @@
-
+const myClubs = document.querySelector("#my-clubs");
+const unApprovedClubs = document.querySelector("#unapproved-clubs");
+const coSponsorClubs = document.querySelector("#cosponsor-clubs");
 
 async function getUser() {
   if (user) {
@@ -24,34 +26,38 @@ async function getTeacherDashboard() {
   // Fetch all clubs
   const response = await fetch("http://localhost:3000/getAllClubs");
   const clubs = await response.json();
-
   // Filter clubs based on approval status and teacher ID
   const myApprovedClubs = clubs.filter(
     (obj) => obj.clubId === user.clubId && obj.isApproved === 1
   );
 
   const myUnapprovedClubs = clubs.filter(
-    (obj) => obj.primaryTeacherId === user.userId && obj.isApproved === 0
+    (obj) => obj.isApproved === 0
   );
 
   const clubsThatNeedCosponsors = [];
 
   // Use map to create an array of promises
   const promises = clubs.map(async (obj) => {
-    const response = await fetch(`http://localhost:3000/get-cosponsors/${obj.clubId}`);
-    const currentCoSponsorsArray = await response.json();
+    const response2 = await fetch(`http://localhost:3000/get-cosponsors/${obj.clubId}`);
+    const currentCoSponsorsArray = await response2.json();
     const currentCoSponsors = currentCoSponsorsArray.cosponsors.length;
 
     if (currentCoSponsors < obj.coSponsorsNeeded) {
       // Ensure we are working with plain objects
       const plainClub = { ...obj };
-      clubsThatNeedCosponsors.push(plainClub);
+      return plainClub
+
     }
-  });
+    return null;
 
-  // Await all promises to complete
-  await Promise.all(promises);
-
+  })
+  const results = await Promise.all(promises)
+  results.forEach((result) => {
+    if (result != null) {
+      clubsThatNeedCosponsors.push(result)
+    }
+  })
   // Update the DOM elements
   document.querySelector("#current-clubs").innerHTML =
     myApprovedClubs.length || 0;
@@ -59,9 +65,7 @@ async function getTeacherDashboard() {
     myUnapprovedClubs.length || 0;
 
   // Select the DOM elements for updates
-  const myClubs = document.querySelector("#my-clubs");
-  const unApprovedClubs = document.querySelector("#unapproved-clubs");
-  const coSponsorClubs = document.querySelector("#cosponsor-clubs");
+
 
   // Clear existing content
   myClubs.innerHTML = '';
@@ -70,34 +74,67 @@ async function getTeacherDashboard() {
 
   // Populate unapproved clubs
   myUnapprovedClubs.forEach((club) => {
-    unApprovedClubs.innerHTML += `<a href="http://127.0.0.1:3000/club-info/${club.clubId}" class="uk-link-text">
+    let coverPhotoUrl = `https://ui-avatars.com/api/?name=${club.clubName}&background=0D8ABC&color=fff`;
+    if (club.coverPhoto) {
+      coverPhotoUrl = `${club.coverPhoto}`;
+    }
+    unApprovedClubs.innerHTML += `<div class="co-sponser-wrapper">
+    <img width="150px" src="${coverPhotoUrl || ""}">
+    <a href="http://127.0.0.1:3000/club-info/${club.clubId}" class="uk-link-text">
     <div class="club">
       <p class="uk-card-title roboto">${club.clubName}</p>
       <p>${club.clubDescription}</p>
-    </div></a><hr>`;
+    </div></a></div><hr>`;
   });
 
   // Populate approved clubs
   myApprovedClubs.forEach((club) => {
-    myClubs.innerHTML += `<a href="http://127.0.0.1:3000/club-info/${club.clubId}" class="uk-link-text">
+    let coverPhotoUrl = `https://ui-avatars.com/api/?name=${club.clubName}&background=0D8ABC&color=fff`;
+    if (club.coverPhoto) {
+      coverPhotoUrl = `${club.coverPhoto}`;
+    }
+    myClubs.innerHTML += `<div class="co-sponser-wrapper">
+    <img width="150px" src="${coverPhotoUrl || ""}">
+    <a href="http://127.0.0.1:3000/club-info/${club.clubId}" class="uk-link-text">
     <div class="club">
       <p class="uk-card-title roboto">${club.clubName}</p>
       <p>${club.clubDescription}</p>
-    </div></a><hr>`;
+    </div></a></div><hr>`;
   });
-
-  // Populate clubs that need co-sponsors
-  clubsThatNeedCosponsors.forEach((club) => {
-    if (club.requiredCoSponsors > 0 && club.isApproved === 1) {
-      coSponsorClubs.innerHTML += `<a href="http://127.0.0.1:3000/club-info/${club.clubId}" class="uk-link-text">
-      <div class="club">
-        <p class="uk-card-title roboto">${club.clubName}</p>
-        <p>${club.clubDescription}</p>
-        <button onclick="addToClub(${club.clubId})" id="${club.clubId}">Co-Sponsor Club</button>
-      </div></a><hr>`;
-    }
-  });
+  displayClubsThatNeedCosponsors(clubsThatNeedCosponsors)
 }
+
+async function displayClubsThatNeedCosponsors(clubsThatNeedCosponsors) {
+  // Populate clubs that need co-sponsors
+  for (const club of clubsThatNeedCosponsors) {
+    if (club.clubId !== user.clubId) {
+      const response = await fetch(`http://localhost:3000/get-cosponsors/${club.clubId}`);
+      const coSponsors = await response.json();
+      console.log('coSponsors', coSponsors)
+      const numCoSponsors = coSponsors.cosponsors.length;
+      console.log('numCoSponsors', numCoSponsors)
+      const requiresCoSponsor = (club.coSponsorsNeeded - numCoSponsors) > 0
+      console.log('requiresCoSponsor', requiresCoSponsor)
+      if (requiresCoSponsor && club.isApproved === 1) {
+        let coverPhotoUrl = `https://ui-avatars.com/api/?name=${club.clubName}&background=0D8ABC&color=fff`;
+        if (club.coverPhoto) {
+          coverPhotoUrl = `${club.coverPhoto}`;
+        }
+        coSponsorClubs.innerHTML += `<div class="co-sponser-wrapper">
+        <img width="150px" src="${coverPhotoUrl || ""}">
+        <a href="http://127.0.0.1:3000/club-info/${club.clubId}" class="uk-link-text">
+        
+        <div class="club">
+        
+          <p class="uk-card-title roboto">${club.clubName}</p>
+          <p>${club.clubDescription}</p>
+          <button class="uk-button uk-button-primary" onclick="addToClub(${club.clubId})" id="${club.clubId}">Co-Sponsor Club</button>
+        </div></a></div><hr>`;
+      }
+    }
+  }
+}
+
 
 async function addToClub(clubId) {
   const response = fetch(`http://127.0.0.1:3000/users/update/${user.userId}/${clubId}`);

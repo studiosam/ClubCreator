@@ -56,6 +56,8 @@ async function createAccount() {
   const responseStatus = await response.json();
   console.log(responseStatus.body);
   if (responseStatus.body === "true") {
+    successMessage.classList.remove("uk-alert-danger");
+    successMessage.classList.add("uk-alert-primary");
     successMessageBox.style.display = "block";
     successMessage.innerHTML = `<div class="text-center"><p> ${responseStatus.user.email} 
         Account created successfully.
@@ -63,7 +65,14 @@ async function createAccount() {
         <a href="./index.html"><button class="uk-button uk-button-primary">Click here to log in</button></a>
         </div>`;
     form.remove();
-  } else {
+  } else if (responseStatus.body === "User already exists") {
+    successMessageBox.style.display = "block";
+    successMessage.classList.remove("uk-alert-primary");
+    successMessage.classList.add("uk-alert-danger");
+    successMessage.innerHTML = `<div class="text-center"><p>ERROR: User already exists!
+        </p>
+        <a href="./index.html"><button class="uk-button uk-button-primary">Click here to log in</button></a>
+        </div>`;
     console.log("failed login"); // handle failed login on screen
   }
 }

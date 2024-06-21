@@ -299,3 +299,16 @@ font-size: 2rem;
   display: flex;
   align-items: center;
 }
+
+.red-boarder {
+  border: 5px solid red;
+}
+
+/* .club {
+  display: flex;
+  flex-direction: column;
+} */
+.co-sponser-wrapper{
+  display: flex;
+gap: 15px
+}

@@ -23,16 +23,14 @@ function initializeDatabase() {
                 clubDescription TEXT,
                 primaryTeacherId INTEGER,
                 coSponsorsNeeded INTEGER,
-                minSlots9 INTEGER,
-                minSlots10 INTEGER,
-                minSlots11 INTEGER,
-                minSlots12 INTEGER,
+                minSlots9 INTEGER DEFAULT 0,
+                minSlots10 INTEGER DEFAULT 0,
+                minSlots11 INTEGER DEFAULT 0,
+                minSlots12 INTEGER DEFAULT 0,
                 maxSlots INTEGER,
                 room TEXT,
-                requiredCoSponsors INTEGER NOT NULL,
                 isApproved BOOLEAN DEFAULT FALSE,
-                coverPhoto TEXT,
-                FOREIGN KEY (primaryTeacherId) REFERENCES users (userId)
+                coverPhoto TEXT
             );
         `);
 
@@ -50,8 +48,7 @@ function initializeDatabase() {
                 password TEXT,
                 isTeacher BOOLEAN,
                 isAdmin BOOLEAN DEFAULT FALSE,
-                clubPreferences TEXT, 
-                FOREIGN KEY (clubId) REFERENCES clubs (clubId)
+                clubPreferences TEXT
             );
         `);
     db.run(`

@@ -31,10 +31,14 @@ async function choiceLoop(thisStudent) {
             // console.log(`Slots available in this club for that grade = ${gradeSlotsAvailable}`)
             const studentsInSameGrade = clubRoster.filter((student) => student.grade === thisStudent.grade).length;
             // console.log(`Students in same grade in this club = ${studentsInSameGrade}`)
-
-
+            const maxSlotsAvailable = choiceClubObject[`maxSlots`];
+            // console.log(choiceClubObject);
+            const studentRoster = await getTeachersOrStudentsInClub(choiceClubObject.clubId, thisStudent.isTeacher);
+            const studentsInClub = studentRoster.length;
+            const allMinSlotsFilled = (choiceClubObject.minSlots9 == 0 && choiceClubObject.minSlots10 == 0 && choiceClubObject.minSlots11 == 0 && choiceClubObject.minSlots12 == 0)
+            // ** CHECK IF ALL GRADE SLOTS ARE SATISFIED AND IF SO THEN LET THEM IN IF THERE ARE SLOTS ******
             // console.log(gradeSlotsAvailable)
-            if (studentsInSameGrade < gradeSlotsAvailable && thisStudent.clubId === null) {
+            if ((studentsInSameGrade < gradeSlotsAvailable || allMinSlotsFilled) && maxSlotsAvailable - studentsInClub > 0 && thisStudent.clubId === null) {
                 await assignClub(thisStudent, choiceClubObject.clubId);
                 //recalculate minSlots per grade level
                 return true

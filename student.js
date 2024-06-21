@@ -18,9 +18,28 @@ async function getStudentDashboard() {
     const response = await fetch("http://localhost:3000/getAllClubs");
     const respClubs = await response.json();
 
-    const clubs = await respClubs.filter(
-        (obj) => obj[`minSlots${user.grade}`] > 0
+    const clubStudentCounts = await Promise.all(
+        respClubs.map(async (club) => {
+            const response = await fetch(`http://localhost:3000/get-students-in-club/${club.clubId}`);
+            const studentCount = await response.json();
+            return { ...club, studentCount };
+        })
     );
+
+    // Filter the clubs based on the specified conditions
+    const clubs = clubStudentCounts.filter((club) => {
+
+        const minSlotsGrade = club[`minSlots${user.grade}`];
+
+        const totalMinSlots = club.minSlots9 + club.minSlots10 + club.minSlots11 + club.minSlots12;
+
+        console.log(club.maxSlots)
+
+        const hasAvailableSlots = (club.studentCount.students.length < club.maxSlots)
+        console.log(hasAvailableSlots)
+        return minSlotsGrade > 0 || (totalMinSlots === 0 && hasAvailableSlots);
+    });
+    console.log(clubStudentCounts)
     const myAssignedClub = await clubs.filter(
         (obj) => obj.clubId === user.clubId
     );

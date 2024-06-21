@@ -23,6 +23,7 @@ async function getClubInfo() {
       <td>${json.clubInfo.room || "None"}</td>
   </tr>`
   if ((user.clubId === json.clubInfo.clubId && user.isTeacher) || user.isAdmin) {
+
     const photoUpload = document.querySelector("#cover-photo-upload");
     photoUpload.innerHTML = `<form id="uploadForm" enctype="multipart/form-data">
                     <div class="uk-margin uk-flex uk-flex-column" uk-margin>
@@ -46,7 +47,9 @@ async function getClubInfo() {
     const date = await getCurrentDate()
     const response = await fetch(`http://127.0.0.1:3000/check-attendance/${json.clubInfo.clubId}/${date}`)
     const attendance = await response.json()
-    if (attendance.length > 0) {
+
+    if (attendance.students.length > 0) {
+
       const studentsPresent = attendance.students[0].studentsPresent
       const studentsPresentArray = studentsPresent.split(',')
 
@@ -61,7 +64,9 @@ async function getClubInfo() {
       <td>${json.clubStudents.length}</td>
   </tr>
   `;
+
       json.clubStudents.forEach((student) => {
+        console.log(student)
         document.querySelector("#club-students").innerHTML += `<div>
         <div id="${student.userId}" class="uk-card uk-card-default uk-card-body student" uk-toggle="target: #${student.userId}; cls: student-attendance-card; animation: uk-animation-fade"><p>${student.firstName} ${student.lastName}</p></div>`;
       });
@@ -70,14 +75,29 @@ async function getClubInfo() {
           document.getElementById(`${student}`).classList.add('student-attendance-card')
         })
       }
+    } else {
+      document.querySelector('#students-title').innerHTML = 'Students'
+      attendancebutton.innerHTML = `<button onclick="submitAttendace(${json.clubInfo.clubId})" class="uk-button uk-button-primary uk-margin-medium-top">Submit Attendance</button>`
+      json.clubStudents.forEach((student) => {
+        console.log(student)
+        document.querySelector("#club-students").innerHTML += `<div>
+        <div id="${student.userId}" class="uk-card uk-card-default uk-card-body student" uk-toggle="target: #${student.userId}; cls: student-attendance-card; animation: uk-animation-fade"><p>${student.firstName} ${student.lastName}</p></div>`;
+      });
+      if (studentsPresent.length > 0) {
+        studentsPresentArray.forEach((student) => {
+          document.getElementById(`${student}`).classList.add('student-attendance-card')
+        })
+      }
+
     }
   }
-
-  document.querySelector("#cover-input").addEventListener('input', () => {
-    if (document.querySelector("#cover-input").value) {
-      document.querySelector('#selected-confirmation').classList.remove('hidden')
-    }
-  })
+  if (document.querySelector("#cover-input")) {
+    document.querySelector("#cover-input").addEventListener('input', () => {
+      if (document.querySelector("#cover-input").value) {
+        document.querySelector('#selected-confirmation').classList.remove('hidden')
+      }
+    })
+  }
   document.getElementById('uploadForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
