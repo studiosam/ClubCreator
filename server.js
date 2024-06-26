@@ -8,7 +8,22 @@ const app = express();
 const bcrypt = require("bcrypt");
 const multer = require("multer");
 const PORT = 3000;
-
+const storage = multer.diskStorage({
+  destination: async (req, file, cb) => {
+    try {
+      await fs.access("uploads/");
+    } catch (err) {
+      if (err.code === "ENOENT") {
+        await fs.mkdir("uploads/", { recursive: true });
+      }
+    }
+    cb(null, "uploads/");
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname)); // Append the extension
+  },
+});
+const upload = multer({ storage: storage });
 // Middleware to parse URL-encoded bodies (as sent by HTML forms)
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -226,7 +241,7 @@ app.post("/deleteClub", async (req, res) => {
 
 app.post("/approveClub", async (req, res) => {
   const clubInfo = req.body;
-  //console.log(clubInfo);
+
   await db.approveClub(clubInfo.clubId);
 
   res.send({ body: "Success", clubInfo });
@@ -234,6 +249,12 @@ app.post("/approveClub", async (req, res) => {
 
 app.post("/updateClub", async (req, res) => {
   const changeData = req.body;
+  if (changeData.addedCoSponsor) {
+    await db.updateUserValue(parseInt(changeData.addedCoSponsor), 'clubId', changeData.clubId)
+  }
+  if (changeData.removedCoSponsor) {
+    await db.updateUserValue(parseInt(changeData.removedCoSponsor), 'clubId', null)
+  }
   const clubInfo = await db.getClubInfo(changeData.clubId);
   const teacherIdToNull = clubInfo.primaryTeacherId;
   await db.removeClubFromUser(teacherIdToNull);
@@ -292,17 +313,18 @@ app.post("/updateUser", async (req, res) => {
 app.post("/setClubPrefs", async (req, res) => {
   const clubPrefs = req.body.clubOrder;
   const studentId = req.body.student;
-
   const updateUser = await db.updateClubPrefs(clubPrefs, studentId);
   //console.log(updateUser)
   res.send({ body: "Success", updatedUserData: updateUser });
 });
 
 // POST route to handle form submission from clubCreation.html
-app.post("/addClub", async (req, res) => {
+app.post("/addClub", upload.single("cover"), async (req, res) => {
   console.log("Received POST request to /addClub");
   const clubInfo = req.body;
-  //console.log(clubInfo);
+  const coverPath = req.file ? req.file.path : "NULL";
+  clubInfo.cover = coverPath
+  console.log(clubInfo);
   try {
     await db.addClub(clubInfo);
   } catch (err) {
@@ -320,7 +342,7 @@ app.post("/addAccount", async (req, res) => {
   userInfo.firstName = await capitalizeName(userInfo.firstName);
   userInfo.lastName = await capitalizeName(userInfo.lastName);
   userInfo.password = await encryptPassword(userInfo.password);
-
+  userInfo.email = userInfo.email.toLowerCase().trim()
   userInfo.isTeacher = userInfo.isTeacher == "true";
 
   const userCheckData = await db.checkUser(userInfo.email);
@@ -435,22 +457,7 @@ async function capitalizeName(name) {
   return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
 }
 
-const storage = multer.diskStorage({
-  destination: async (req, file, cb) => {
-    try {
-      await fs.access("uploads/");
-    } catch (err) {
-      if (err.code === "ENOENT") {
-        await fs.mkdir("uploads/", { recursive: true });
-      }
-    }
-    cb(null, "uploads/");
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname)); // Append the extension
-  },
-});
-const upload = multer({ storage: storage });
+
 
 app.post("/upload-avatar", upload.single("avatar"), async (req, res) => {
   const newAvatarPath = req.file.path;

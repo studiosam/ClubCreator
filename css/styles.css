@@ -304,11 +304,36 @@ font-size: 2rem;
   border: 5px solid red;
 }
 
-/* .club {
-  display: flex;
-  flex-direction: column;
-} */
+.club {
+padding-left: 15px;
+min-width: 675px !important;
+}
+
 .co-sponser-wrapper{
-  display: flex;
+display: flex;
 gap: 15px
 }
+
+.club-thumbnail {
+height: 150px;
+min-width: 150px;
+background-position: center;
+background-size: cover;
+}
+
+.co-sponsor-list{
+  list-style: none;
+}
+
+#cover-photo-upload{
+text-align: end;
+}
+
+#cover-photo-up{
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 15px;
+}
+

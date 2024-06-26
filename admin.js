@@ -155,18 +155,16 @@ async function getAllApprovedClubs() {
             teacherLastName = teacherInfo.lastName;
 
           }
-
-
-
-
-
           const response = await fetch(
             `http://localhost:3000/get-cosponsors/${club.clubId}`
           );
           const coSponsors = await response.json();
-          console.log('coSponsors', coSponsors)
+
           const currentCoSponsors = coSponsors.cosponsors.length;
-          console.log('currentCoSponsors', currentCoSponsors)
+          const coSponsorsStillNeeded = club.coSponsorsNeeded - currentCoSponsors
+          if (coSponsorsStillNeeded < 0) {
+            isPrimaryId = 'red-boarder'
+          }
           approvedClubList.innerHTML += `<form class="approved-clubs uk-width-1-2@m" id="form${club.clubId
             }"><div id="club-${club.clubId}" class="uk-card ${isPrimaryId}">
     <div id="${club.clubId
@@ -189,6 +187,16 @@ async function getAllApprovedClubs() {
              <strong>${teacherFirstName || 'Select'} ${teacherLastName || "Teacher"}</strong>
              <button type="button" onclick="changeTeacher(${club.clubId
             })" class="change">Change</button>
+            </div>
+            <div id="coSponsorsBlock${club.clubId}" class="maxSlots">
+            <span>Current Co-Sponsors: </span>
+            <ul class="uk-list co-sponsor-list" id="currentCosponsors${club.clubId}"></ul>
+                        
+            </div>
+      <div id="addCoSponsor${club.clubId}" class="maxSlots uk-margin">
+      <span>Add Co-Sponsor: </span>
+             <button type="button" onclick="addCosponsor(${club.clubId
+            })" class="change">Add</button>
             </div>
         
         <input id="hiddenTeacherId${club.clubId
@@ -232,7 +240,7 @@ async function getAllApprovedClubs() {
     </div>
       <div class="coSponsors">
       <span>Still Needed: </span><p id = "clubId${club.clubId
-            }-coSponsorsRequired" class = "">${club.coSponsorsNeeded - currentCoSponsors
+            }-coSponsorsRequired" class ="">${coSponsorsStillNeeded
             }</p>
       </div>
     </div>
@@ -257,6 +265,15 @@ async function getAllApprovedClubs() {
         </div>
         </div></form>
         `;
+
+          if (coSponsors.cosponsors.length > 0) {
+            coSponsors.cosponsors.forEach((cosponsor) => {
+              document.getElementById(`currentCosponsors${club.clubId}`).innerHTML += `<li>${cosponsor.firstName} ${cosponsor.lastName}</li>`
+            })
+            document.getElementById(`coSponsorsBlock${club.clubId}`).innerHTML += `<button type="button" onclick="removeCoSponsor(${club.clubId}, ${club.primaryTeacherId}
+              )" class="change">Remove</button>`
+          }
+
         })
       );
       // console.log("ready");
@@ -312,6 +329,44 @@ async function changeTeacher(club) {
   teachers.forEach((teacher) => {
     document.getElementById(
       `teacherDrop${club}`
+    ).innerHTML += `<option value="${teacher.userId}">${teacher.userId} - ${teacher.firstName} ${teacher.lastName}</option>`;
+  });
+}
+async function addCosponsor(club, teacher) {
+  const list = document.getElementById(`addCoSponsor${club}`)
+  const getTeachers = await fetch(
+    "http://localhost:3000/getAllUsers?isTeacher=true"
+  );
+  teachers = await getTeachers.json();
+
+  teachers = teachers.filter((teacher) => teacher.clubId === null)
+
+  list.innerHTML = `<span>Co Sponsor</span> <div class="uk-margin">
+  <select id="coSponsorDrop${club}" name="addedCoSponsor" class="primaryTeacher uk-select uk-form-width-medium" aria-label="Select">
+  </select>`;
+
+  teachers.forEach((teacher) => {
+    document.getElementById(
+      `coSponsorDrop${club}`
+    ).innerHTML += `<option value="${teacher.userId}">${teacher.userId} - ${teacher.firstName} ${teacher.lastName}</option>`;
+  });
+}
+async function removeCoSponsor(club, primeTeacher) {
+  const list = document.getElementById(`currentCosponsors${club}`)
+  const getTeachers = await fetch(
+    "http://localhost:3000/getAllUsers?isTeacher=true"
+  );
+  teachers = await getTeachers.json();
+
+  teachers = teachers.filter((teacher) => teacher.clubId === club && teacher.userId !== primeTeacher)
+
+  list.innerHTML = `<span>Co Sponsor</span> <div class="uk-margin">
+  <select id="coSponsorDrop${club}" name="removedCoSponsor" class="primaryTeacher uk-select uk-form-width-medium" aria-label="Select">
+  </select>`;
+
+  teachers.forEach((teacher) => {
+    document.getElementById(
+      `coSponsorDrop${club}`
     ).innerHTML += `<option value="${teacher.userId}">${teacher.userId} - ${teacher.firstName} ${teacher.lastName}</option>`;
   });
 }

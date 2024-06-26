@@ -43,7 +43,7 @@ form.addEventListener("submit", (event) => {
 });
 
 async function createAccount() {
-  const userEmail = form.email.value;
+  const userEmail = form.email.value.toLowerCase();
   const formData = new FormData(form);
   formData.set("username", userEmail.toLowerCase().trim());
   const jsonData = new URLSearchParams(formData);

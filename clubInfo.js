@@ -12,6 +12,15 @@ async function getClubInfo() {
   const coverPhotoDisplay = document.querySelector("#cover-photo")
   coverPhotoDisplay.style.backgroundImage = `url("${json.clubInfo.coverPhoto}")`;
   const clubData = document.querySelector("#clubData");
+  json.clubStudents.sort((a, b) => {
+    if (a.lastName < b.lastName) {
+      return -1;
+    }
+    if (a.lastName > b.lastName) {
+      return 1;
+    }
+    return 0;
+  })
   clubData.innerHTML += `
 
     <tr>
@@ -28,9 +37,9 @@ async function getClubInfo() {
     photoUpload.innerHTML = `<form id="uploadForm" enctype="multipart/form-data">
                     <div class="uk-margin uk-flex uk-flex-column" uk-margin>
                         <div>
-                            <p class="text-center">Change Cover Photo</p>
+                            <button id="changeCoverPhoto" type="button" class="uk-button uk-button-secondary uk-margin-small-top">Change Cover Photo</button>
                         </div>
-                        <div id="cover-upload">
+                        <div id="cover-upload" class="hidden text-center uk-placeholder">
                              <div uk-form-custom="target: true">
 
                                 <input id="cover-input" type="file" name="cover" accept="image/*"
@@ -44,14 +53,18 @@ async function getClubInfo() {
                         </div>
                     </div>
                 </form>`;
+    document.querySelector('#changeCoverPhoto').addEventListener('click', () => {
+      document.querySelector('#cover-upload').classList.remove('hidden')
+    })
     const date = await getCurrentDate()
     const response = await fetch(`http://127.0.0.1:3000/check-attendance/${json.clubInfo.clubId}/${date}`)
     const attendance = await response.json()
-
+    let studentsPresent = []
     if (attendance.students.length > 0) {
 
-      const studentsPresent = attendance.students[0].studentsPresent
+      studentsPresent = attendance.students[0].studentsPresent
       const studentsPresentArray = studentsPresent.split(',')
+
 
 
       document.querySelector('#students-title').innerHTML = 'Students'
@@ -66,7 +79,7 @@ async function getClubInfo() {
   `;
 
       json.clubStudents.forEach((student) => {
-        console.log(student)
+
         document.querySelector("#club-students").innerHTML += `<div>
         <div id="${student.userId}" class="uk-card uk-card-default uk-card-body student" uk-toggle="target: #${student.userId}; cls: student-attendance-card; animation: uk-animation-fade"><p>${student.firstName} ${student.lastName}</p></div>`;
       });
@@ -79,7 +92,7 @@ async function getClubInfo() {
       document.querySelector('#students-title').innerHTML = 'Students'
       attendancebutton.innerHTML = `<button onclick="submitAttendace(${json.clubInfo.clubId})" class="uk-button uk-button-primary uk-margin-medium-top">Submit Attendance</button>`
       json.clubStudents.forEach((student) => {
-        console.log(student)
+
         document.querySelector("#club-students").innerHTML += `<div>
         <div id="${student.userId}" class="uk-card uk-card-default uk-card-body student" uk-toggle="target: #${student.userId}; cls: student-attendance-card; animation: uk-animation-fade"><p>${student.firstName} ${student.lastName}</p></div>`;
       });
@@ -147,6 +160,24 @@ async function submitAttendace(clubId) {
     },
     body: JSON.stringify({ presentStudents: presentStudents, absentStudents: absentStudents, clubId: clubId, date: date })
   });
+
+  const success = await response.json()
+  console.log(success)
+  if (success.body === 'Success') {
+    UIkit.notification({
+      message: 'Attendance Successfully Submitted',
+      status: 'success',
+      pos: 'bottom-right',
+      timeout: 5000
+    });
+  } else {
+    UIkit.notification({
+      message: 'Attendance Submission Failed',
+      status: 'danger',
+      pos: 'bottom-right',
+      timeout: 5000
+    });
+  }
 }
 
 async function getCurrentDate() {

@@ -75,11 +75,12 @@ async function getTeacherDashboard() {
   // Populate unapproved clubs
   myUnapprovedClubs.forEach((club) => {
     let coverPhotoUrl = `https://ui-avatars.com/api/?name=${club.clubName}&background=0D8ABC&color=fff`;
-    if (club.coverPhoto) {
+    if (club.coverPhoto !== 'NULL') {
       coverPhotoUrl = `${club.coverPhoto}`;
     }
     unApprovedClubs.innerHTML += `<div class="co-sponser-wrapper">
-    <img width="150px" src="${coverPhotoUrl || ""}">
+    <div class="club-thumbnail" style="background-image: url(&quot;${coverPhotoUrl}&quot;)">
+    </div>
     <a href="http://127.0.0.1:3000/club-info/${club.clubId}" class="uk-link-text">
     <div class="club">
       <p class="uk-card-title roboto">${club.clubName}</p>
@@ -90,11 +91,12 @@ async function getTeacherDashboard() {
   // Populate approved clubs
   myApprovedClubs.forEach((club) => {
     let coverPhotoUrl = `https://ui-avatars.com/api/?name=${club.clubName}&background=0D8ABC&color=fff`;
-    if (club.coverPhoto) {
+    if (club.coverPhoto !== 'NULL') {
       coverPhotoUrl = `${club.coverPhoto}`;
     }
     myClubs.innerHTML += `<div class="co-sponser-wrapper">
-    <img width="150px" src="${coverPhotoUrl || ""}">
+    <div class="club-thumbnail" style="background-image: url(&quot;${coverPhotoUrl}&quot;)">
+    </div>
     <a href="http://127.0.0.1:3000/club-info/${club.clubId}" class="uk-link-text">
     <div class="club">
       <p class="uk-card-title roboto">${club.clubName}</p>
@@ -121,7 +123,8 @@ async function displayClubsThatNeedCosponsors(clubsThatNeedCosponsors) {
           coverPhotoUrl = `${club.coverPhoto}`;
         }
         coSponsorClubs.innerHTML += `<div class="co-sponser-wrapper">
-        <img width="150px" src="${coverPhotoUrl || ""}">
+            <div class="club-thumbnail" style="background-image: url(&quot;${coverPhotoUrl}&quot;)">
+    </div>
         <a href="http://127.0.0.1:3000/club-info/${club.clubId}" class="uk-link-text">
         
         <div class="club">

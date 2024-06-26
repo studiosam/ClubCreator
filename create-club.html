@@ -45,24 +45,35 @@
         RBHS Club Creation Form
       </h1>
       <div class="uk-container uk-width-1-2 uk-align-center">
-        <form class="" id="clubCreation">
+        <form class="" id="clubCreation" enctype="multipart/form-data">
           <label for="preferredClub">Club you would like to host:</label>
           <input class="uk-input" type="text" id="preferredClub" name="preferredClub" required />
-          <br />
           <label for="preferredClubDescription">Brief desciption of your preferred club:</label>
           <textarea class="uk-textarea" id="preferredClubDescription" name="preferredClubDescription"
             required></textarea>
-          <br />
           <label for="coSponsorsNeeded">How many co-sponsors do you need?</label>
           <input class="uk-input" type="number" min="0" max="5" value="0" id="coSponsorsNeeded" name="coSponsorsNeeded"
             required />
-          <br />
           <label for="maxCapacity">How many students do you have equipment for?</label>
           <input class="uk-input" type="number" min="5" id="maxCapacity" name="maxCapacity" required />
-          <br />
-          <button class="uk-button uk-button-primary uk-margin-small-top" type="submit">
-            Submit
-          </button>
+          <div class="uk-placeholder" id="cover-photo-up">
+
+            <span>(Optional) Upload Cover Photo: </span>
+            <div id="cover-upload">
+              <div uk-form-custom="target: true">
+
+                <input id="cover-input" type="file" name="cover" accept="image/*" aria-label="Custom controls" />
+                <button class="uk-button uk-button-default upload-button" type="button" tabindex="-1">Select</button>
+
+              </div>
+              <button class="uk-button uk-button-primary" type="submit">
+                Submit
+              </button>
+
+            </div>
+            <p id="selected-confirmation" class="hidden"><span class="green" uk-icon="check"></span>File Selected!
+            </p>
+          </div>
         </form>
         <div id="status" class="hidden" uk-alert>
           <a href class="uk-alert-close" uk-close></a>

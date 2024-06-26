@@ -51,22 +51,28 @@ async function submitAttendance(presentStudents, absentStudents, clubId, date) {
       date,
     ]);
     console.log("Attendance submitted successfully.");
+    return true
   } catch (err) {
     console.error("Error inserting or updating attendance:", err);
+    return false;
   }
 }
 
 async function addClub(newClubInfo) {
   try {
+    const normalizedPath = path.posix
+      .normalize(newClubInfo.cover)
+      .replace(/\\/g, "/");
 
 
-    const sqlInsert = `INSERT INTO clubs (clubName, clubDescription, coSponsorsNeeded, maxSlots, primaryTeacherId) VALUES (?, ?, ?, ?, ?)`;
+    const sqlInsert = `INSERT INTO clubs (clubName, clubDescription, coSponsorsNeeded, maxSlots, primaryTeacherId, coverPhoto) VALUES (?, ?, ?, ?, ?,?)`;
     const insertResult = await run(sqlInsert, [
       newClubInfo.preferredClub,
       newClubInfo.preferredClubDescription,
       newClubInfo.coSponsorsNeeded,
       newClubInfo.maxCapacity,
       newClubInfo.teacherId,
+      normalizedPath
     ]);
   } catch (err) {
     console.error("Error in addClub function:", err.message);
@@ -347,7 +353,7 @@ async function getAllTeachersOrStudentsPagination(
                 console.log(err);
                 return reject(err);
               } else {
-                console.log(resolve({ users: rows, total: countResult.count }));
+
                 return resolve({ users: rows, total: countResult.count });
               }
             }
