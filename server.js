@@ -1,13 +1,25 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
-const fs = require("fs").promises;
 const db = require("./database.js"); // Import your database functions
 const ca = require("./clubAssignment.js");
 const app = express();
 const bcrypt = require("bcrypt");
 const multer = require("multer");
+const crypto = require("crypto");
+const nodemailer = require("nodemailer");
 const PORT = 3000;
+const fs = require('node:fs');
+const ip = require("ip");
+const serverAddress = ip.address('public')
+const content = `const serverAddress = '${serverAddress}'`
+fs.writeFile('./serverVariables.js', content, err => {
+  if (err) {
+    console.error(err);
+  } else {
+    console.log(`Server address: ${serverAddress}`)
+  }
+});
 const storage = multer.diskStorage({
   destination: async (req, file, cb) => {
     try {
@@ -144,7 +156,7 @@ app.get("/club-info/:club", async (req, res) => {
 
     res.send({ clubInfo: clubInfo, clubStudents: getClubStudents });
   } else {
-    res.redirect(`http://127.0.0.1:5500/club-info.html?club-id=${clubId}`);
+    res.redirect(`http://${serverAddress}/club-info.html?club-id=${clubId}`);
   }
 });
 
@@ -482,3 +494,65 @@ app.post("/upload-cover-photo", upload.single("cover"), async (req, res) => {
     res.send({ body: "Error" });
   }
 });
+
+
+app.post('/request-password-confirm', async (req, res) => {
+  const password = req.body.password
+  const userToken = req.body.token
+  const databaseInfo = await db.checkResetPasswordToken(userToken)
+  const databaseToken = databaseInfo.token
+  console.log(databaseInfo.token, databaseToken)
+  if (databaseInfo.token === databaseToken) {
+    console.log('MATCH')
+    const newPass = await encryptPassword(password)
+    console.log('newPass=', newPass)
+    const updateUser = await db.resetUserPassword(databaseInfo.user_id, newPass)
+    res.send({ body: "Success" });
+  }
+})
+
+
+app.post('/request-password-reset', async (req, res) => {
+
+  const email = req.body.email.toLowerCase();
+
+  const userObject = await db.getUserByEmail(email)
+  const userId = userObject.userId
+  if (userId) {
+    const token = crypto.randomBytes(20).toString('hex');
+    const expiration = new Date(Date.now() + 3600000); // 1 hour from now
+    const sendTokenToDatabase = await db.setResetPasswordToken(userId, token, expiration)
+
+    // Send email with the token
+    console.log('SEND IT PLEASE?')
+    const transporter = nodemailer.createTransport({
+      host: `gbs423.com`,
+      port: 465,
+      secure: true, // use SSL
+      auth: {
+        user: "form@gbs423.com",
+        pass: "Wafflesthedog6969!",
+      },
+    });
+
+    const mailOptions = {
+      from: 'RBHS Club Creator Password Reset <form@gbs423.com>',
+      to: email,
+      subject: 'Password Reset',
+      html: `<p>You requested a password reset. Please use the following link to reset your password:</p> <a href="${serverAddress}/reset-password.html?token=${token}">Reset Password</a>`
+    };
+
+    transporter.sendMail(mailOptions, (err, info) => {
+      console.log('SENT MAIL????')
+      if (err) throw err;
+      console.log(info);
+      res.json({ message: 'Password reset email sent!' });
+    });
+
+  }
+
+
+
+
+})
+

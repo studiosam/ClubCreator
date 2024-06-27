@@ -4,7 +4,7 @@ const attendancebutton = document.querySelector('#attendance-submission')
 
 async function getClubInfo() {
   const response = await fetch(
-    `http://127.0.0.1:3000/club-info/${clubId}?view=true`
+    `http://${serverAddress}:3000/club-info/${clubId}?view=true`
   );
   const json = await response.json();
   document.querySelector("#clubName").innerHTML = json.clubInfo.clubName;
@@ -57,7 +57,7 @@ async function getClubInfo() {
       document.querySelector('#cover-upload').classList.remove('hidden')
     })
     const date = await getCurrentDate()
-    const response = await fetch(`http://127.0.0.1:3000/check-attendance/${json.clubInfo.clubId}/${date}`)
+    const response = await fetch(`http://${serverAddress}:3000/check-attendance/${json.clubInfo.clubId}/${date}`)
     const attendance = await response.json()
     let studentsPresent = []
     if (attendance.students.length > 0) {
@@ -116,7 +116,7 @@ async function getClubInfo() {
     const formData = new FormData(e.target);
 
     formData.set('clubId', json.clubInfo.clubId)
-    const response = await fetch('http://127.0.0.1:3000/upload-cover-photo', {
+    const response = await fetch(`http://${serverAddress}:3000/upload-cover-photo`, {
       method: 'POST',
       body: formData
     });
@@ -153,7 +153,7 @@ async function submitAttendace(clubId) {
   // Create a new Date object for the current date and time
   date = await getCurrentDate()
 
-  const response = await fetch(`http://localhost:3000/submit-attendance`, {
+  const response = await fetch(`http://${serverAddress}:3000/submit-attendance`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

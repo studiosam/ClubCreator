@@ -80,7 +80,7 @@
 
                     formData.set('userId', JSON.parse(localStorage.getItem('user')).userId)
                     console.log(formData)
-                    const response = await fetch('http://127.0.0.1:3000/upload-avatar', {
+                    const response = await fetch(`http://${serverAddress}:3000/upload-avatar`, {
                         method: 'POST',
                         body: formData
                     });
@@ -111,6 +111,7 @@
         apply to change clubs after approval
         change password
      -->
+            <script src="serverVariables.js"></script>
             <script src="userData.js"></script>
 </body>
 

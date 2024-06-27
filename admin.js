@@ -1,8 +1,8 @@
 const approvedClubList = document.querySelector("#approvedClubList");
 const clubProposals = document.querySelector("#clubProposalList");
-const socket = new WebSocket("ws://localhost:42069");
+const socket = new WebSocket(`ws://${serverAddress}:8008`);
 async function deleteAllUserClubs() {
-  const response = await fetch("http://localhost:3000/admin-erase", {
+  const response = await fetch(`http://${serverAddress}:3000/admin-erase`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -22,7 +22,7 @@ async function deleteAllUserClubs() {
   }
 }
 async function deleteAllClubs() {
-  const response = await fetch("http://localhost:3000/admin-erase-all-clubs", {
+  const response = await fetch(`http://${serverAddress}:3000/admin-erase-all-clubs`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -43,7 +43,7 @@ async function deleteAllClubs() {
 }
 
 async function deleteAllStudents() {
-  const response = await fetch("http://localhost:3000/admin-erase-students", {
+  const response = await fetch(`http://${serverAddress}:3000/admin-erase-students`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -65,7 +65,7 @@ async function deleteAllStudents() {
 async function createStudents() {
   const numOfStudents = document.querySelector("#num-of-rand-students").value;
 
-  const response = await fetch("http://localhost:3000/admin-create-students", {
+  const response = await fetch(`http://${serverAddress}:3000/admin-create-students`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -87,7 +87,7 @@ async function createStudents() {
 }
 async function createClubs() {
   const numOfClubs = document.querySelector("#num-of-rand-clubs").value;
-  const response = await fetch("http://localhost:3000/admin-create-clubs", {
+  const response = await fetch(`http://${serverAddress}:3000/admin-create-clubs`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -116,7 +116,7 @@ let teachers;
   await getAllApprovedClubs();
 })();
 async function getAllApprovedClubs() {
-  const response = await fetch("http://localhost:3000/getAllClubs");
+  const response = await fetch(`http://${serverAddress}:3000/getAllClubs`);
   const clubs = await response.json();
 
   getAllUnapprovedClubs(clubs);
@@ -141,7 +141,7 @@ async function getAllApprovedClubs() {
 
           if (club.primaryTeacherId !== null && club.primaryTeacherId !== 0) {
             let clubInfo = await fetch(
-              `http://localhost:3000/getUserInfo?userId=${club.primaryTeacherId}`
+              `http://${serverAddress}:3000/getUserInfo?userId=${club.primaryTeacherId}`
             );
             if (!clubInfo.ok) {
               throw new Error(
@@ -156,7 +156,7 @@ async function getAllApprovedClubs() {
 
           }
           const response = await fetch(
-            `http://localhost:3000/get-cosponsors/${club.clubId}`
+            `http://${serverAddress}:3000/get-cosponsors/${club.clubId}`
           );
           const coSponsors = await response.json();
 
@@ -172,7 +172,7 @@ async function getAllApprovedClubs() {
     <div class="uk-card-badge uk-label uk-label-success">Approved</div>
     <div class="uk-background-blend-multiply uk-background-secondary" id="cover-photo-card" style="background-image : url('${club.coverPhoto
             }')">   
-    <a class="cover-card-text" href="http://127.0.0.1:5500/club-info.html?club-id=${club.clubId
+    <a class="cover-card-text" href="${serverAddress}/club-info.html?club-id=${club.clubId
             }><p class="roboto uk-text-bold clubName" id="${club.clubId}clubName">${club.clubName
             }</p></a>
     <input type="hidden" name="clubName" value="${club.clubName}">
@@ -286,7 +286,7 @@ async function getAllApprovedClubs() {
 
 async function updateClubValue(newClubData) {
   console.log("Updating club value");
-  const response = await fetch("http://localhost:3000/updateClub", {
+  const response = await fetch(`http://${serverAddress}:3000/updateClub`, {
     method: "post",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: newClubData,
@@ -314,7 +314,7 @@ async function updateClubValue(newClubData) {
 async function changeTeacher(club) {
   document.getElementById(`hiddenTeacherId${club}`).remove();
   const getTeachers = await fetch(
-    "http://localhost:3000/getAllUsers?isTeacher=true"
+    `http://${serverAddress}:3000/getAllUsers?isTeacher=true`
   );
   teachers = await getTeachers.json();
 
@@ -335,7 +335,7 @@ async function changeTeacher(club) {
 async function addCosponsor(club, teacher) {
   const list = document.getElementById(`addCoSponsor${club}`)
   const getTeachers = await fetch(
-    "http://localhost:3000/getAllUsers?isTeacher=true"
+    `http://${serverAddress}:3000/getAllUsers?isTeacher=true`
   );
   teachers = await getTeachers.json();
 
@@ -354,7 +354,7 @@ async function addCosponsor(club, teacher) {
 async function removeCoSponsor(club, primeTeacher) {
   const list = document.getElementById(`currentCosponsors${club}`)
   const getTeachers = await fetch(
-    "http://localhost:3000/getAllUsers?isTeacher=true"
+    `http://${serverAddress}:3000/getAllUsers?isTeacher=true`
   );
   teachers = await getTeachers.json();
 
@@ -390,7 +390,7 @@ async function getAllUnapprovedClubs(clubs) {
     <div class="uk-card uk-card-default uk-card-body uk-card-hover">
     <div class="uk-card-badge uk-label uk-label-warning">Unapproved</div>
     <div class="uk-card-header">   
-    <a href="http://127.0.0.1:5500/club-info.html?club-id=${club.clubId}"><h2 class="roboto uk-text-bold uk-card-title">${club.clubName}</h2></a>
+    <a href="${serverAddress}/club-info.html?club-id=${club.clubId}"><h2 class="roboto uk-text-bold uk-card-title">${club.clubName}</h2></a>
     </div> 
     <div class="uk-card-body">
         <p class="uk-text-bold">${club.clubDescription}</p>
@@ -424,7 +424,7 @@ async function getAllUnapprovedClubs(clubs) {
 }
 
 async function deleteClub(clubId, clubName) {
-  const response = await fetch("http://localhost:3000/deleteClub", {
+  const response = await fetch(`http://${serverAddress}:3000/deleteClub`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -446,7 +446,7 @@ async function deleteClub(clubId, clubName) {
   }
 }
 async function approveClub(clubId, clubName) {
-  const response = await fetch("http://localhost:3000/approveClub", {
+  const response = await fetch(`http://${serverAddress}:3000/approveClub`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -504,7 +504,7 @@ async function attachEventListeners() {
 }
 
 async function assignClubs() {
-  const respose = await fetch("http://localhost:3000/admin-club-assignment");
+  const respose = await fetch(`http://${serverAddress}:3000/admin-club-assignment`);
   const json = await respose.json();
   if (json.body === "Success") {
     console.log("Success");

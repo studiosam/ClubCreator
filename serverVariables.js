@@ -1,0 +1,1 @@
+const serverAddress = '192.168.40.224'

@@ -1,4 +1,4 @@
-const form = document.querySelector("#login");
+const form = document.querySelector("#reset");
 const error = document.querySelector('#error')
 form.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -9,24 +9,11 @@ async function login() {
     console.log('login');
     const userEmail = form.email.value.toLowerCase().trim();
     const formData = new FormData(form);
-    formData.set("username", userEmail);
     const jsonData = new URLSearchParams(formData);
-    const response = await fetch(`http://${serverAddress}:3000/login`, { method: "post", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: jsonData });
+    const response = await fetch(`http://${serverAddress}:3000/request-password-reset`, { method: "post", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: jsonData });
     const responseStatus = await response.json();
     console.log(responseStatus);
-    if (responseStatus.body) {
-        const user = responseStatus.userObject;
-        setUser(user);
-        if (user.isTeacher) {
-            window.location.href = `./home-teacher.html`;
-        } else {
-            window.location.href = `./home-student.html`;
-        }
-    } else {
-        document.querySelector('#errormessage').innerHTML = `${responseStatus.error}`;
-        error.style.display = "block"
-        console.log("failed login"); // handle failed login on screen
-    }
+
 }
 
 function logout() {

@@ -31,7 +31,7 @@ confirmPassword.addEventListener("change", () => {
 password.addEventListener("change", () => {
   if (password.value !== confirmPassword.value) {
     successMessageBox.style.display = "block";
-    successMessage.innerHTML = "passowrds don't match";
+    successMessage.innerHTML = "passwords don't match";
   } else {
     successMessageBox.style.display = "none";
     successMessage.innerHTML = "";
@@ -48,7 +48,7 @@ async function createAccount() {
   formData.set("username", userEmail.toLowerCase().trim());
   const jsonData = new URLSearchParams(formData);
   console.log(jsonData);
-  const response = await fetch("http://127.0.0.1:3000/addAccount", {
+  const response = await fetch(`http://${serverAddress}:3000/addAccount`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: jsonData,

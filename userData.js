@@ -1,6 +1,5 @@
 const userUpdate = fetch(
-  `http://localhost:3000/getUserInfo?userId=${
-    JSON.parse(localStorage.getItem("user")).userId
+  `http://${serverAddress}:3000/getUserInfo?userId=${JSON.parse(localStorage.getItem("user")).userId
   }`
 )
   .then((response) => response.json())

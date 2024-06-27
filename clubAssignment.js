@@ -3,7 +3,7 @@ const { updateClubValue, assignClub, getTeachersOrStudentsInClub } = require("./
 
 //get object of all user ids and preference arrays
 async function getStudents() {
-    const response = await fetch('http://127.0.0.1:3000/getAllStudents')
+    const response = await fetch(`http://${serverAddress}:3000/getAllStudents`)
 
     const users = await response.json();
     return users
@@ -76,7 +76,7 @@ async function choiceLoopNoGrade(thisStudent) {
 //get club object for student's choice
 async function getClubById(id) {
     // console.log('Get Club By Id', id)
-    const response = await fetch(`http://127.0.0.1:3000/getClubById?club=${id}`);
+    const response = await fetch(`http://${serverAddress}:3000/getClubById?club=${id}`);
     const club = await response.json();
     return club;
 }

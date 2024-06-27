@@ -15,12 +15,12 @@ async function getUser() {
 getUser();
 
 async function getStudentDashboard() {
-    const response = await fetch("http://localhost:3000/getAllClubs");
+    const response = await fetch(`http://${serverAddress}:3000/getAllClubs`);
     const respClubs = await response.json();
 
     const clubStudentCounts = await Promise.all(
         respClubs.map(async (club) => {
-            const response = await fetch(`http://localhost:3000/get-students-in-club/${club.clubId}`);
+            const response = await fetch(`http://${serverAddress}:3000/get-students-in-club/${club.clubId}`);
             const studentCount = await response.json();
             return { ...club, studentCount };
         })
@@ -47,7 +47,7 @@ async function getStudentDashboard() {
 
         const myClubs = document.querySelector("#my-club");
         myAssignedClub.forEach((club) => {
-            myClubs.innerHTML += `<a href="http://127.0.0.1:3000/club-info/${club.clubId}" class="uk-link-text">
+            myClubs.innerHTML += `<a href=http://${serverAddress}/club-info/${club.clubId}" class="uk-link-text">
     <div class="club">
       <p class="uk-card-title roboto">${club.clubName}</p>
       <p>${club.clubDescription}</p>
@@ -61,7 +61,7 @@ async function getStudentDashboard() {
 
         clubs.forEach((club) => {
             allClubs.innerHTML += `<div id="student-club-wrapper"><div class="club-choice"><input id="${club.clubId}-${club.clubName}" class="club-input" type="checkbox">
-            <div id="${club.clubId}student-club-cover" class="student-club-cover" style="background-image : url('${club.coverPhoto}')"></div><a href="http://127.0.0.1:3000/club-info/${club.clubId}" class="uk-link-text">
+            <div id="${club.clubId}student-club-cover" class="student-club-cover" style="background-image : url('${club.coverPhoto}')"></div><a href="http://${serverAddress}/club-info/${club.clubId}" class="uk-link-text">
         <div class="club">
           <p class="uk-card-title roboto">${club.clubName}</p>
           </div>
@@ -122,7 +122,7 @@ function selectedClubList(clubs) {
     document.querySelector('#menuInstructions').innerHTML = `<h3 id="menuHeading" class="uk-card-title roboto">Put the 5 clubs you chose in order from your favorite to the least favorite</h3>
         <p><strong class="red">Put your favorite club at the top.</strong></p>`
     clubs.forEach((club) => {
-        allClubs.innerHTML += `<div id="${club.clubId}" class="uk-sortable-handle uk-flex"><span style="margin-top: 9px" class="uk-margin-small-right uk-text-center" uk-icon="icon: table"></span><a href="http://127.0.0.1:3000/club-info/${club.clubId}" class="uk-link-text">
+        allClubs.innerHTML += `<div id="${club.clubId}" class="uk-sortable-handle uk-flex"><span style="margin-top: 9px" class="uk-margin-small-right uk-text-center" uk-icon="icon: table"></span><a href="http://${serverAddress}club-info/${club.clubId}" class="uk-link-text">
         <div id="student-club-wrapper">   
         <div id="student-club-cover" style="background-image : url('${club.coverPhoto}')"></div>
           <p class="uk-card-title roboto">${club.clubName}</p>
@@ -143,7 +143,7 @@ function selectedClubList(clubs) {
             clubOrder.push(club.id)
         })
         console.log(clubOrder)
-        const response = await fetch("http://localhost:3000/setClubPrefs", {
+        const response = await fetch(`http://${serverAddress}:3000/setClubPrefs`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

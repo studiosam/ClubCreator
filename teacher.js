@@ -24,7 +24,7 @@ getUser();
 
 async function getTeacherDashboard() {
   // Fetch all clubs
-  const response = await fetch("http://localhost:3000/getAllClubs");
+  const response = await fetch(`http://${serverAddress}:3000/getAllClubs`);
   const clubs = await response.json();
   // Filter clubs based on approval status and teacher ID
   const myApprovedClubs = clubs.filter(
@@ -39,7 +39,7 @@ async function getTeacherDashboard() {
 
   // Use map to create an array of promises
   const promises = clubs.map(async (obj) => {
-    const response2 = await fetch(`http://localhost:3000/get-cosponsors/${obj.clubId}`);
+    const response2 = await fetch(`http://${serverAddress}:3000/get-cosponsors/${obj.clubId}`);
     const currentCoSponsorsArray = await response2.json();
     const currentCoSponsors = currentCoSponsorsArray.cosponsors.length;
 
@@ -75,13 +75,13 @@ async function getTeacherDashboard() {
   // Populate unapproved clubs
   myUnapprovedClubs.forEach((club) => {
     let coverPhotoUrl = `https://ui-avatars.com/api/?name=${club.clubName}&background=0D8ABC&color=fff`;
-    if (club.coverPhoto !== 'NULL') {
+    if (club.coverPhoto !== 'NULL' && club.coverPhoto !== 'null' && club.coverPhoto !== null) {
       coverPhotoUrl = `${club.coverPhoto}`;
     }
     unApprovedClubs.innerHTML += `<div class="co-sponser-wrapper">
     <div class="club-thumbnail" style="background-image: url(&quot;${coverPhotoUrl}&quot;)">
     </div>
-    <a href="http://127.0.0.1:3000/club-info/${club.clubId}" class="uk-link-text">
+    <a href="http://${serverAddress}/club-info/${club.clubId}" class="uk-link-text">
     <div class="club">
       <p class="uk-card-title roboto">${club.clubName}</p>
       <p>${club.clubDescription}</p>
@@ -91,13 +91,13 @@ async function getTeacherDashboard() {
   // Populate approved clubs
   myApprovedClubs.forEach((club) => {
     let coverPhotoUrl = `https://ui-avatars.com/api/?name=${club.clubName}&background=0D8ABC&color=fff`;
-    if (club.coverPhoto !== 'NULL') {
+    if (club.coverPhoto !== 'NULL' && club.coverPhoto !== 'null' && club.coverPhoto !== null) {
       coverPhotoUrl = `${club.coverPhoto}`;
     }
     myClubs.innerHTML += `<div class="co-sponser-wrapper">
     <div class="club-thumbnail" style="background-image: url(&quot;${coverPhotoUrl}&quot;)">
     </div>
-    <a href="http://127.0.0.1:3000/club-info/${club.clubId}" class="uk-link-text">
+    <a href="http://${serverAddress}/club-info/${club.clubId}" class="uk-link-text">
     <div class="club">
       <p class="uk-card-title roboto">${club.clubName}</p>
       <p>${club.clubDescription}</p>
@@ -110,7 +110,7 @@ async function displayClubsThatNeedCosponsors(clubsThatNeedCosponsors) {
   // Populate clubs that need co-sponsors
   for (const club of clubsThatNeedCosponsors) {
     if (club.clubId !== user.clubId) {
-      const response = await fetch(`http://localhost:3000/get-cosponsors/${club.clubId}`);
+      const response = await fetch(`http://${serverAddress}:3000/get-cosponsors/${club.clubId}`);
       const coSponsors = await response.json();
       console.log('coSponsors', coSponsors)
       const numCoSponsors = coSponsors.cosponsors.length;
@@ -125,7 +125,7 @@ async function displayClubsThatNeedCosponsors(clubsThatNeedCosponsors) {
         coSponsorClubs.innerHTML += `<div class="co-sponser-wrapper">
             <div class="club-thumbnail" style="background-image: url(&quot;${coverPhotoUrl}&quot;)">
     </div>
-        <a href="http://127.0.0.1:3000/club-info/${club.clubId}" class="uk-link-text">
+        <a href="http://${serverAddress}/club-info/${club.clubId}" class="uk-link-text">
         
         <div class="club">
         
@@ -140,5 +140,5 @@ async function displayClubsThatNeedCosponsors(clubsThatNeedCosponsors) {
 
 
 async function addToClub(clubId) {
-  const response = fetch(`http://127.0.0.1:3000/users/update/${user.userId}/${clubId}`);
+  const response = fetch(`http://${serverAddress}:3000/users/update/${user.userId}/${clubId}`);
 }

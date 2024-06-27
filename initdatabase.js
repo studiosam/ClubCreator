@@ -60,6 +60,13 @@ function initializeDatabase() {
                 UNIQUE(clubId, date)
             );
         `);
+    db.run(`
+            CREATE TABLE IF NOT EXISTS password_reset_requests (
+                user_id INTEGER,
+                token TEXT,
+                expiration TEXT
+            );
+        `);
   });
 }
 initializeDatabase();

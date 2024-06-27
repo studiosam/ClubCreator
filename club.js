@@ -17,7 +17,7 @@ async function createClub() {
   formData.set("requiredCosponsors", formData.get("coSponsorsNeeded"));
 
   // Remove URLSearchParams as it doesn't support file uploads
-  const response = await fetch("http://127.0.0.1:3000/addClub", {
+  const response = await fetch(`http://${serverAddress}:3000/addClub`, {
     method: "post",
     body: formData,
   });

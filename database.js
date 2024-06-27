@@ -3,7 +3,7 @@ const path = require("path");
 const fs = require("fs");
 const fetch = require("node-fetch");
 const WebSocket = require("ws");
-const wss = new WebSocket.Server({ port: 42069 });
+const wss = new WebSocket.Server({ port: 8008 });
 
 // Open a database connection
 const db = new sqlite3.Database(
@@ -258,6 +258,62 @@ async function getUserInfo(data, type) {
 
 async function getUser(userId) {
   const sql = `SELECT * FROM users WHERE userId = ${userId}`;
+  return new Promise((resolve, reject) => {
+    db.get(sql, (err, row) => {
+      if (err) {
+        return reject(err);
+      } else {
+        resolve(row);
+        // console.log(row)
+        return row;
+      }
+    });
+  });
+}
+async function getUserByEmail(email) {
+  const sql = `SELECT * FROM users WHERE email = '${email}'`;
+  return new Promise((resolve, reject) => {
+    db.get(sql, (err, row) => {
+      if (err) {
+        return reject(err);
+      } else {
+        resolve(row);
+        // console.log(row)
+        return row;
+      }
+    });
+  });
+}
+async function setResetPasswordToken(userId, token, expiration) {
+  const sql = `INSERT INTO password_reset_requests (user_id, token, expiration) VALUES (?, ?, ?)`;
+  return new Promise((resolve, reject) => {
+    db.get(sql, [userId, token, expiration], (err, row) => {
+      if (err) {
+        return reject(err);
+      } else {
+        resolve(row);
+        // console.log(row)
+        return row;
+      }
+    });
+  });
+}
+async function checkResetPasswordToken(token) {
+  const sql = `SELECT * FROM password_reset_requests WHERE token = '${token}'`;
+  return new Promise((resolve, reject) => {
+    db.get(sql, (err, row) => {
+      if (err) {
+        return reject(err);
+      } else {
+        resolve(row);
+
+        return row;
+      }
+    });
+  });
+}
+async function resetUserPassword(userId, newPassword) {
+  const sql = `UPDATE users SET password = '${newPassword}' WHERE userId = ${userId}`;
   return new Promise((resolve, reject) => {
     db.get(sql, (err, row) => {
       if (err) {
@@ -883,6 +939,8 @@ async function createRandomClubs(numberOfClubs) {
 }
 
 module.exports = {
+  get,
+  run,
   addClub,
   addUser,
   checkUser,
@@ -903,6 +961,7 @@ module.exports = {
   updateClubValue,
   deleteClub,
   getAllUsers,
+  getUserByEmail,
   updateClubPrefs,
   removeClubFromUser,
   assignClub,
@@ -919,5 +978,8 @@ module.exports = {
   checkAttendance,
   assignClubToStudent,
   getCoSponsors,
+  setResetPasswordToken,
+  checkResetPasswordToken,
+  resetUserPassword
   // Export other database functions here
 };

@@ -19,7 +19,7 @@ async function fetchTeachers(
   sortDirection = "asc"
 ) {
   const response = await fetch(
-    `http://127.0.0.1:3000/users/teachers?page=${page}&limit=${itemsPerPage}&search=${encodeURIComponent(
+    `${serverAddress}:3000/users/teachers?page=${page}&limit=${itemsPerPage}&search=${encodeURIComponent(
       searchQuery
     )}&sortBy=${sortBy}&sortDirection=${sortDirection}`
   );
@@ -32,7 +32,7 @@ async function displayTeachers(page, searchQuery = "") {
   totalPages = data.totalPages; // Update totalPages
   teachersTable.innerHTML = "";
   if (teachers.length > 0) {
-    const response = await fetch("http://localhost:3000/getAllClubs");
+    const response = await fetch(`http://${serverAddress}:3000/getAllClubs`);
     const clubs = await response.json();
 
     teachers.forEach((teacher) => {
@@ -52,9 +52,8 @@ async function displayTeachers(page, searchQuery = "") {
           <td>${teacher.email}</td>
           <td class="uk-text-nowrap">${teacher.grade || "None"}</td>
           <td class="uk-text-nowrap">${teacher.room || "None"}</td>
-          <td class="uk-text-nowrap uk-table-link"><a href="http://127.0.0.1:5500/club-info.html?club-id=${
-            teacher.clubId
-          }">${clubName}</a></td>
+          <td class="uk-text-nowrap uk-table-link"><a href="http://${serverAddress}/club-info.html?club-id=${teacher.clubId
+        }">${clubName}</a></td>
         </tr>`;
     });
     updatePaginationInfo(page, data.total, totalPages);

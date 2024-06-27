@@ -80,7 +80,7 @@ async function deleteSelectedUsers() {
     ) {
       try {
         const deleteRequests = selectedUserIds.map((userId) =>
-          fetch(`http://127.0.0.1:3000/users/delete/${userId}`, {})
+          fetch(`http://${serverAddress}:3000/users/delete/${userId}`, {})
         );
 
         await Promise.all(deleteRequests);
@@ -118,7 +118,7 @@ async function deleteSelectedUsers() {
 
 async function populateClubSelect() {
   try {
-    const response = await fetch("http://localhost:3000/getAllClubs");
+    const response = await fetch(`http://${serverAddress}:3000/getAllClubs`);
     const clubs = await response.json();
 
     clubSelect.innerHTML = clubs
@@ -142,7 +142,7 @@ async function addToClub() {
   if (selectedUserIds.length > 0 && clubId) {
     try {
       const updateRequests = selectedUserIds.map((userId) =>
-        fetch(`http://127.0.0.1:3000/users/updateStudentClub/${userId}/${clubId}`)
+        fetch(`http://${serverAddress}:3000/users/updateStudentClub/${userId}/${clubId}`)
       );
 
       await Promise.all(updateRequests);
@@ -194,7 +194,7 @@ async function fetchStudents(
   sortDirection = "asc"
 ) {
   const response = await fetch(
-    `http://127.0.0.1:3000/users/students?page=${page}&limit=${itemsPerPage}&search=${encodeURIComponent(
+    `http://${serverAddress}:3000/users/students?page=${page}&limit=${itemsPerPage}&search=${encodeURIComponent(
       searchQuery
     )}&sortBy=${sortBy}&sortDirection=${sortDirection}`
   );
@@ -206,7 +206,7 @@ async function displayStudents(page, searchQuery = "") {
   totalPages = data.totalPages; // Update totalPages
   studentsTable.innerHTML = "";
   if (students.length > 0) {
-    const response = await fetch("http://localhost:3000/getAllClubs");
+    const response = await fetch(`http://${serverAddress}:3000/getAllClubs`);
     const clubs = await response.json();
 
     students.forEach((student) => {
@@ -226,7 +226,7 @@ async function displayStudents(page, searchQuery = "") {
           <td>${student.email}</td>
           <td class="uk-text-nowrap">${student.grade || "None"}</td>
           <td class="uk-text-nowrap">${student.room || "None"}</td>
-          <td class="uk-text-nowrap uk-table-link"><a href="http://127.0.0.1:5500/club-info.html?club-id=${student.clubId
+          <td class="uk-text-nowrap uk-table-link"><a href="http://${serverAddress}/club-info.html?club-id=${student.clubId
         }">${clubName}</a></td>
         </tr>`;
     });
