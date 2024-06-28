@@ -193,7 +193,10 @@ ul {
 .uk-card-header h3 {
   color: #0e0e11 !important;
 }
-
+.student-attendance-card,
+.student-attendance-absent {
+  cursor: pointer;
+}
 .dash-nav {
   padding-left: 35px;
 }
@@ -220,7 +223,6 @@ ul {
 .club-choice {
   display: flex;
   align-items: center;
-
 }
 .club-input {
   margin-top: 10px !important;
@@ -274,12 +276,12 @@ tbody tr:hover {
   color: white;
   font-size: 5rem;
 }
-.cover-card-text{
+.cover-card-text {
   color: white !important;
-font-size: 2rem;
+  font-size: 2rem;
 }
 
-#cover-photo-card{
+#cover-photo-card {
   height: 100px;
   background-position: center;
   background-size: cover;
@@ -288,14 +290,14 @@ font-size: 2rem;
   align-items: center;
 }
 
-.student-club-cover{
+.student-club-cover {
   width: 100px;
   height: 100px;
   background-size: cover;
   margin-right: 25px;
 }
 
-#student-club-wrapper{
+#student-club-wrapper {
   display: flex;
   align-items: center;
 }
@@ -305,35 +307,34 @@ font-size: 2rem;
 }
 
 .club {
-padding-left: 15px;
-min-width: 675px !important;
+  padding-left: 15px;
+  min-width: 675px !important;
 }
 
-.co-sponser-wrapper{
-display: flex;
-gap: 15px
+.co-sponser-wrapper {
+  display: flex;
+  gap: 15px;
 }
 
 .club-thumbnail {
-height: 150px;
-min-width: 150px;
-background-position: center;
-background-size: cover;
+  height: 150px;
+  min-width: 150px;
+  background-position: center;
+  background-size: cover;
 }
 
-.co-sponsor-list{
+.co-sponsor-list {
   list-style: none;
 }
 
-#cover-photo-upload{
-text-align: end;
+#cover-photo-upload {
+  text-align: end;
 }
 
-#cover-photo-up{
+#cover-photo-up {
   display: flex;
   justify-content: end;
   align-items: center;
   gap: 1rem;
   margin-top: 15px;
 }
-

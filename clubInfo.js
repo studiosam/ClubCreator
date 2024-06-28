@@ -1,6 +1,6 @@
 let params = new URL(document.location.toString()).searchParams;
 const clubId = params.get("club-id");
-const attendancebutton = document.querySelector('#attendance-submission')
+const attendancebutton = document.querySelector("#attendance-submission");
 
 async function getClubInfo() {
   const response = await fetch(
@@ -9,7 +9,7 @@ async function getClubInfo() {
   const json = await response.json();
   document.querySelector("#clubName").innerHTML = json.clubInfo.clubName;
   document.querySelector("#clubDescription").innerHTML = json.clubInfo.clubName;
-  const coverPhotoDisplay = document.querySelector("#cover-photo")
+  const coverPhotoDisplay = document.querySelector("#cover-photo");
   coverPhotoDisplay.style.backgroundImage = `url("${json.clubInfo.coverPhoto}")`;
   const clubData = document.querySelector("#clubData");
   json.clubStudents.sort((a, b) => {
@@ -20,7 +20,7 @@ async function getClubInfo() {
       return 1;
     }
     return 0;
-  })
+  });
   clubData.innerHTML += `
 
     <tr>
@@ -30,9 +30,11 @@ async function getClubInfo() {
     <tr>
       <td>Room</td>
       <td>${json.clubInfo.room || "None"}</td>
-  </tr>`
-  if ((user.clubId === json.clubInfo.clubId && user.isTeacher) || user.isAdmin) {
-
+  </tr>`;
+  if (
+    (user.clubId === json.clubInfo.clubId && user.isTeacher) ||
+    user.isAdmin
+  ) {
     const photoUpload = document.querySelector("#cover-photo-upload");
     photoUpload.innerHTML = `<form id="uploadForm" enctype="multipart/form-data">
                     <div class="uk-margin uk-flex uk-flex-column" uk-margin>
@@ -53,23 +55,23 @@ async function getClubInfo() {
                         </div>
                     </div>
                 </form>`;
-    document.querySelector('#changeCoverPhoto').addEventListener('click', () => {
-      document.querySelector('#cover-upload').classList.remove('hidden')
-    })
-    const date = await getCurrentDate()
-    const response = await fetch(`http://${serverAddress}:3000/check-attendance/${json.clubInfo.clubId}/${date}`)
-    const attendance = await response.json()
-    let studentsPresent = []
+    document
+      .querySelector("#changeCoverPhoto")
+      .addEventListener("click", () => {
+        document.querySelector("#cover-upload").classList.remove("hidden");
+      });
+    const date = await getCurrentDate();
+    const response = await fetch(
+      `http://${serverAddress}:3000/check-attendance/${json.clubInfo.clubId}/${date}`
+    );
+    const attendance = await response.json();
+    let studentsPresent = [];
     if (attendance.students.length > 0) {
+      studentsPresent = attendance.students[0].studentsPresent;
+      const studentsPresentArray = studentsPresent.split(",");
 
-      studentsPresent = attendance.students[0].studentsPresent
-      const studentsPresentArray = studentsPresent.split(',')
-
-
-
-      document.querySelector('#students-title').innerHTML = 'Students'
-      attendancebutton.innerHTML = `<button onclick="submitAttendace(${json.clubInfo.clubId})" class="uk-button uk-button-primary uk-margin-medium-top">Submit Attendance</button>`
-
+      document.querySelector("#students-title").innerHTML = "Students";
+      attendancebutton.innerHTML = `<button onclick="submitAttendace(${json.clubInfo.clubId})" class="uk-button uk-button-primary uk-margin-medium-top">Submit Attendance</button>`;
 
       clubData.innerHTML += `
       <tr>
@@ -79,103 +81,121 @@ async function getClubInfo() {
   `;
 
       json.clubStudents.forEach((student) => {
-
         document.querySelector("#club-students").innerHTML += `<div>
-        <div id="${student.userId}" class="uk-card uk-card-default uk-card-body student" uk-toggle="target: #${student.userId}; cls: student-attendance-card; animation: uk-animation-fade"><p>${student.firstName} ${student.lastName}</p></div>`;
+        <div id="${student.userId}" class="student-attendance-absent uk-card uk-card-default uk-card-body student" uk-toggle="target: #${student.userId}; cls: student-attendance-card; animation: uk-animation-fade"><p>${student.firstName} ${student.lastName}</p></div>`;
       });
       if (studentsPresent.length > 0) {
         studentsPresentArray.forEach((student) => {
-          document.getElementById(`${student}`).classList.add('student-attendance-card')
-        })
+          document
+            .getElementById(`${student}`)
+            .classList.add("student-attendance-card");
+        });
       }
     } else {
-      document.querySelector('#students-title').innerHTML = 'Students'
-      attendancebutton.innerHTML = `<button onclick="submitAttendace(${json.clubInfo.clubId})" class="uk-button uk-button-primary uk-margin-medium-top">Submit Attendance</button>`
+      document.querySelector("#students-title").innerHTML = "Students";
+      attendancebutton.innerHTML = `<button onclick="submitAttendace(${json.clubInfo.clubId})" class="uk-button uk-button-primary uk-margin-medium-top">Submit Attendance</button>`;
       json.clubStudents.forEach((student) => {
-
         document.querySelector("#club-students").innerHTML += `<div>
         <div id="${student.userId}" class="uk-card uk-card-default uk-card-body student" uk-toggle="target: #${student.userId}; cls: student-attendance-card; animation: uk-animation-fade"><p>${student.firstName} ${student.lastName}</p></div>`;
       });
       if (studentsPresent.length > 0) {
         studentsPresentArray.forEach((student) => {
-          document.getElementById(`${student}`).classList.add('student-attendance-card')
-        })
+          document
+            .getElementById(`${student}`)
+            .classList.add("student-attendance-card");
+        });
       }
-
     }
   }
   if (document.querySelector("#cover-input")) {
-    document.querySelector("#cover-input").addEventListener('input', () => {
+    document.querySelector("#cover-input").addEventListener("input", () => {
       if (document.querySelector("#cover-input").value) {
-        document.querySelector('#selected-confirmation').classList.remove('hidden')
+        document
+          .querySelector("#selected-confirmation")
+          .classList.remove("hidden");
       }
-    })
-  }
-  document.getElementById('uploadForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-
-    formData.set('clubId', json.clubInfo.clubId)
-    const response = await fetch(`http://${serverAddress}:3000/upload-cover-photo`, {
-      method: 'POST',
-      body: formData
     });
-    const result = await response.json();
-    console.log(result)
-    if (result.body === "Success") {
-      UIkit.notification({
-        message: "Avatar Successfully Updated!",
-        status: "success",
-        pos: "top-center",
-        timeout: 5000,
-      });
-      document.getElementById('upload-avatar').src = result.avatarPath;
-    }
-  });
+  }
+  document
+    .getElementById("uploadForm")
+    .addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+
+      formData.set("clubId", json.clubInfo.clubId);
+      const response = await fetch(
+        `http://${serverAddress}:3000/upload-cover-photo`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+      const result = await response.json();
+      console.log(result);
+      if (result.body === "Success") {
+        UIkit.notification({
+          message: "Avatar Successfully Updated!",
+          status: "success",
+          pos: "top-center",
+          timeout: 5000,
+        });
+        document.getElementById("upload-avatar").src = result.avatarPath;
+      }
+    });
 }
 getClubInfo();
 
 async function submitAttendace(clubId) {
   const presentStudentArray = [];
   const absentStudentArray = [];
-  const allStudents = document.querySelectorAll('.student')
+  const allStudents = document.querySelectorAll(".student");
   allStudents.forEach((student) => {
-    const presentStudent = student.classList.contains('student-attendance-card')
+    const presentStudent = student.classList.contains(
+      "student-attendance-card"
+    );
     if (presentStudent) {
-      presentStudentArray.push(student.id)
+      presentStudentArray.push(student.id);
     } else {
       absentStudentArray.push(student.id);
     }
-  })
-  const presentStudents = presentStudentArray.join(',')
-  const absentStudents = absentStudentArray.join(',')
+  });
+  const presentStudents = presentStudentArray.join(",");
+  const absentStudents = absentStudentArray.join(",");
 
   // Create a new Date object for the current date and time
-  date = await getCurrentDate()
+  date = await getCurrentDate();
 
-  const response = await fetch(`http://${serverAddress}:3000/submit-attendance`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ presentStudents: presentStudents, absentStudents: absentStudents, clubId: clubId, date: date })
-  });
+  const response = await fetch(
+    `http://${serverAddress}:3000/submit-attendance`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        presentStudents: presentStudents,
+        absentStudents: absentStudents,
+        clubId: clubId,
+        date: date,
+      }),
+    }
+  );
 
-  const success = await response.json()
-  console.log(success)
-  if (success.body === 'Success') {
+  const success = await response.json();
+  console.log(success);
+  if (success.body === "Success") {
     UIkit.notification({
-      message: 'Attendance Successfully Submitted',
-      status: 'success',
-      pos: 'bottom-right',
-      timeout: 5000
+      message: "Attendance Successfully Submitted",
+      status: "success",
+      pos: "bottom-right",
+      timeout: 5000,
     });
   } else {
     UIkit.notification({
-      message: 'Attendance Submission Failed',
-      status: 'danger',
-      pos: 'bottom-right',
-      timeout: 5000
+      message: "Attendance Submission Failed",
+      status: "danger",
+      pos: "bottom-right",
+      timeout: 5000,
     });
   }
 }
@@ -185,11 +205,10 @@ async function getCurrentDate() {
 
   // Get the year, month, and day
   const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed, so add 1 and pad with zero if needed
-  const day = String(now.getDate()).padStart(2, '0'); // Pad day with leading zero if needed
+  const month = String(now.getMonth() + 1).padStart(2, "0"); // Months are zero-indexed, so add 1 and pad with zero if needed
+  const day = String(now.getDate()).padStart(2, "0"); // Pad day with leading zero if needed
 
   // Format the date as YYYY-MM-DD
   const formattedDate = `${year}-${month}-${day}`;
   return formattedDate;
 }
-
