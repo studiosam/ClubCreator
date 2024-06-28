@@ -19,7 +19,7 @@ async function fetchTeachers(
   sortDirection = "asc"
 ) {
   const response = await fetch(
-    `${serverAddress}:3000/users/teachers?page=${page}&limit=${itemsPerPage}&search=${encodeURIComponent(
+    `http://${serverAddress}:3000/users/teachers?page=${page}&limit=${itemsPerPage}&search=${encodeURIComponent(
       searchQuery
     )}&sortBy=${sortBy}&sortDirection=${sortDirection}`
   );
@@ -52,8 +52,9 @@ async function displayTeachers(page, searchQuery = "") {
           <td>${teacher.email}</td>
           <td class="uk-text-nowrap">${teacher.grade || "None"}</td>
           <td class="uk-text-nowrap">${teacher.room || "None"}</td>
-          <td class="uk-text-nowrap uk-table-link"><a href="http://${serverAddress}/club-info.html?club-id=${teacher.clubId
-        }">${clubName}</a></td>
+          <td class="uk-text-nowrap uk-table-link"><a href="http://${serverAddress}/club-info.html?club-id=${
+        teacher.clubId
+      }">${clubName}</a></td>
         </tr>`;
     });
     updatePaginationInfo(page, data.total, totalPages);

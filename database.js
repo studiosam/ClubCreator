@@ -30,7 +30,6 @@ async function checkAttendance(clubId, date) {
         return reject(err);
       }
       resolve(rows);
-
     });
   });
 }
@@ -51,7 +50,7 @@ async function submitAttendance(presentStudents, absentStudents, clubId, date) {
       date,
     ]);
     console.log("Attendance submitted successfully.");
-    return true
+    return true;
   } catch (err) {
     console.error("Error inserting or updating attendance:", err);
     return false;
@@ -64,7 +63,6 @@ async function addClub(newClubInfo) {
       .normalize(newClubInfo.cover)
       .replace(/\\/g, "/");
 
-
     const sqlInsert = `INSERT INTO clubs (clubName, clubDescription, coSponsorsNeeded, maxSlots, primaryTeacherId, coverPhoto) VALUES (?, ?, ?, ?, ?,?)`;
     const insertResult = await run(sqlInsert, [
       newClubInfo.preferredClub,
@@ -72,7 +70,7 @@ async function addClub(newClubInfo) {
       newClubInfo.coSponsorsNeeded,
       newClubInfo.maxCapacity,
       newClubInfo.teacherId,
-      normalizedPath
+      normalizedPath,
     ]);
   } catch (err) {
     console.error("Error in addClub function:", err.message);
@@ -94,7 +92,7 @@ async function updateClub(clubChangeInfo) {
     isApproved,
     clubId,
   } = clubChangeInfo;
-  if (primaryTeacherId === 'null') {
+  if (primaryTeacherId === "null") {
     primaryTeacherId = null;
   }
   const sql = `UPDATE clubs SET clubName = ?,
@@ -133,7 +131,6 @@ async function updateClub(clubChangeInfo) {
     );
     const sqlAddId = `UPDATE users SET clubId = ? WHERE userId = ?`;
     db.run(sqlAddId, [clubId, primaryTeacherId]);
-
   });
   return true;
 }
@@ -152,10 +149,11 @@ async function updateClubPrefs(clubPrefsString, studentId) {
 }
 
 async function getCoSponsors(clubId) {
-
   const allSponsors = await getTeachersOrStudentsInClub(clubId, true);
   const club = await getClubInfo(clubId);
-  const coSponsors = allSponsors.filter((sponsor) => sponsor.userId !== club.primaryTeacherId)
+  const coSponsors = allSponsors.filter(
+    (sponsor) => sponsor.userId !== club.primaryTeacherId
+  );
   return coSponsors;
 }
 
@@ -409,7 +407,6 @@ async function getAllTeachersOrStudentsPagination(
                 console.log(err);
                 return reject(err);
               } else {
-
                 return resolve({ users: rows, total: countResult.count });
               }
             }
@@ -555,7 +552,7 @@ async function deleteAllClubs() {
 
 // update a single club value
 async function updateClubValue(clubId, key, value) {
-  console.log(`clubId: ${clubId}, key: ${key}, value: ${value}`)
+  console.log(`clubId: ${clubId}, key: ${key}, value: ${value}`);
   const sql = `UPDATE clubs SET ${key} = ? WHERE clubId = ?`;
   db.run(sql, [value, clubId], function (err) {
     if (err) {
@@ -580,22 +577,21 @@ async function updateUserValue(userId, key, value) {
 
 // get students with clubId
 async function getTeachersOrStudentsInClub(clubId, userType) {
-
   const users = await getAllTeachersOrStudents(userType);
 
-  const clubRoster = await users.filter((user) => user.clubId === parseInt(clubId));
+  const clubRoster = await users.filter(
+    (user) => user.clubId === parseInt(clubId)
+  );
 
   return clubRoster;
 }
 async function getAllUsersInClub(clubId) {
-
   return new Promise((resolve, reject) => {
     const sql = `SELECT * FROM users WHERE clubId = ${clubId}`;
     db.all(sql, (err, rows) => {
       if (err) {
         return reject(err);
       } else {
-
         return resolve(rows);
       }
     });
@@ -797,8 +793,9 @@ function getRandomString(length) {
 
 function getRandomEmail() {
   const domains = ["example.com", "mail.com", "test.com"];
-  return `${getRandomString(5)}@${domains[Math.floor(Math.random() * domains.length)]
-    }`;
+  return `${getRandomString(5)}@${
+    domains[Math.floor(Math.random() * domains.length)]
+  }`;
 }
 
 function getRandomGrade() {
@@ -980,6 +977,6 @@ module.exports = {
   getCoSponsors,
   setResetPasswordToken,
   checkResetPasswordToken,
-  resetUserPassword
+  resetUserPassword,
   // Export other database functions here
 };

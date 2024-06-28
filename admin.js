@@ -22,15 +22,18 @@ async function deleteAllUserClubs() {
   }
 }
 async function deleteAllClubs() {
-  const response = await fetch(`http://${serverAddress}:3000/admin-erase-all-clubs`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      isAdmin: user.isAdmin,
-    }),
-  });
+  const response = await fetch(
+    `http://${serverAddress}:3000/admin-erase-all-clubs`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        isAdmin: user.isAdmin,
+      }),
+    }
+  );
   const clubs = await response.json();
   if (clubs.body === "Success") {
     UIkit.notification({
@@ -43,15 +46,18 @@ async function deleteAllClubs() {
 }
 
 async function deleteAllStudents() {
-  const response = await fetch(`http://${serverAddress}:3000/admin-erase-students`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      isAdmin: user.isAdmin,
-    }),
-  });
+  const response = await fetch(
+    `http://${serverAddress}:3000/admin-erase-students`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        isAdmin: user.isAdmin,
+      }),
+    }
+  );
   const clubs = await response.json();
   if (clubs.body === "Success") {
     UIkit.notification({
@@ -65,16 +71,19 @@ async function deleteAllStudents() {
 async function createStudents() {
   const numOfStudents = document.querySelector("#num-of-rand-students").value;
 
-  const response = await fetch(`http://${serverAddress}:3000/admin-create-students`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      isAdmin: user.isAdmin,
-      numOfStudents: numOfStudents,
-    }),
-  });
+  const response = await fetch(
+    `http://${serverAddress}:3000/admin-create-students`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        isAdmin: user.isAdmin,
+        numOfStudents: numOfStudents,
+      }),
+    }
+  );
   const clubs = await response.json();
   if (clubs.body === "Success") {
     UIkit.notification({
@@ -87,16 +96,19 @@ async function createStudents() {
 }
 async function createClubs() {
   const numOfClubs = document.querySelector("#num-of-rand-clubs").value;
-  const response = await fetch(`http://${serverAddress}:3000/admin-create-clubs`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      isAdmin: user.isAdmin,
-      numOfClubs: numOfClubs,
-    }),
-  });
+  const response = await fetch(
+    `http://${serverAddress}:3000/admin-create-clubs`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        isAdmin: user.isAdmin,
+        numOfClubs: numOfClubs,
+      }),
+    }
+  );
   const clubs = await response.json();
   if (clubs.body === "Success") {
     UIkit.notification({
@@ -134,7 +146,6 @@ async function getAllApprovedClubs() {
     try {
       await Promise.all(
         filteredClubs.map(async (club) => {
-          console.log(club.primaryTeacherId);
           let teacherFirstName = "Select";
           let teacherLastName = "Teacher";
           let isPrimaryId = "red-boarder";
@@ -150,10 +161,9 @@ async function getAllApprovedClubs() {
             }
 
             teacherInfo = await clubInfo.json();
-            isPrimaryId = ""
+            isPrimaryId = "";
             teacherFirstName = teacherInfo.firstName;
             teacherLastName = teacherInfo.lastName;
-
           }
           const response = await fetch(
             `http://${serverAddress}:3000/get-cosponsors/${club.clubId}`
@@ -161,105 +171,137 @@ async function getAllApprovedClubs() {
           const coSponsors = await response.json();
 
           const currentCoSponsors = coSponsors.cosponsors.length;
-          const coSponsorsStillNeeded = club.coSponsorsNeeded - currentCoSponsors
+          const coSponsorsStillNeeded =
+            club.coSponsorsNeeded - currentCoSponsors;
           if (coSponsorsStillNeeded < 0) {
-            isPrimaryId = 'red-boarder'
+            isPrimaryId = "red-boarder";
           }
-          approvedClubList.innerHTML += `<form class="approved-clubs uk-width-1-2@m" id="form${club.clubId
-            }"><div id="club-${club.clubId}" class="uk-card ${isPrimaryId}">
-    <div id="${club.clubId
-            }" class=" uk-card uk-card-default uk-card-body uk-card-hover">
+          approvedClubList.innerHTML += `<form class="approved-clubs uk-width-1-2@m" id="form${
+            club.clubId
+          }"><div id="club-${club.clubId}" class="uk-card ${isPrimaryId}">
+    <div id="${
+      club.clubId
+    }" class=" uk-card uk-card-default uk-card-body uk-card-hover">
     <div class="uk-card-badge uk-label uk-label-success">Approved</div>
-    <div class="uk-background-blend-multiply uk-background-secondary" id="cover-photo-card" style="background-image : url('${club.coverPhoto
-            }')">   
-    <a class="cover-card-text" href="${serverAddress}/club-info.html?club-id=${club.clubId
-            }><p class="roboto uk-text-bold clubName" id="${club.clubId}clubName">${club.clubName
-            }</p></a>
+    <div class="uk-background-blend-multiply uk-background-secondary" id="cover-photo-card" style="background-image : url('${
+      club.coverPhoto
+    }')">   
+    <a class="cover-card-text" href="http://${serverAddress}/club-info.html?club-id=${
+            club.clubId
+          }><p class="roboto uk-text-bold clubName" id="${
+            club.clubId
+          }clubName">${club.clubName}</p></a>
     <input type="hidden" name="clubName" value="${club.clubName}">
     </div> 
     <div class="uk-card-body">
-        <p class= "uk-text-bold text-center" id="clubDescription">${club.clubDescription
-            }</p>
-        <input type="hidden" name="clubDescription" value="${club.clubDescription
-            }">
+        <p class= "uk-text-bold text-center" id="clubDescription">${
+          club.clubDescription
+        }</p>
+        <input type="hidden" name="clubDescription" value="${
+          club.clubDescription
+        }">
       <div id="changeTeacher${club.clubId}" class="maxSlots uk-margin">
       <span>Primary Teacher: </span>
-             <strong>${teacherFirstName || 'Select'} ${teacherLastName || "Teacher"}</strong>
-             <button type="button" onclick="changeTeacher(${club.clubId
-            })" class="change">Change</button>
+             <strong>${teacherFirstName || "Select"} ${
+            teacherLastName || "Teacher"
+          }</strong>
+             <button type="button" onclick="changeTeacher(${
+               club.clubId
+             })" class="change">Change</button>
             </div>
             <div id="coSponsorsBlock${club.clubId}" class="maxSlots">
             <span>Current Co-Sponsors: </span>
-            <ul class="uk-list co-sponsor-list" id="currentCosponsors${club.clubId}"></ul>
+            <ul class="uk-list co-sponsor-list" id="currentCosponsors${
+              club.clubId
+            }"></ul>
                         
             </div>
       <div id="addCoSponsor${club.clubId}" class="maxSlots uk-margin">
       <span>Add Co-Sponsor: </span>
-             <button type="button" onclick="addCosponsor(${club.clubId
-            })" class="change">Add</button>
+             <button type="button" onclick="addCosponsor(${
+               club.clubId
+             })" class="change">Add</button>
             </div>
         
-        <input id="hiddenTeacherId${club.clubId
-            }" type="hidden" name="primaryTeacherId" value="${club.primaryTeacherId || null
-            }">
+        <input id="hiddenTeacherId${
+          club.clubId
+        }" type="hidden" name="primaryTeacherId" value="${
+            club.primaryTeacherId || null
+          }">
         <div class="maxSlots">
-        <span>Maximum Slots: </span><input name="maxSlots" id="clubId${club.clubId
-            }-maxSlots" class="uk-input uk-form-width-small" type="number" value="${club.maxSlots
-            }"></div>
+        <span>Maximum Slots: </span><input name="maxSlots" id="clubId${
+          club.clubId
+        }-maxSlots" class="uk-input uk-form-width-small" type="number" value="${
+            club.maxSlots
+          }"></div>
         <div id="minSlotsWrapper">
         <p class="text-center uk-text-bold uk-margin-medium-top">Minimum Slots:</p>
         <div id="minSlots-${club.clubId}" class="minSlots">
         <div class="text-center">
-        <span class="">9th Grade: </span><input name="minSlots9" id = "${club.clubId
-            }-minslots9" class = "slots9 uk-input" type="number" value="${club.minSlots9
-            }">
+        <span class="">9th Grade: </span><input name="minSlots9" id = "${
+          club.clubId
+        }-minslots9" class = "slots9 uk-input" type="number" value="${
+            club.minSlots9
+          }">
         </div>
         <div class="text-center">
-        <span class="">10th Grade: </span><input name="minSlots10" id = "${club.clubId
-            }-minslots10" class = "slots10 uk-input" type="number" value="${club.minSlots10
-            }">
+        <span class="">10th Grade: </span><input name="minSlots10" id = "${
+          club.clubId
+        }-minslots10" class = "slots10 uk-input" type="number" value="${
+            club.minSlots10
+          }">
         </div>
         <div class="text-center">
-        <span class="">11th Grade: </span><input name="minSlots11" id = "${club.clubId
-            }-minslots11" class = "slots11 uk-input" type="number" value="${club.minSlots11
-            }">
+        <span class="">11th Grade: </span><input name="minSlots11" id = "${
+          club.clubId
+        }-minslots11" class = "slots11 uk-input" type="number" value="${
+            club.minSlots11
+          }">
         </div>
         <div class="text-center">
-        <span class="">12th Grade: </span><input name="minSlots12" id = "${club.clubId
-            }-minslots12" class = "slots12 uk-input" type="number" value="${club.minSlots12
-            }">
+        <span class="">12th Grade: </span><input name="minSlots12" id = "${
+          club.clubId
+        }-minslots12" class = "slots12 uk-input" type="number" value="${
+            club.minSlots12
+          }">
         </div>
         </div>
         </div>
         <p class="text-center uk-text-bold uk-margin-medium-top">Co-Sponsors:</p>
         <div class="coSponsors">
         <div class="coSponsors">
-        <span>Total Required: </span><input name="coSponsorsNeeded" id = "clubId${club.coSponsorsNeeded
-            }-coSponsorsNeeded" class = "uk-input uk-width-1-2" type="number" value="${club.coSponsorsNeeded
-            }">
+        <span>Total Required: </span><input name="coSponsorsNeeded" id = "clubId${
+          club.coSponsorsNeeded
+        }-coSponsorsNeeded" class = "uk-input uk-width-1-2" type="number" value="${
+            club.coSponsorsNeeded
+          }">
     </div>
       <div class="coSponsors">
-      <span>Still Needed: </span><p id = "clubId${club.clubId
-            }-coSponsorsRequired" class ="">${coSponsorsStillNeeded
-            }</p>
+      <span>Still Needed: </span><p id = "clubId${
+        club.clubId
+      }-coSponsorsRequired" class ="">${coSponsorsStillNeeded}</p>
       </div>
     </div>
     <div class="text-center approval">
-    <span>Room: </span><input name="room" class = "clubId${club.clubId
-            }-room uk-input uk-form-width-small" type="text" value="${club.room || ""}">
-    <span>Approved: </span><input name="isApproved" id="is-approved${club.clubId
-            }" class ="isApproved" type="checkbox" checked>
+    <span>Room: </span><input name="room" class = "clubId${
+      club.clubId
+    }-room uk-input uk-form-width-small" type="text" value="${club.room || ""}">
+    <span>Approved: </span><input name="isApproved" id="is-approved${
+      club.clubId
+    }" class ="isApproved" type="checkbox" checked>
     </div>
         
         
         
         </div>
         <div class="text-center">
-        <button type="button" id="approve${club.clubId
-            }" class="uk-button uk-button-secondary uk-width-1 approveBtn">Confirm</button>
+        <button type="button" id="approve${
+          club.clubId
+        }" class="uk-button uk-button-secondary uk-width-1 approveBtn">Confirm</button>
         <button class="delete" uk-toggle="target: #delete-confirmation" type="button">
-        <img id="delete-link-${club.clubId
-            }" src="/img/trash-can.png" width="40px">
+        <img id="delete-link-${
+          club.clubId
+        }" src="/img/trash-can.png" width="40px">
         </button>
         </div>
         </div>
@@ -268,12 +310,15 @@ async function getAllApprovedClubs() {
 
           if (coSponsors.cosponsors.length > 0) {
             coSponsors.cosponsors.forEach((cosponsor) => {
-              document.getElementById(`currentCosponsors${club.clubId}`).innerHTML += `<li>${cosponsor.firstName} ${cosponsor.lastName}</li>`
-            })
-            document.getElementById(`coSponsorsBlock${club.clubId}`).innerHTML += `<button type="button" onclick="removeCoSponsor(${club.clubId}, ${club.primaryTeacherId}
-              )" class="change">Remove</button>`
+              document.getElementById(
+                `currentCosponsors${club.clubId}`
+              ).innerHTML += `<li>${cosponsor.firstName} ${cosponsor.lastName}</li>`;
+            });
+            document.getElementById(
+              `coSponsorsBlock${club.clubId}`
+            ).innerHTML += `<button type="button" onclick="removeCoSponsor(${club.clubId}, ${club.primaryTeacherId}
+              )" class="change">Remove</button>`;
           }
-
         })
       );
       // console.log("ready");
@@ -318,7 +363,9 @@ async function changeTeacher(club) {
   );
   teachers = await getTeachers.json();
 
-  teachers = teachers.filter((teacher) => teacher.clubId === null || teacher.clubId === club)
+  teachers = teachers.filter(
+    (teacher) => teacher.clubId === null || teacher.clubId === club
+  );
 
   document.getElementById(
     `changeTeacher${club}`
@@ -333,13 +380,13 @@ async function changeTeacher(club) {
   });
 }
 async function addCosponsor(club, teacher) {
-  const list = document.getElementById(`addCoSponsor${club}`)
+  const list = document.getElementById(`addCoSponsor${club}`);
   const getTeachers = await fetch(
     `http://${serverAddress}:3000/getAllUsers?isTeacher=true`
   );
   teachers = await getTeachers.json();
 
-  teachers = teachers.filter((teacher) => teacher.clubId === null)
+  teachers = teachers.filter((teacher) => teacher.clubId === null);
 
   list.innerHTML = `<span>Co Sponsor</span> <div class="uk-margin">
   <select id="coSponsorDrop${club}" name="addedCoSponsor" class="primaryTeacher uk-select uk-form-width-medium" aria-label="Select">
@@ -352,13 +399,15 @@ async function addCosponsor(club, teacher) {
   });
 }
 async function removeCoSponsor(club, primeTeacher) {
-  const list = document.getElementById(`currentCosponsors${club}`)
+  const list = document.getElementById(`currentCosponsors${club}`);
   const getTeachers = await fetch(
     `http://${serverAddress}:3000/getAllUsers?isTeacher=true`
   );
   teachers = await getTeachers.json();
 
-  teachers = teachers.filter((teacher) => teacher.clubId === club && teacher.userId !== primeTeacher)
+  teachers = teachers.filter(
+    (teacher) => teacher.clubId === club && teacher.userId !== primeTeacher
+  );
 
   list.innerHTML = `<span>Co Sponsor</span> <div class="uk-margin">
   <select id="coSponsorDrop${club}" name="removedCoSponsor" class="primaryTeacher uk-select uk-form-width-medium" aria-label="Select">
@@ -386,17 +435,29 @@ async function getAllUnapprovedClubs(clubs) {
     clubProposals.innerHTML = "";
   }
   filteredClubs.forEach(async (club) => {
+    let clubInfo = await fetch(
+      `http://${serverAddress}:3000/getUserInfo?userId=${club.primaryTeacherId}`
+    );
+    if (!clubInfo.ok) {
+      throw new Error(`Failed to fetch club info for club ID ${club.clubId}`);
+    }
+
+    teacherInfo = await clubInfo.json();
+    teacherFirstName = teacherInfo.firstName;
+    teacherLastName = teacherInfo.lastName;
     clubProposals.innerHTML += `<div id="club-${club.clubId}" class="uk-card uk-width-1-2 club-proposals uk-container-expand">
     <div class="uk-card uk-card-default uk-card-body uk-card-hover">
     <div class="uk-card-badge uk-label uk-label-warning">Unapproved</div>
-    <div class="uk-card-header">   
-    <a href="${serverAddress}/club-info.html?club-id=${club.clubId}"><h2 class="roboto uk-text-bold uk-card-title">${club.clubName}</h2></a>
+     <div class="uk-background-blend-multiply uk-background-secondary" id="cover-photo-card" style="background-image : url('${club.coverPhoto}')"> 
+    <a href="http://${serverAddress}/club-info.html?club-id=${club.clubId}"><h2 class="roboto uk-card-title cover-card-text">${club.clubName}</h2></a>
     </div> 
     <div class="uk-card-body">
         <p class="uk-text-bold">${club.clubDescription}</p>
+        <p class="text-center uk-text-bold">Submited By:</p>
+        <p class="text-center uk-text-bold">${teacherFirstName} ${teacherLastName}</p>
         </div>
         <div class="uk-card-footer text-center">
-        <button class="uk-button uk-button-primary uk-width-1" onclick="approveClub(${club.clubId},'${club.clubName}')">Approve</button>
+        <button class="uk-button uk-button-primary uk-width-1-1" onclick="approveClub(${club.clubId},'${club.clubName}')">Approve</button>
         <div>
         <button class="delete" uk-toggle="target: #delete-confirmation" type="button">
         <img id="delete-link-${club.clubId}" src="/img/trash-can.png" width="40px">
@@ -504,7 +565,9 @@ async function attachEventListeners() {
 }
 
 async function assignClubs() {
-  const respose = await fetch(`http://${serverAddress}:3000/admin-club-assignment`);
+  const respose = await fetch(
+    `http://${serverAddress}:3000/admin-club-assignment`
+  );
   const json = await respose.json();
   if (json.body === "Success") {
     console.log("Success");

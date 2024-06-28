@@ -4,13 +4,11 @@ const coSponsorClubs = document.querySelector("#cosponsor-clubs");
 
 async function getUser() {
   if (user) {
-
     console.log(`User: ${user.firstName} ${user.lastName}`);
     console.log(user);
     if (!user.isTeacher) {
       window.location.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
     }
-
 
     //getTeacherDashboard();
   } else {
@@ -31,33 +29,31 @@ async function getTeacherDashboard() {
     (obj) => obj.clubId === user.clubId && obj.isApproved === 1
   );
 
-  const myUnapprovedClubs = clubs.filter(
-    (obj) => obj.isApproved === 0
-  );
+  const myUnapprovedClubs = clubs.filter((obj) => obj.isApproved === 0);
 
   const clubsThatNeedCosponsors = [];
 
   // Use map to create an array of promises
   const promises = clubs.map(async (obj) => {
-    const response2 = await fetch(`http://${serverAddress}:3000/get-cosponsors/${obj.clubId}`);
+    const response2 = await fetch(
+      `http://${serverAddress}:3000/get-cosponsors/${obj.clubId}`
+    );
     const currentCoSponsorsArray = await response2.json();
     const currentCoSponsors = currentCoSponsorsArray.cosponsors.length;
 
     if (currentCoSponsors < obj.coSponsorsNeeded) {
       // Ensure we are working with plain objects
       const plainClub = { ...obj };
-      return plainClub
-
+      return plainClub;
     }
     return null;
-
-  })
-  const results = await Promise.all(promises)
+  });
+  const results = await Promise.all(promises);
   results.forEach((result) => {
     if (result != null) {
-      clubsThatNeedCosponsors.push(result)
+      clubsThatNeedCosponsors.push(result);
     }
-  })
+  });
   // Update the DOM elements
   document.querySelector("#current-clubs").innerHTML =
     myApprovedClubs.length || 0;
@@ -66,22 +62,26 @@ async function getTeacherDashboard() {
 
   // Select the DOM elements for updates
 
-
   // Clear existing content
-  myClubs.innerHTML = '';
-  unApprovedClubs.innerHTML = '';
-  coSponsorClubs.innerHTML = '';
+  myClubs.innerHTML = "";
+  unApprovedClubs.innerHTML = "";
+  coSponsorClubs.innerHTML = "";
 
   // Populate unapproved clubs
   myUnapprovedClubs.forEach((club) => {
     let coverPhotoUrl = `https://ui-avatars.com/api/?name=${club.clubName}&background=0D8ABC&color=fff`;
-    if (club.coverPhoto !== 'NULL' && club.coverPhoto !== 'null' && club.coverPhoto !== null) {
+    if (
+      club.coverPhoto &&
+      club.coverPhoto !== "NULL" &&
+      club.coverPhoto !== "null" &&
+      club.coverPhoto !== null
+    ) {
       coverPhotoUrl = `${club.coverPhoto}`;
     }
     unApprovedClubs.innerHTML += `<div class="co-sponser-wrapper">
     <div class="club-thumbnail" style="background-image: url(&quot;${coverPhotoUrl}&quot;)">
     </div>
-    <a href="http://${serverAddress}/club-info/${club.clubId}" class="uk-link-text">
+    <a href="http://${serverAddress}:3000/club-info/${club.clubId}" class="uk-link-text">
     <div class="club">
       <p class="uk-card-title roboto">${club.clubName}</p>
       <p>${club.clubDescription}</p>
@@ -91,32 +91,39 @@ async function getTeacherDashboard() {
   // Populate approved clubs
   myApprovedClubs.forEach((club) => {
     let coverPhotoUrl = `https://ui-avatars.com/api/?name=${club.clubName}&background=0D8ABC&color=fff`;
-    if (club.coverPhoto !== 'NULL' && club.coverPhoto !== 'null' && club.coverPhoto !== null) {
+    if (
+      club.coverPhoto &&
+      club.coverPhoto !== "NULL" &&
+      club.coverPhoto !== "null" &&
+      club.coverPhoto !== null
+    ) {
       coverPhotoUrl = `${club.coverPhoto}`;
     }
     myClubs.innerHTML += `<div class="co-sponser-wrapper">
     <div class="club-thumbnail" style="background-image: url(&quot;${coverPhotoUrl}&quot;)">
     </div>
-    <a href="http://${serverAddress}/club-info/${club.clubId}" class="uk-link-text">
+    <a href="http://${serverAddress}:3000/club-info/${club.clubId}" class="uk-link-text">
     <div class="club">
       <p class="uk-card-title roboto">${club.clubName}</p>
       <p>${club.clubDescription}</p>
     </div></a></div><hr>`;
   });
-  displayClubsThatNeedCosponsors(clubsThatNeedCosponsors)
+  displayClubsThatNeedCosponsors(clubsThatNeedCosponsors);
 }
 
 async function displayClubsThatNeedCosponsors(clubsThatNeedCosponsors) {
   // Populate clubs that need co-sponsors
   for (const club of clubsThatNeedCosponsors) {
     if (club.clubId !== user.clubId) {
-      const response = await fetch(`http://${serverAddress}:3000/get-cosponsors/${club.clubId}`);
+      const response = await fetch(
+        `http://${serverAddress}:3000/get-cosponsors/${club.clubId}`
+      );
       const coSponsors = await response.json();
-      console.log('coSponsors', coSponsors)
+      console.log("coSponsors", coSponsors);
       const numCoSponsors = coSponsors.cosponsors.length;
-      console.log('numCoSponsors', numCoSponsors)
-      const requiresCoSponsor = (club.coSponsorsNeeded - numCoSponsors) > 0
-      console.log('requiresCoSponsor', requiresCoSponsor)
+      console.log("numCoSponsors", numCoSponsors);
+      const requiresCoSponsor = club.coSponsorsNeeded - numCoSponsors > 0;
+      console.log("requiresCoSponsor", requiresCoSponsor);
       if (requiresCoSponsor && club.isApproved === 1) {
         let coverPhotoUrl = `https://ui-avatars.com/api/?name=${club.clubName}&background=0D8ABC&color=fff`;
         if (club.coverPhoto) {
@@ -125,7 +132,7 @@ async function displayClubsThatNeedCosponsors(clubsThatNeedCosponsors) {
         coSponsorClubs.innerHTML += `<div class="co-sponser-wrapper">
             <div class="club-thumbnail" style="background-image: url(&quot;${coverPhotoUrl}&quot;)">
     </div>
-        <a href="http://${serverAddress}/club-info/${club.clubId}" class="uk-link-text">
+        <a href="http://${serverAddress}:3000/club-info/${club.clubId}" class="uk-link-text">
         
         <div class="club">
         
@@ -138,7 +145,8 @@ async function displayClubsThatNeedCosponsors(clubsThatNeedCosponsors) {
   }
 }
 
-
 async function addToClub(clubId) {
-  const response = fetch(`http://${serverAddress}:3000/users/update/${user.userId}/${clubId}`);
+  const response = fetch(
+    `http://${serverAddress}:3000/users/update/${user.userId}/${clubId}`
+  );
 }

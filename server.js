@@ -9,15 +9,15 @@ const multer = require("multer");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 const PORT = 3000;
-const fs = require('node:fs');
+const fs = require("node:fs");
 const ip = require("ip");
-const serverAddress = ip.address('public')
-const content = `const serverAddress = '${serverAddress}'`
-fs.writeFile('./serverVariables.js', content, err => {
+const serverAddress = ip.address("public");
+const content = `const serverAddress = '${serverAddress}'`;
+fs.writeFile("./serverVariables.js", content, (err) => {
   if (err) {
     console.error(err);
   } else {
-    console.log(`Server address: ${serverAddress}`)
+    console.log(`Server address: ${serverAddress}`);
   }
 });
 const storage = multer.diskStorage({
@@ -91,7 +91,6 @@ app.get("/getAllStudentsPagination", async (req, res) => {
 });
 
 app.get("/getAllUsers", async (req, res) => {
-
   let isTeacher = req.query.isTeacher || false;
   try {
     const users = await db.getAllTeachersOrStudents(isTeacher);
@@ -105,13 +104,13 @@ app.get("/getAllUsers", async (req, res) => {
 
 app.get("/get-cosponsors/:club", async (req, res) => {
   const club = req.params.club;
-  const cosponsors = await db.getCoSponsors(club)
+  const cosponsors = await db.getCoSponsors(club);
   // console.log(cosponsors)
-  res.send({ "cosponsors": cosponsors });
+  res.send({ cosponsors: cosponsors });
 });
 app.get("/get-students-in-club/:club", async (req, res) => {
   const club = req.params.club;
-  const students = await db.getTeachersOrStudentsInClub(club, false)
+  const students = await db.getTeachersOrStudentsInClub(club, false);
   // console.log(cosponsors)
   res.send({ students });
 });
@@ -177,12 +176,10 @@ app.get("/users/update/:user/:club", async (req, res) => {
   const allClubs = await db.getAllClubs();
   allClubs.forEach(async (club) => {
     if (club.primaryTeacherId === user.userId) {
-      await db.updateClubValue(club.clubId, 'primaryTeacherId', null)
-      await db.updateClubValue(club.clubId, 'isApproved', false)
+      await db.updateClubValue(club.clubId, "primaryTeacherId", null);
+      await db.updateClubValue(club.clubId, "isApproved", false);
     }
-  })
-
-
+  });
 
   const added = await db.assignClub(userId, clubId, user.isTeacher);
   if (added) {
@@ -203,30 +200,35 @@ app.get("/users/updateStudentClub/:user/:club", async (req, res) => {
 });
 
 app.get("/users/:type", async (req, res) => {
-  let isTeacher = false;
-  let userType = req.params.type;
-  if (userType === "teachers") {
-    isTeacher = true;
-  }
-
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 10;
-  const search = req.query.search || "";
-  const sortBy = req.query.sortBy || "userId";
-  const sortDirection = req.query.sortDirection === "desc" ? "DESC" : "ASC";
-
   try {
-    const { users, total } = await db.getAllTeachersOrStudentsPagination(
-      isTeacher,
-      page,
-      limit,
-      search,
-      sortBy,
-      sortDirection
-    );
-    const totalPages = Math.ceil(total / limit);
+    let isTeacher = false;
+    let userType = req.params.type;
+    if (userType === "teachers") {
+      isTeacher = true;
+    }
 
-    res.send({ users, total, totalPages });
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const search = req.query.search || "";
+    const sortBy = req.query.sortBy || "userId";
+    const sortDirection = req.query.sortDirection === "desc" ? "DESC" : "ASC";
+
+    try {
+      const { users, total } = await db.getAllTeachersOrStudentsPagination(
+        isTeacher,
+        page,
+        limit,
+        search,
+        sortBy,
+        sortDirection
+      );
+      const totalPages = Math.ceil(total / limit);
+
+      res.send({ users, total, totalPages });
+    } catch (err) {
+      console.error("Error: ", err);
+      res.status(500).send("Error fetching Users");
+    }
   } catch (err) {
     console.error("Error: ", err);
     res.status(500).send("Error fetching Users");
@@ -236,14 +238,12 @@ app.get("/users/:type", async (req, res) => {
 app.post("/deleteClub", async (req, res) => {
   const clubId = req.body.clubId;
   const allUsers = await db.getAllUsersInClub(clubId);
-  const usersInClub = allUsers.filter((user) =>
-    user.clubId === clubId
-  )
+  const usersInClub = allUsers.filter((user) => user.clubId === clubId);
   const deleted = await db.deleteClub(clubId);
   if (deleted) {
     usersInClub.forEach(async (user) => {
-      await db.updateUserValue(user.userId, 'clubId', null);
-    })
+      await db.updateUserValue(user.userId, "clubId", null);
+    });
 
     res.send({ body: "Success" });
   } else {
@@ -262,10 +262,18 @@ app.post("/approveClub", async (req, res) => {
 app.post("/updateClub", async (req, res) => {
   const changeData = req.body;
   if (changeData.addedCoSponsor) {
-    await db.updateUserValue(parseInt(changeData.addedCoSponsor), 'clubId', changeData.clubId)
+    await db.updateUserValue(
+      parseInt(changeData.addedCoSponsor),
+      "clubId",
+      changeData.clubId
+    );
   }
   if (changeData.removedCoSponsor) {
-    await db.updateUserValue(parseInt(changeData.removedCoSponsor), 'clubId', null)
+    await db.updateUserValue(
+      parseInt(changeData.removedCoSponsor),
+      "clubId",
+      null
+    );
   }
   const clubInfo = await db.getClubInfo(changeData.clubId);
   const teacherIdToNull = clubInfo.primaryTeacherId;
@@ -285,12 +293,13 @@ app.post("/updateClub", async (req, res) => {
 });
 
 app.post("/submit-attendance", async (req, res) => {
-  const { presentStudents,
+  const { presentStudents, absentStudents, clubId, date } = req.body;
+  const success = await db.submitAttendance(
+    presentStudents,
     absentStudents,
     clubId,
     date
-  } = req.body
-  const success = await db.submitAttendance(presentStudents, absentStudents, clubId, date);
+  );
   if (success) {
     res.send({ body: "Success" });
   } else {
@@ -335,7 +344,7 @@ app.post("/addClub", upload.single("cover"), async (req, res) => {
   console.log("Received POST request to /addClub");
   const clubInfo = req.body;
   const coverPath = req.file ? req.file.path : "NULL";
-  clubInfo.cover = coverPath
+  clubInfo.cover = coverPath;
   console.log(clubInfo);
   try {
     await db.addClub(clubInfo);
@@ -354,7 +363,7 @@ app.post("/addAccount", async (req, res) => {
   userInfo.firstName = await capitalizeName(userInfo.firstName);
   userInfo.lastName = await capitalizeName(userInfo.lastName);
   userInfo.password = await encryptPassword(userInfo.password);
-  userInfo.email = userInfo.email.toLowerCase().trim()
+  userInfo.email = userInfo.email.toLowerCase().trim();
   userInfo.isTeacher = userInfo.isTeacher == "true";
 
   const userCheckData = await db.checkUser(userInfo.email);
@@ -469,8 +478,6 @@ async function capitalizeName(name) {
   return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
 }
 
-
-
 app.post("/upload-avatar", upload.single("avatar"), async (req, res) => {
   const newAvatarPath = req.file.path;
   const user = parseInt(req.body.userId);
@@ -495,64 +502,81 @@ app.post("/upload-cover-photo", upload.single("cover"), async (req, res) => {
   }
 });
 
+app.get("/check-reset-email", async (req, res) => {
+  const email = req.query.email.toLowerCase();
 
-app.post('/request-password-confirm', async (req, res) => {
-  const password = req.body.password
-  const userToken = req.body.token
-  const databaseInfo = await db.checkResetPasswordToken(userToken)
-  const databaseToken = databaseInfo.token
-  console.log(databaseInfo.token, databaseToken)
-  if (databaseInfo.token === databaseToken) {
-    console.log('MATCH')
-    const newPass = await encryptPassword(password)
-    console.log('newPass=', newPass)
-    const updateUser = await db.resetUserPassword(databaseInfo.user_id, newPass)
-    res.send({ body: "Success" });
+  const userExists = await db.checkUser(email);
+  res.send({ body: userExists });
+});
+
+app.post("/request-password-confirm", async (req, res) => {
+  try {
+    const password = req.body.password;
+    const userToken = req.body.token;
+    const databaseInfo = await db.checkResetPasswordToken(userToken);
+    const databaseToken = databaseInfo.token;
+    if (databaseInfo.token === databaseToken) {
+      const newPass = await encryptPassword(password);
+
+      const updateUser = await db.resetUserPassword(
+        databaseInfo.user_id,
+        newPass
+      );
+      res.send({ body: "Success" });
+    }
+  } catch (err) {
+    console.log(err);
+    res.send({ body: "Error" });
   }
-})
+});
 
+app.post("/request-password-reset", async (req, res) => {
+  try {
+    const email = req.body.email.toLowerCase();
+    const userObject = await db.getUserByEmail(email);
+    const userId = userObject.userId;
+    if (userId) {
+      const token = crypto.randomBytes(20).toString("hex");
+      const expiration = new Date(Date.now() + 3600000); // 1 hour from now
+      const sendTokenToDatabase = await db.setResetPasswordToken(
+        userId,
+        token,
+        expiration
+      );
 
-app.post('/request-password-reset', async (req, res) => {
+      // Send email with the token
 
-  const email = req.body.email.toLowerCase();
+      const transporter = nodemailer.createTransport({
+        host: `gbs423.com`,
+        port: 465,
+        secure: true, // use SSL
+        auth: {
+          user: "form@gbs423.com",
+          pass: "Wafflesthedog6969!",
+        },
+      });
 
-  const userObject = await db.getUserByEmail(email)
-  const userId = userObject.userId
-  if (userId) {
-    const token = crypto.randomBytes(20).toString('hex');
-    const expiration = new Date(Date.now() + 3600000); // 1 hour from now
-    const sendTokenToDatabase = await db.setResetPasswordToken(userId, token, expiration)
+      const mailOptions = {
+        from: "RBHS Club Creator Password Reset <form@gbs423.com>",
+        to: email,
+        subject: "Password Reset",
+        html: `<div style="padding-top:50px;height:100vh ;background-color:#0e0e11; color:white; font-size:1.5rem; text-align:center">
+  <div><img src="https://upload.wikimedia.org/wikipedia/en/0/0d/Logo_for_Red_Bank_High_School.png"></div>
+  <h1>Hello ${userObject.firstName}!</h1>
+        <p>You requested a password reset. Please follow the link below to reset your password:</p>
+  <a style="text-decoration:none; color:#0f7ae5" href="http://${serverAddress}/reset-password.html?token=${token}">Click Here To Reset Password</a>
+  <p style="color:goldenrod">If you did not request a password change, you may ignore this email.</p>
+        </div>`,
+      };
 
-    // Send email with the token
-    console.log('SEND IT PLEASE?')
-    const transporter = nodemailer.createTransport({
-      host: `gbs423.com`,
-      port: 465,
-      secure: true, // use SSL
-      auth: {
-        user: "form@gbs423.com",
-        pass: "Wafflesthedog6969!",
-      },
-    });
-
-    const mailOptions = {
-      from: 'RBHS Club Creator Password Reset <form@gbs423.com>',
-      to: email,
-      subject: 'Password Reset',
-      html: `<p>You requested a password reset. Please use the following link to reset your password:</p> <a href="${serverAddress}/reset-password.html?token=${token}">Reset Password</a>`
-    };
-
-    transporter.sendMail(mailOptions, (err, info) => {
-      console.log('SENT MAIL????')
-      if (err) throw err;
-      console.log(info);
-      res.json({ message: 'Password reset email sent!' });
-    });
-
+      transporter.sendMail(mailOptions, (err, info) => {
+        if (err) throw err;
+        console.log(info);
+        res.send({ body: "Success", email: email });
+      });
+    }
+  } catch (err) {
+    console.log(err);
+    res.send({ body: "Error" });
   }
-
-
-
-
-})
-
+});

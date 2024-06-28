@@ -22,7 +22,7 @@ confirmPassword.addEventListener("change", () => {
   if (password.value !== confirmPassword.value) {
     successMessageBox.classList.add("uk-alert-danger");
     successMessageBox.style.display = "block";
-    successMessage.innerHTML = "passowrds don't match";
+    successMessage.innerHTML = "Passwords Do Not Match";
   } else {
     successMessageBox.style.display = "none";
     successMessage.innerHTML = "";
@@ -30,8 +30,9 @@ confirmPassword.addEventListener("change", () => {
 });
 password.addEventListener("change", () => {
   if (password.value !== confirmPassword.value) {
+    successMessageBox.classList.add("uk-alert-danger");
     successMessageBox.style.display = "block";
-    successMessage.innerHTML = "passwords don't match";
+    successMessage.innerHTML = "Passwords Do Not Match";
   } else {
     successMessageBox.style.display = "none";
     successMessage.innerHTML = "";
