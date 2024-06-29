@@ -94,6 +94,32 @@ async function createStudents() {
     });
   }
 }
+async function createTeachers() {
+  const numOfTeachers = document.querySelector("#num-of-rand-teachers").value;
+
+  const response = await fetch(
+    `http://${serverAddress}:3000/admin-create-teachers`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        isAdmin: user.isAdmin,
+        numOfTeachers: numOfTeachers,
+      }),
+    }
+  );
+  const clubs = await response.json();
+  if (clubs.body === "Success") {
+    UIkit.notification({
+      message: `${numOfTeachers} Random Teachers Created!`,
+      status: "success",
+      pos: "top-center",
+      timeout: 5000,
+    });
+  }
+}
 async function createClubs() {
   const numOfClubs = document.querySelector("#num-of-rand-clubs").value;
   const response = await fetch(
@@ -106,6 +132,7 @@ async function createClubs() {
       body: JSON.stringify({
         isAdmin: user.isAdmin,
         numOfClubs: numOfClubs,
+        teacherId: user.userId
       }),
     }
   );
@@ -149,7 +176,7 @@ async function getAllApprovedClubs() {
           let teacherFirstName = "Select";
           let teacherLastName = "Teacher";
           let isPrimaryId = "red-boarder";
-
+          let clubStatus = "Not Ready"
           if (club.primaryTeacherId !== null && club.primaryTeacherId !== 0) {
             let clubInfo = await fetch(
               `http://${serverAddress}:3000/getUserInfo?userId=${club.primaryTeacherId}`
@@ -176,134 +203,131 @@ async function getAllApprovedClubs() {
           if (coSponsorsStillNeeded < 0) {
             isPrimaryId = "red-boarder";
           }
-          approvedClubList.innerHTML += `<form class="approved-clubs uk-width-1-2@m" id="form${
-            club.clubId
-          }"><div id="club-${club.clubId}" class="uk-card ${isPrimaryId}">
-    <div id="${
-      club.clubId
-    }" class=" uk-card uk-card-default uk-card-body uk-card-hover">
-    <div class="uk-card-badge uk-label uk-label-success">Approved</div>
-    <div class="uk-background-blend-multiply uk-background-secondary" id="cover-photo-card" style="background-image : url('${
-      club.coverPhoto
-    }')">   
-    <a class="cover-card-text" href="http://${serverAddress}/club-info.html?club-id=${
-            club.clubId
-          }><p class="roboto uk-text-bold clubName" id="${
-            club.clubId
-          }clubName">${club.clubName}</p></a>
+
+          if (club.room !== null && club.room !== "") {
+
+            locationNeeded = 'blue'
+          } else {
+            locationNeeded = 'red'
+          }
+          if (coSponsorsStillNeeded > 0) {
+            usersNeeded = 'red'
+          } else {
+            usersNeeded = 'blue'
+          }
+          if (usersNeeded === 'blue' && locationNeeded === 'blue') {
+            isPrimaryId = 'blue-boarder';
+            clubStatus = 'Ready'
+            badgeType = 'uk-label'
+
+          } else {
+            club.room = null
+            isPrimaryId = 'red-boarder';
+            badgeType = 'uk-label-danger'
+          }
+          approvedClubList.innerHTML += `<form class="approved-clubs uk-width-1-2@m" id="form${club.clubId
+            }"><div id="club-${club.clubId}" class="uk-card ${isPrimaryId}">
+    <div id="${club.clubId
+            }" class=" uk-card uk-card-default uk-card-body uk-card-hover">
+    <div class="uk-card-badge uk-label ${badgeType}">${clubStatus}</div>
+    <div class="uk-background-blend-multiply uk-background-secondary" id="cover-photo-card" style="background-image : url('${club.coverPhoto
+            }')">   
+    <a class="cover-card-text" href="http://${serverAddress}/club-info.html?club-id=${club.clubId
+            }"><p class="roboto uk-text-bold clubName" id="${club.clubId
+            }clubName">${club.clubName}</p></a>
     <input type="hidden" name="clubName" value="${club.clubName}">
     </div> 
-    <div class="uk-card-body">
-        <p class= "uk-text-bold text-center" id="clubDescription">${
-          club.clubDescription
-        }</p>
-        <input type="hidden" name="clubDescription" value="${
-          club.clubDescription
-        }">
+    <div class="text-center uk-margin-medium-top">
+    <span class="${locationNeeded}" uk-icon="icon:location; ratio:1.5"uk-tooltip="title:Room: ${club.room || "None"}"></span>
+    <span class="${usersNeeded}" uk-icon="icon:users; ratio:1.5" uk-tooltip="${coSponsorsStillNeeded} Co-Sponsors Still Needed"></span>
+    <button type="button" id="club-edit-button-${club.clubId}" class="uk-button uk-button-primary edit-club-button">Edit Club</button>
+    </div>
+    <div id="club-card-body-${club.clubId}" class="uk-card-body hidden">
+        <p class= "uk-text-bold text-center" id="clubDescription">${club.clubDescription
+            }</p>
+        <input type="hidden" name="clubDescription" value="${club.clubDescription
+            }">
       <div id="changeTeacher${club.clubId}" class="maxSlots uk-margin">
       <span>Primary Teacher: </span>
-             <strong>${teacherFirstName || "Select"} ${
-            teacherLastName || "Teacher"
-          }</strong>
-             <button type="button" onclick="changeTeacher(${
-               club.clubId
-             })" class="change">Change</button>
+             <strong>${teacherFirstName || "Select"} ${teacherLastName || "Teacher"
+            }</strong>
+             <button type="button" onclick="changeTeacher(${club.clubId
+            })" class="change">Change</button>
             </div>
             <div id="coSponsorsBlock${club.clubId}" class="maxSlots">
             <span>Current Co-Sponsors: </span>
-            <ul class="uk-list co-sponsor-list" id="currentCosponsors${
-              club.clubId
+            <ul class="uk-list co-sponsor-list" id="currentCosponsors${club.clubId
             }"></ul>
                         
             </div>
       <div id="addCoSponsor${club.clubId}" class="maxSlots uk-margin">
       <span>Add Co-Sponsor: </span>
-             <button type="button" onclick="addCosponsor(${
-               club.clubId
-             })" class="change">Add</button>
+             <button type="button" onclick="addCosponsor(${club.clubId
+            })" class="change">Add</button>
             </div>
         
-        <input id="hiddenTeacherId${
-          club.clubId
-        }" type="hidden" name="primaryTeacherId" value="${
-            club.primaryTeacherId || null
-          }">
+        <input id="hiddenTeacherId${club.clubId
+            }" type="hidden" name="primaryTeacherId" value="${club.primaryTeacherId || null
+            }">
         <div class="maxSlots">
-        <span>Maximum Slots: </span><input name="maxSlots" id="clubId${
-          club.clubId
-        }-maxSlots" class="uk-input uk-form-width-small" type="number" value="${
-            club.maxSlots
-          }"></div>
+        <span>Maximum Slots: </span><input name="maxSlots" id="clubId${club.clubId
+            }-maxSlots" class="uk-input uk-form-width-small" type="number" value="${club.maxSlots
+            }"></div>
         <div id="minSlotsWrapper">
         <p class="text-center uk-text-bold uk-margin-medium-top">Minimum Slots:</p>
         <div id="minSlots-${club.clubId}" class="minSlots">
         <div class="text-center">
-        <span class="">9th Grade: </span><input name="minSlots9" id = "${
-          club.clubId
-        }-minslots9" class = "slots9 uk-input" type="number" value="${
-            club.minSlots9
-          }">
+        <span class="">9th Grade: </span><input name="minSlots9" id = "${club.clubId
+            }-minslots9" class = "slots9 uk-input" type="number" value="${club.minSlots9
+            }">
         </div>
         <div class="text-center">
-        <span class="">10th Grade: </span><input name="minSlots10" id = "${
-          club.clubId
-        }-minslots10" class = "slots10 uk-input" type="number" value="${
-            club.minSlots10
-          }">
+        <span class="">10th Grade: </span><input name="minSlots10" id = "${club.clubId
+            }-minslots10" class = "slots10 uk-input" type="number" value="${club.minSlots10
+            }">
         </div>
         <div class="text-center">
-        <span class="">11th Grade: </span><input name="minSlots11" id = "${
-          club.clubId
-        }-minslots11" class = "slots11 uk-input" type="number" value="${
-            club.minSlots11
-          }">
+        <span class="">11th Grade: </span><input name="minSlots11" id = "${club.clubId
+            }-minslots11" class = "slots11 uk-input" type="number" value="${club.minSlots11
+            }">
         </div>
         <div class="text-center">
-        <span class="">12th Grade: </span><input name="minSlots12" id = "${
-          club.clubId
-        }-minslots12" class = "slots12 uk-input" type="number" value="${
-            club.minSlots12
-          }">
+        <span class="">12th Grade: </span><input name="minSlots12" id = "${club.clubId
+            }-minslots12" class = "slots12 uk-input" type="number" value="${club.minSlots12
+            }">
         </div>
         </div>
         </div>
         <p class="text-center uk-text-bold uk-margin-medium-top">Co-Sponsors:</p>
         <div class="coSponsors">
         <div class="coSponsors">
-        <span>Total Required: </span><input name="coSponsorsNeeded" id = "clubId${
-          club.coSponsorsNeeded
-        }-coSponsorsNeeded" class = "uk-input uk-width-1-2" type="number" value="${
-            club.coSponsorsNeeded
-          }">
+        <span>Total Required: </span><input name="coSponsorsNeeded" id = "clubId${club.coSponsorsNeeded
+            }-coSponsorsNeeded" class = "uk-input uk-width-1-2" type="number" value="${club.coSponsorsNeeded
+            }">
     </div>
       <div class="coSponsors">
-      <span>Still Needed: </span><p id = "clubId${
-        club.clubId
-      }-coSponsorsRequired" class ="">${coSponsorsStillNeeded}</p>
+      <span>Still Needed: </span><p id = "clubId${club.clubId
+            }-coSponsorsRequired" class ="">${coSponsorsStillNeeded}</p>
       </div>
     </div>
     <div class="text-center approval">
-    <span>Room: </span><input name="room" class = "clubId${
-      club.clubId
-    }-room uk-input uk-form-width-small" type="text" value="${club.room || ""}">
-    <span>Approved: </span><input name="isApproved" id="is-approved${
-      club.clubId
-    }" class ="isApproved" type="checkbox" checked>
+    <span>Room: </span><input name="room" class = "clubId${club.clubId
+            }-room uk-input uk-form-width-small" type="text" value="${club.room || ""}">
+    <span>Approved: </span><input name="isApproved" id="is-approved${club.clubId
+            }" class ="isApproved" type="checkbox" checked>
     </div>
         
-        
-        
-        </div>
         <div class="text-center">
-        <button type="button" id="approve${
-          club.clubId
-        }" class="uk-button uk-button-secondary uk-width-1 approveBtn">Confirm</button>
+        <button type="button" id="approve${club.clubId
+            }" class="uk-button uk-button-secondary uk-width-1 approveBtn">Confirm</button>
         <button class="delete" uk-toggle="target: #delete-confirmation" type="button">
-        <img id="delete-link-${
-          club.clubId
-        }" src="/img/trash-can.png" width="40px">
+        <img id="delete-link-${club.clubId
+            }" src="/img/trash-can.png" width="40px">
         </button>
         </div>
+        
+        </div>
+        
         </div>
         </div></form>
         `;
@@ -449,7 +473,7 @@ async function getAllUnapprovedClubs(clubs) {
     <div class="uk-card uk-card-default uk-card-body uk-card-hover">
     <div class="uk-card-badge uk-label uk-label-warning">Unapproved</div>
      <div class="uk-background-blend-multiply uk-background-secondary" id="cover-photo-card" style="background-image : url('${club.coverPhoto}')"> 
-    <a href="http://${serverAddress}/club-info.html?club-id=${club.clubId}"><h2 class="roboto uk-card-title cover-card-text">${club.clubName}</h2></a>
+    <a href="http://${serverAddress}/club-info.html?club-id=${club.clubId}"><h2 id="${club.clubId}clubName" class="roboto uk-card-title cover-card-text">${club.clubName}</h2></a>
     </div> 
     <div class="uk-card-body">
         <p class="uk-text-bold">${club.clubDescription}</p>
@@ -531,6 +555,16 @@ async function approveClub(clubId, clubName) {
 }
 
 async function attachEventListeners() {
+
+  document.querySelectorAll('.edit-club-button').forEach((element) => {
+    element.addEventListener("click", async (e) => {
+      clubId = e.target.id.match(`(?<=button-)(.+?)((?<![^a-zA-Z0-9_\u4e00-\u9fa5])(?=[^a-zA-Z0-9_\u4e00-\u9fa5])|(?<=[^a-zA-Z0-9_\u4e00-\u9fa5])(?![^a-zA-Z0-9_\u4e00-\u9fa5])|$)`)[1]
+
+      document.getElementById(`club-card-body-${clubId}`).classList.remove('hidden')
+      e.target.style.display = "none"
+    })
+  })
+
   document.querySelectorAll(".approveBtn").forEach((element) => {
     element.addEventListener("click", async (e) => {
       clubId = e.target.id.match(/\D(\d+)$/)[1];

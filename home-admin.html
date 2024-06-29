@@ -76,6 +76,18 @@
                 placeholder="Number to Generate" />
             </div>
           </div>
+          <div class="uk-flex">
+            <div>
+              <button class="uk-button uk-button-primary uk-margin uk-margin-small-right uk-width-medium""
+                  id=" create-random-teachers" onclick="createTeachers()">
+                Create Random Teachers
+              </button>
+            </div>
+            <div>
+              <input id="num-of-rand-teachers" class="uk-input uk-width-small" type="number" min="1" value="1"
+                placeholder="Number to Generate" />
+            </div>
+          </div>
           <div>
             <div class="uk-flex">
               <div>
@@ -118,11 +130,6 @@
               <span class="uk-badge approved-clubs-badge">0</span>
             </a>
           </li>
-          <li uk-filter-control="filter: .locations">
-            <a href="#">
-              <h2 class="roboto" id="locations">Locations</h2>
-            </a>
-          </li>
         </ul>
 
         <div id="clubProposalList" class="club-proposals js-filter uk-grid-column-small uk-grid-row-small" uk-grid
@@ -133,12 +140,6 @@
         <div id="approvedClubList" class="approved-clubs clubList js-filter uk-grid-column-small uk-grid-row-small"
           uk-grid uk-sortable>
           No Approved Clubs
-        </div>
-
-        <div id="locationList" class="clubList js-filter uk-grid-column-small uk-grid-row-small" uk-grid uk-sortable>
-          <a class="locations" href="create location page">
-            Create Location
-          </a>
         </div>
         <div id="delete-confirmation" uk-modal>
           <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">

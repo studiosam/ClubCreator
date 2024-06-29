@@ -90,6 +90,13 @@ textarea:focus {
   right: -16px;
 }
 
+.not-ready-badge {
+  background-color: #bb5252;
+  position: absolute;
+  top: 0;
+  right: -16px;
+}
+
 .uk-subnav-pill > .uk-active > a {
   background: none !important;
   border-bottom: 3px solid rgb(60, 138, 255);
@@ -304,6 +311,10 @@ tbody tr:hover {
 
 .red-boarder {
   border: 5px solid red;
+}
+
+.blue-boarder {
+  border: 5px solid rgb(0, 140, 255);
 }
 
 .club {

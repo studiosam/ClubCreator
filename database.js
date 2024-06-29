@@ -793,9 +793,8 @@ function getRandomString(length) {
 
 function getRandomEmail() {
   const domains = ["example.com", "mail.com", "test.com"];
-  return `${getRandomString(5)}@${
-    domains[Math.floor(Math.random() * domains.length)]
-  }`;
+  return `${getRandomString(5)}@${domains[Math.floor(Math.random() * domains.length)]
+    }`;
 }
 
 function getRandomGrade() {
@@ -819,6 +818,8 @@ async function getRandomPreferences() {
 }
 
 async function createRandomGuys(numberOfAccounts) {
+  let isTeacher = false;
+
   const sql = `INSERT INTO users (firstName, lastName, email, password, grade, clubPreferences, isTeacher) VALUES (?,?,?,?,?,?,?)`;
 
   for (let i = 0; i < numberOfAccounts; i++) {
@@ -833,7 +834,7 @@ async function createRandomGuys(numberOfAccounts) {
     const password = getRandomString(10);
     const grade = getRandomGrade();
     const clubPreferences = await getRandomPreferences();
-    const isTeacher = false;
+
 
     await db.run(sql, [
       firstName,
@@ -862,6 +863,70 @@ async function createRandomGuys(numberOfAccounts) {
   console.log(`${numberOfAccounts} random accounts created.`);
   return true;
 }
+async function createRandomTeachers(numberOfAccounts) {
+  let isTeacher = true
+
+  const sql = `INSERT INTO users (firstName, lastName, email, password, grade, clubPreferences, isTeacher) VALUES (?,?,?,?,?,?,?)`;
+
+  for (let i = 0; i < numberOfAccounts; i++) {
+    const res = await fetch("https://randomuser.me/api/?nat=us");
+    const user = await res.json();
+    console.log(
+      `User ${user.results[0].name.first} ${user.results[0].name.last} Created`
+    );
+    const firstName = user.results[0].name.first;
+    const lastName = user.results[0].name.last;
+    const email = user.results[0].email;
+    const password = getRandomString(10);
+    const grade = null
+    const clubPreferences = null;
+    let primaryTeacherId
+
+    db.run(sql, [
+      firstName,
+      lastName,
+      email,
+      password,
+      grade,
+      clubPreferences,
+      isTeacher,
+    ], async function getId(err) {
+      if (err) {
+        console.error(err);
+        return;
+      }
+
+      primaryTeacherId = this.lastID;
+      console.log('LAST ID:', primaryTeacherId);
+      await createRandomClubs(1, primaryTeacherId)
+      // Further operations with primaryTeacherId should be inside this callback
+      const createdUser = {
+        firstName,
+        lastName,
+        email,
+        grade,
+        clubPreferences,
+        progress: ((i + 1) / numberOfAccounts) * 100,
+        primaryTeacherId, // Include primaryTeacherId in your createdUser object if needed
+      };
+
+      // Additional code related to createdUser or primaryTeacherId
+      wss.clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+          createdUser.type = "teacher";
+          client.send(JSON.stringify(createdUser));
+        }
+      });
+    });
+
+
+
+
+
+    console.log(`${numberOfAccounts} random accounts created.`);
+    return true;
+  }
+}
 
 async function deleteAllStudents() {
   try {
@@ -881,8 +946,8 @@ function getRandomInt(min, max) {
 }
 
 // Function to create a specified number of random clubs
-async function createRandomClubs(numberOfClubs) {
-  const sqlInsert = `INSERT INTO clubs (clubName, clubDescription, coSponsorsNeeded, minSlots9, minSlots10, minSlots11, minSlots12, maxSlots, primaryTeacherId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+async function createRandomClubs(numberOfClubs, teacherId) {
+  const sqlInsert = `INSERT INTO clubs (clubName, clubDescription, coSponsorsNeeded, minSlots9, minSlots10, minSlots11, minSlots12, maxSlots, primaryTeacherId,isApproved) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
   for (let i = 0; i < numberOfClubs; i++) {
     const response = await fetch(
@@ -894,7 +959,7 @@ async function createRandomClubs(numberOfClubs) {
     const coSponsorsNeeded = 0;
     const maxSlots = 40;
     const requiredCoSponsors = 0;
-    const primaryTeacherId = getRandomInt(1, 100); // assuming teacher IDs range from 1 to 100
+    const primaryTeacherId = teacherId;
 
     const newClubInfo = {
       preferredClub: clubName,
@@ -905,7 +970,8 @@ async function createRandomClubs(numberOfClubs) {
       minSlots11: 8,
       minSlots12: 8,
       maxCapacity: maxSlots,
-      primaryTeacherId: 1,
+      primaryTeacherId: primaryTeacherId,
+      isApproved: 1
     };
 
     db.run(sqlInsert, [
@@ -918,17 +984,23 @@ async function createRandomClubs(numberOfClubs) {
       newClubInfo.minSlots12,
       newClubInfo.maxCapacity,
       newClubInfo.primaryTeacherId,
-    ]);
-    const createdClub = {
-      clubName,
-      progress: ((i + 1) / numberOfClubs) * 100,
-    };
-    wss.clients.forEach((client) => {
-      if (client.readyState === WebSocket.OPEN) {
-        createdClub.type = "club";
-        client.send(JSON.stringify(createdClub));
-      }
+      newClubInfo.isApproved
+    ], async function (err) {
+      const createdClub = {
+        clubName,
+        progress: ((i + 1) / numberOfClubs) * 100,
+      };
+
+      await updateUserValue(newClubInfo.primaryTeacherId, 'clubId', this.lastID)
+      wss.clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+          createdClub.type = "club";
+          client.send(JSON.stringify(createdClub));
+        }
+      });
     });
+
+
   }
 
   console.log(`${numberOfClubs} random clubs created.`);
@@ -978,5 +1050,6 @@ module.exports = {
   setResetPasswordToken,
   checkResetPasswordToken,
   resetUserPassword,
+  createRandomTeachers
   // Export other database functions here
 };

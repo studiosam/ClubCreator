@@ -421,7 +421,8 @@ app.post("/admin-erase-all-clubs", async (req, res) => {
 
 app.post("/admin-create-clubs", async (req, res) => {
   if (req.body.isAdmin) {
-    const created = await db.createRandomClubs(req.body.numOfClubs);
+    let teacherId = req.body.teacherId;
+    const created = await db.createRandomClubs(req.body.numOfClubs, teacherId);
 
     if (created) {
       res.send({ body: "Success" });
@@ -433,6 +434,15 @@ app.post("/admin-create-students", async (req, res) => {
   // console.log(req.body.numOfStudents);
   if (req.body.isAdmin) {
     const created = await db.createRandomGuys(req.body.numOfStudents);
+    if (created) {
+      res.send({ body: "Success" });
+    }
+  }
+});
+app.post("/admin-create-teachers", async (req, res) => {
+  // console.log(req.body.numOfStudents);
+  if (req.body.isAdmin) {
+    const created = await db.createRandomTeachers(req.body.numOfTeachers);
     if (created) {
       res.send({ body: "Success" });
     }
