@@ -865,15 +865,16 @@ async function createRandomGuys(numberOfAccounts) {
 }
 async function createRandomTeachers(numberOfAccounts) {
   let isTeacher = true
-
+  console.log(typeof numberOfAccounts);
   const sql = `INSERT INTO users (firstName, lastName, email, password, grade, clubPreferences, isTeacher) VALUES (?,?,?,?,?,?,?)`;
 
-  for (let i = 0; i < numberOfAccounts; i++) {
+  for (let i = 0; i < parseInt(numberOfAccounts); i++) {
     const res = await fetch("https://randomuser.me/api/?nat=us");
     const user = await res.json();
     console.log(
       `User ${user.results[0].name.first} ${user.results[0].name.last} Created`
     );
+    console.log(i);
     const firstName = user.results[0].name.first;
     const lastName = user.results[0].name.last;
     const email = user.results[0].email;
@@ -898,7 +899,7 @@ async function createRandomTeachers(numberOfAccounts) {
 
       primaryTeacherId = this.lastID;
       console.log('LAST ID:', primaryTeacherId);
-      await createRandomClubs(1, primaryTeacherId)
+      await createRandomClubs(1, primaryTeacherId);
       // Further operations with primaryTeacherId should be inside this callback
       const createdUser = {
         firstName,
@@ -923,9 +924,9 @@ async function createRandomTeachers(numberOfAccounts) {
 
 
 
-    console.log(`${numberOfAccounts} random accounts created.`);
-    return true;
   }
+  console.log(`${numberOfAccounts} random accounts created.`);
+  return true;
 }
 
 async function deleteAllStudents() {
