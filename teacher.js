@@ -54,6 +54,7 @@ async function getTeacherDashboard() {
       clubsThatNeedCosponsors.push(result);
     }
   });
+
   // Update the DOM elements
   document.querySelector("#current-clubs").innerHTML =
     myApprovedClubs.length || 0;

@@ -1,1 +1,1 @@
-const serverAddress = '192.168.40.224'
+const serverAddress = '192.168.50.245'
