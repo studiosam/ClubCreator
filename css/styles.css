@@ -349,3 +349,27 @@ tbody tr:hover {
   gap: 1rem;
   margin-top: 15px;
 }
+
+
+#student-grade {
+align-items: center !important;
+display: flex;
+justify-content: center;
+gap: 15px;
+}
+
+.grade {
+  border: 1px solid rgb(0, 140, 255);
+  text-align: center;
+  padding: 5px 15px 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+#incorrectEmailMessage {
+  color: red;
+  padding-left: 35px;
+  font-weight: 1;
+}

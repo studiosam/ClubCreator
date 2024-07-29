@@ -5,20 +5,19 @@ const password = document.querySelector("#password");
 const confirmPassword = document.querySelector("#confirmPassword");
 const isStudent = document.querySelector("#student");
 const isTeacher = document.querySelector("#teacher");
+const emailInput = document.querySelector('#email');
 
-isStudent.addEventListener("change", () => {
-  if (isStudent.checked) {
-    document.querySelector("#student-grade").classList.remove("hidden");
-    document.querySelector("#grade").required = true;
+emailInput.addEventListener("keyup", () => {
+  if (!emailInput.value.includes("@students.hcde.org")) {
+    document.querySelector("#submit").disabled = true;
+    document.querySelector("#incorrectEmailMessage").innerHTML = "Please use your school email address";
+  } else {
+    document.querySelector("#submit").disabled = false;
+    document.querySelector("#incorrectEmailMessage").innerHTML = "";
   }
-});
-isTeacher.addEventListener("change", () => {
-  if (isTeacher.checked) {
-    document.querySelector("#student-grade").classList.add("hidden");
-    document.querySelector("#grade").required = false;
-  }
-});
-confirmPassword.addEventListener("change", () => {
+})
+
+confirmPassword.addEventListener("keyup", () => {
   if (password.value !== confirmPassword.value) {
     successMessageBox.classList.add("uk-alert-danger");
     successMessageBox.style.display = "block";
@@ -28,7 +27,8 @@ confirmPassword.addEventListener("change", () => {
     successMessage.innerHTML = "";
   }
 });
-password.addEventListener("change", () => {
+
+password.addEventListener("keyup", () => {
   if (password.value !== confirmPassword.value) {
     successMessageBox.classList.add("uk-alert-danger");
     successMessageBox.style.display = "block";
@@ -75,5 +75,12 @@ async function createAccount() {
         <a href="./index.html"><button class="uk-button uk-button-primary">Click here to log in</button></a>
         </div>`;
     console.log("failed login"); // handle failed login on screen
+  } else if (responseStatus.body === "Invalid email address") {
+    UIkit.notification({
+      message: 'Invalid email address',
+      status: 'danger',
+      pos: 'top-center',
+      timeout: 5000
+    });
   }
 }

@@ -480,7 +480,7 @@ function addUser(user) {
     user.lastName,
     user.email,
     user.password,
-    user.grade,
+    parseInt(user.grade),
     user.isTeacher,
   ]);
 }
@@ -1008,6 +1008,20 @@ async function createRandomClubs(numberOfClubs, teacherId) {
   return true;
 }
 
+async function getAttendanceFromDate(dateString) {
+  console.log(typeof dateString);
+  return new Promise((resolve, reject) => {
+    const sql = `SELECT * FROM attendance WHERE date = ${dateString.toString()}`;
+    db.all(sql, (err, rows) => {
+      if (err) {
+        return reject(err);
+      } else {
+        return resolve(rows);
+      }
+    });
+  });
+}
+
 module.exports = {
   get,
   run,
@@ -1051,6 +1065,7 @@ module.exports = {
   setResetPasswordToken,
   checkResetPasswordToken,
   resetUserPassword,
-  createRandomTeachers
+  createRandomTeachers,
+  getAttendanceFromDate
   // Export other database functions here
 };

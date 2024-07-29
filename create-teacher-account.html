@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Account</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/css/uikit.min.css" />
+  <link rel="stylesheet" href="./css/styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/js/uikit.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/js/uikit-icons.min.js"></script>
+</head>
+
+<body>
+  <div class="wrapper">
+    <a href="index.html"><img src="/img/rbhs.png" /></a>
+    <h1 class="uk-heading-large uk-text-bold text-center roboto white">
+      RBHS Clubs
+    </h1>
+    <p class="blue">Please fill out the form below to create your account</p>
+    <form class="uk-width-large" id="createAccount">
+      <input type="hidden" value="true" name="isTeacher" />
+      <label for="firstName">First Name:</label>
+      <input class="uk-input" type="text" id="firstName" name="firstName" required />
+      <label for="lastName">Last Name:</label>
+      <input class="uk-input" type="text" id="lastName" name="lastName" required />
+      <label for="email">Email Address:</label>
+      <input class="uk-input" type="email" id="email" name="email" required />
+      <label for="password">Password:</label>
+      <input class="uk-input" type="password" id="password" name="password" required />
+      <label for="confirmPassword">Confirm Password:</label>
+      <input class="uk-input" type="password" id="confirmPassword" name="confirmPassword" required />
+      <div class="text-center uk-margin">
+        <button class="uk-button uk-button-primary" type="submit">
+          Create Account
+        </button>
+      </div>
+
+    </form>
+    <div id="successDiv" class="uk-alert-primary hidden" uk-alert>
+      <a href class="uk-alert-close" uk-close></a>
+      <p id="success">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.</p>
+    </div>
+  </div>
+
+</body>
+<script src="serverVariables.js"></script>
+<script src="./newAccount.js"></script>
+
+</html>

@@ -367,14 +367,26 @@ app.post("/addAccount", async (req, res) => {
   userInfo.isTeacher = userInfo.isTeacher == "true";
 
   const userCheckData = await db.checkUser(userInfo.email);
-
+  console.log(userInfo.isTeacher);
   if (userCheckData.userExists === true) {
     res.send({ body: "User already exists" });
   } else {
+    if (!userInfo.isTeacher) {
+      console.log(userInfo.email)
+      if (!userInfo.email.includes("@students.hcde.org")) {
+        res.send({ body: "Invalid email address" });
+        return;
+      }
+    }
     db.addUser(userInfo);
     res.send({ body: "true", user: userInfo });
   }
 });
+
+app.post("/getAttendanceFromDate", async (req, res) => {
+  let attendance = await db.getAttendanceFromDate(req.body.date);
+  console.log(attendance);
+})
 
 app.post("/login", async (req, res) => {
   const email = req.body.email.toLowerCase();

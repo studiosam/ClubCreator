@@ -16,40 +16,46 @@
 
 <body>
   <div class="wrapper">
-    <img src="/img/rbhs.png"></img>
+    <a href="index.html"><img src="/img/rbhs.png" /></a>
     <h1 class="uk-heading-large uk-text-bold text-center roboto white">
       RBHS Clubs
     </h1>
     <p class="blue">Please fill out the form below to create your account</p>
     <form class="uk-width-large" id="createAccount">
-      <fieldset class="uk-fieldset text-center">
-        <legend class="uk-legend uk-margin-small">Account Type:</legend>
-        <label>
-          <input id="student" class="uk-radio" type="radio" name="isTeacher" value="false" required />
-          Student
-        </label>
-        <label>
-          <input id="teacher" class="uk-radio" type="radio" name="isTeacher" value="true" required />
-          Teacher
-        </label>
-      </fieldset>
-      <br /><br />
+      <input type="hidden" value="false" name="isTeacher" />
+      <div id="student-grade">
+        <span>Grade:</span>
+        <div class="grade">
+          <span>9</span>
+          <input type="radio" value="9" name="grade">
+        </div>
+        <div class="grade">
+          <span>10</span>
+          <input type="radio" value="10" name="grade">
+        </div>
+        <div class="grade">
+          <span>11</span>
+          <input type="radio" value="11" name="grade">
+        </div>
+        <div class="grade">
+          <span>12</span>
+          <input type="radio" value="12" name="grade">
+        </div>
+
+      </div>
       <label for="firstName">First Name:</label>
       <input class="uk-input" type="text" id="firstName" name="firstName" required />
       <label for="lastName">Last Name:</label>
       <input class="uk-input" type="text" id="lastName" name="lastName" required />
-      <div id="student-grade" class="hidden">
-        <label for="grade">Grade:</label>
-        <input class="uk-input" type="text" id="grade" name="grade" required />
-      </div>
       <label for="email">Email Address:</label>
+      <span id="incorrectEmailMessage"></span>
       <input class="uk-input" type="email" id="email" name="email" required />
       <label for="password">Password:</label>
       <input class="uk-input" type="password" id="password" name="password" required />
       <label for="confirmPassword">Confirm Password:</label>
       <input class="uk-input" type="password" id="confirmPassword" name="confirmPassword" required />
       <div class="text-center uk-margin">
-        <button class="uk-button uk-button-primary" type="submit">
+        <button id="submit" class="uk-button uk-button-primary" type="submit">
           Create Account
         </button>
       </div>
