@@ -15,6 +15,10 @@
   cursor: pointer;
 }
 
+.bold {
+  font-weight: bold;
+}
+
 .wrapper {
   display: flex;
   justify-content: center;
@@ -22,9 +26,66 @@
   height: 100vh;
   flex-direction: column;
 }
-
+.bosab{
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: start;
+  text-align: left;
+}
 .roboto {
   font-family: "Roboto Slab", sans-serif !important;
+}
+
+#attendance-form{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+#date {
+  font-size: 28px;
+  font-weight: bold;
+  
+}
+
+input[type="date"]:focus {
+  background-color: white !important;
+}
+
+.warning {
+  background-color: #007bff;
+  margin-top: 20px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+
+}
+.warning-text-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.warning-text{
+  width: 50%;
+  text-align: center;
+}
+
+.attendance-wraper {
+  text-align: center;
+  margin-top: 50px;
+  width: 100%;
+}
+
+#attendance {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  font-size: 18px !important;
+}
+
+#attendance-out {
+  display: flex;
+  justify-content: center;
 }
 
 body {

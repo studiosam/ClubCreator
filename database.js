@@ -1011,8 +1011,8 @@ async function createRandomClubs(numberOfClubs, teacherId) {
 async function getAttendanceFromDate(dateString) {
   console.log(typeof dateString);
   return new Promise((resolve, reject) => {
-    const sql = `SELECT * FROM attendance WHERE date = ${dateString.toString()}`;
-    db.all(sql, (err, rows) => {
+    const sql = `SELECT * FROM attendance WHERE date = ?`;
+    db.all(sql, [dateString], (err, rows) => {
       if (err) {
         return reject(err);
       } else {

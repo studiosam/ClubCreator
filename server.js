@@ -168,6 +168,12 @@ app.get("/users/delete/:id", async (req, res) => {
   }
 });
 
+app.get("/usersInfo/:user", async (req, res) => {
+  let userId = req.params.user;
+  const user = await db.getUser(userId);
+  res.json(user);
+})
+
 app.get("/users/update/:user/:club", async (req, res) => {
   let userId = req.params.user;
   let clubId = req.params.club;
@@ -385,7 +391,7 @@ app.post("/addAccount", async (req, res) => {
 
 app.post("/getAttendanceFromDate", async (req, res) => {
   let attendance = await db.getAttendanceFromDate(req.body.date);
-  console.log(attendance);
+  res.send({ attendance: attendance });
 })
 
 app.post("/login", async (req, res) => {
@@ -400,6 +406,7 @@ app.post("/login", async (req, res) => {
       delete userObject.password;
       res.send({ body: true, userObject });
     } else {
+
       res.send({
         body: false,
         error: "You have entered a Wrong Password. Please try again.",

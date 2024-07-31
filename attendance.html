@@ -42,12 +42,29 @@
                     Logout
                 </button>
             </div>
-            <form>
-                <input type="date" id="date" name="date">
-                <button type="submit">
-                    Submitch
-                </button>
-            </form>
+            <div class="attendance-wraper">
+                <form id="attendance-form">
+                    <input type="date" id="date" name="date">
+                    <button class="uk-button uk-button-primary" type="submit">
+                        Get Attendace For Date
+                    </button>
+                    <button class="printbtn uk-button uk-button-secondary">Print All Names</button>
+                </form>
+                <div class="warning">
+                    <div class="warning-text-center">
+                        <p class="bold warning-text">The checkboxes are just for you to keep track of where you are in
+                            the
+                            list
+                            as you enter attendance. All they do is turn the name blue so you can see where you left
+                            off. If
+                            you leave or refresh this page, all changes will be lost</p>
+                    </div>
+                </div>
+                <div id="attendance-out">
+                    <div id="attendance"></div>
+                </div>
+                <button class="printbtn uk-button uk-button-secondary">Print All Names</button>
+            </div>
         </div>
     </div>
     <script src="serverVariables.js"></script>

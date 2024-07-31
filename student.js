@@ -137,7 +137,7 @@ async function finishStudentDashboard() {
     });
     document.querySelector(
       "#card-footer"
-    ).innerHTML = `<div class="text-center"><button id="submit" class="uk-button uk-button-primary">Submitch</button></div>`;
+    ).innerHTML = `<div class="text-center"><button id="submit" class="uk-button uk-button-primary">Submit</button></div>`;
     document.querySelector("#submit").addEventListener("click", async () => {
       const checkedClubs = document.querySelectorAll(".club-input:checked");
       if (checkedClubs.length > 5) {
@@ -178,7 +178,7 @@ async function finishStudentDashboard() {
 function selectedClubList(clubs) {
   document.querySelector(
     "#card-footer"
-  ).innerHTML = `<div class="text-center"><button id="submit-selections" class="uk-button uk-button-primary">Submitch</button></div>`;
+  ).innerHTML = `<div class="text-center"><button id="submit-selections" class="uk-button uk-button-primary">Submit</button></div>`;
   const allClubs = document.querySelector("#my-club");
   allClubs.innerHTML = "";
   document.querySelector(

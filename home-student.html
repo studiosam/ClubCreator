@@ -1,105 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>RBHS Student Home Page</title>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/css/uikit.min.css"
-    />
-    <link rel="stylesheet" href="./css/styles.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap"
-      rel="stylesheet"
-    />
-    <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/js/uikit.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/js/uikit-icons.min.js"></script>
-  </head>
 
-  <body>
-    <div class="uk-flex">
-      <div id="side-nav" class="text-center">
-        <img
-          class="uk-margin-medium-top uk-margin-medium-bottom"
-          src="./img/rbhs.png"
-        />
-        <ul class="dash-nav uk-nav uk-margin-small-top">
-          <li class="uk-active">
-            <a id="homepage-link" href="home-student.html"
-              ><span uk-icon="home"></span>Dashboard</a
-            >
-          </li>
-        </ul>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RBHS Student Home Page</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/css/uikit.min.css" />
+  <link rel="stylesheet" href="./css/styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/js/uikit.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/js/uikit-icons.min.js"></script>
+</head>
+
+<body>
+  <div class="uk-flex">
+    <div id="side-nav" class="text-center">
+      <img class="uk-margin-medium-top uk-margin-medium-bottom" src="./img/rbhs.png" />
+      <ul class="dash-nav uk-nav uk-margin-small-top">
+        <li class="uk-active">
+          <a id="homepage-link" href="home-student.html"><span uk-icon="home"></span>Dashboard</a>
+        </li>
+      </ul>
+    </div>
+    <div id="right">
+      <div class="menu-panel">
+        <img class="uk-preserve-width uk-border-circle uk-margin-small-right avatar" src="" width="40" height="40"
+          alt="user avatar" />
+        <p id="user-name">Name</p>
+        <button class="uk-button logout-button" onclick="logout()">
+          Logout
+        </button>
       </div>
-      <div id="right">
-        <div class="menu-panel">
-          <a href="account-settings.html"
-            ><img
-              class="uk-preserve-width uk-border-circle uk-margin-small-right avatar"
-              src=""
-              width="40"
-              height="40"
-              alt="user avatar"
-          /></a>
-          <p id="user-name">Name</p>
-          <button class="uk-button logout-button" onclick="logout()">
-            Logout
-          </button>
-        </div>
 
-        <!--MAIN DASHBOARD PANEL START-->
-        <div id="current-prefs"></div>
-        <div
-          id="main-dashboard-panel"
-          class="uk-container uk-container-expand uk-padding uk-margin-remove"
-        >
-          <div
-            class="uk-section uk-padding-remove-bottom uk-margin-medium-bottom"
-          >
-            <div class="uk-container uk-margin-remove uk-width-1-1">
-              <div class="uk-flex uk-flex-center">
-                <div class="uk-card uk-card-default">
-                  <div class="uk-card-header">
-                    <div id="menuInstructions">
-                      <h3 id="menuHeading" class="uk-card-title roboto">
-                        My Club
-                      </h3>
-                    </div>
+      <!--MAIN DASHBOARD PANEL START-->
+      <div id="current-prefs"></div>
+      <div id="main-dashboard-panel" class="uk-container uk-container-expand uk-padding uk-margin-remove">
+        <div class="uk-section uk-padding-remove-bottom uk-margin-medium-bottom">
+          <div class="uk-container uk-margin-remove uk-width-1-1">
+            <div class="uk-flex uk-flex-center">
+              <div class="uk-card uk-card-default">
+                <div class="uk-card-header">
+                  <div id="menuInstructions">
+                    <h3 id="menuHeading" class="uk-card-title roboto">
+                      My Club
+                    </h3>
                   </div>
-                  <div>
-                    <div
-                      id="my-club"
-                      class="uk-card-body"
-                      uk-sortable="handle: .uk-sortable-handle"
-                    ></div>
-                  </div>
-                  <div id="card-footer" class="uk-card-footer"></div>
                 </div>
+                <div>
+                  <div id="my-club" class="uk-card-body" uk-sortable="handle: .uk-sortable-handle"></div>
+                </div>
+                <div id="card-footer" class="uk-card-footer"></div>
               </div>
             </div>
           </div>
-          <div id="status" class="hidden uk-alert-danger" uk-alert>
-            <a href class="uk-alert-close" uk-close></a>
-            <p id="status-message"></p>
-          </div>
         </div>
-        <!--MAIN DASHBOARD PANEL END-->
+        <div id="status" class="hidden uk-alert-danger" uk-alert>
+          <a href class="uk-alert-close" uk-close></a>
+          <p id="status-message"></p>
+        </div>
       </div>
+      <!--MAIN DASHBOARD PANEL END-->
     </div>
-    <!--
+  </div>
+  <!--
         ==if no club, display club sponsor options (create club or co-sponsor club)    
     -->
-    <!-- 
+  <!-- 
         change first and last name
         unassign as primary sponsor from club suggestion before approval
         apply to change clubs after approval
         change password
      -->
-    <script src="serverVariables.js"></script>
-    <script src="userData.js"></script>
-    <script src="student.js"></script>
-  </body>
+  <script src="serverVariables.js"></script>
+  <script src="userData.js"></script>
+  <script src="student.js"></script>
+</body>
+
 </html>

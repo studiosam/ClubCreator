@@ -1,3 +1,4 @@
+
 let params = new URL(document.location.toString()).searchParams;
 const clubId = params.get("club-id");
 const attendancebutton = document.querySelector("#attendance-submission");

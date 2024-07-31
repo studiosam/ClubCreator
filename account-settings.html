@@ -96,6 +96,21 @@
                         document.getElementById('upload-avatar').src = result.avatarPath;
                     }
                 });
+                async function getUser() {
+                    if (user) {
+                        console.log(`User: ${user.firstName} ${user.lastName}`);
+                        console.log(user);
+                        if (!user.isTeacher) {
+                            window.location.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+                        }
+
+                        //getTeacherDashboard();
+                    } else {
+                        console.log(`Nobody is logged in`);
+                        window.location.href = "/";
+                    }
+                }
+                getUser();
             </script>
 
 
