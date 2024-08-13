@@ -48,7 +48,8 @@ function initializeDatabase() {
                 password TEXT,
                 isTeacher BOOLEAN,
                 isAdmin BOOLEAN DEFAULT FALSE,
-                clubPreferences TEXT
+                clubPreferences TEXT,
+                UNIQUE(email)
             );
         `);
     db.run(`

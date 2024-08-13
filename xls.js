@@ -9,7 +9,7 @@ async function parseXls() {
         {
             input: "file.xls", // input xls
             output: null, // output json
-            sheet: "sheet", // specific sheetname
+            // specific sheetname
             rowsToSkip: 0, // number of rows to skip at the top of the sheet; defaults to 0
             allowEmptyKey: false, // avoids empty keys in the output, example: {"": "something"}; default: true
         },
@@ -27,15 +27,19 @@ async function parseXls() {
 
 
 async function addStudents(allStudents) {
-    console.log(allStudents);
+
     allStudents.forEach(async (student) => {
-        if (student.firstName) {
+        if (student.First_Name) {
+            student.firstName = student.First_Name
+            student.lastName = student.Last_Name
+            student.email = student.Student_Email_DONOTUSE
+            student.grade = student.Grade_Level
             const passwordDate = student.DOB.split("/").join("");
             const firstThree = student.firstName.replace("'", "").substring(0, 3).toLowerCase();
             const password = passwordDate + firstThree;
             student.password = await encryptPassword(password);
             student.isTeacher = false
-            await db.addUser(student)
+            db.addUser(student)
             console.log(`Student added: ${student.firstName}`)
         }
     })

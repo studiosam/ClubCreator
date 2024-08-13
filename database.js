@@ -474,15 +474,19 @@ async function getUnapprovedClubs() {
 // function to check for email address already connected to account
 
 function addUser(user) {
-  const sql = `INSERT INTO users (firstName, lastName, email, password, grade, isTeacher) VALUES (?, ?, ?, ?, ?, ?)`;
-  db.run(sql, [
-    user.firstName,
-    user.lastName,
-    user.email,
-    user.password,
-    parseInt(user.grade),
-    user.isTeacher,
-  ]);
+  if (user.email !== "" && user.email !== undefined) {
+    const sql = `INSERT INTO users (firstName, lastName, email, password, grade, isTeacher) VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT(email) DO NOTHING`;
+    db.run(sql, [
+      user.firstName,
+      user.lastName,
+      user.email,
+      user.password,
+      parseInt(user.grade),
+      user.isTeacher,
+    ]);
+  } else {
+    console.log("No email provided.");
+  }
 }
 
 async function removeClubFromUser(userId) {
