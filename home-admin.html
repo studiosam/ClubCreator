@@ -60,58 +60,46 @@
             </a>
           </div>
         </div>
-        <!-- <button class="uk-button uk-button-danger uk-margin uk-width-medium" id="delete-all-clubs"
-            onclick="deleteAllUserClubs()">
-            Delete All User's Clubs
-          </button>
+      </div>
+      <div class="uk-container" uk-filter="target: .js-filter; animation: slide">
+        <ul class="uk-subnav uk-subnav-divider notification-wrapper uk-subnav-pill">
+          <li uk-filter-control="filter: .club-proposals">
+            <a class="text-center" href="#">
+              <h2 class="roboto" id="clubProposals">Club Proposals</h2>
+              <span class="uk-badge club-proposals-badge">1</span>
+            </a>
+          </li>
+          <li class="uk-active" uk-filter-control="filter: .approved-clubs">
+            <a class="notification-wrapper" href="#">
+              <h2 class="roboto" id="approvedClubs">Approved Clubs</h2>
+              <span class="uk-badge approved-clubs-badge">0</span>
+            </a>
+          </li>
+        </ul>
+
+        <div id="clubProposalList" class="club-proposals js-filter uk-grid-column-small uk-grid-row-small" uk-grid
+          uk-sortable>
+          No Club Proposals
         </div>
-        <div>
-          <button class="uk-button uk-button-danger uk-margin uk-width-medium" id="delete-all-students"
-            onclick="deleteAllStudents()">
-            Delete All Students
-          </button>
+
+        <div id="approvedClubList" class="approved-clubs clubList js-filter uk-grid-column-small uk-grid-row-small"
+          uk-grid uk-sortable>
+          No Approved Clubs
         </div>
-        <div>
-          <button class="uk-button uk-button-danger uk-margin uk-width-medium" id="delete-all-students"
-            onclick="deleteAllClubs()">
-            Delete All Clubs
-          </button>
-        </div>
-        <div class="uk-flex">
-          <div>
-            <button class="uk-button uk-button-primary uk-margin uk-margin-small-right uk-width-medium""
-                  id=" create-random-students" onclick="createStudents()">
-              Create Random Students
-            </button>
-          </div>
-          <div>
-            <input id="num-of-rand-students" class="uk-input uk-width-small" type="number" min="1" value="1"
-              placeholder="Number to Generate" />
-          </div>
-        </div>
-        <div class="uk-flex">
-          <div>
-            <button class="uk-button uk-button-primary uk-margin uk-margin-small-right uk-width-medium""
-                  id=" create-random-teachers" onclick="createTeachers()">
-              Create Random Teachers
-            </button>
-          </div>
-          <div>
-            <input id="num-of-rand-teachers" class="uk-input uk-width-small" type="number" min="1" value="1"
-              placeholder="Number to Generate" />
-          </div>
-        </div>
-        <div>
-          <div class="uk-flex">
-            <div>
-              <button class="uk-button uk-button-primary uk-margin uk-margin-small-right uk-width-medium"
-                id="create-random-clubs" onclick="createClubs()">
-                Create Random Clubs
+        <div id="delete-confirmation" uk-modal>
+          <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
+            <h2 class="uk-modal-title roboto">ARE YOU SURE?</h2>
+            <p id="delete-confirmation-body">OK</p>
+            <p class="uk-text-right">
+              <button class="uk-button uk-button-primary uk-modal-close" type="button">
+                Cancel
               </button>
-              <div>
-              </div>
-              <div><input id="num-of-rand-clubs" class="uk-input uk-width-small" type="number" min="1" value="1"
-                  placeholder="Number to Generate" /></div> -->
+              <button id="delete-btn" class="uk-button uk-button-danger uk-modal-close" type="button">
+                Delete
+              </button>
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -124,46 +112,7 @@
       value="0" max="100"></progress>
   </div>
   </div>
-  <div class="uk-container" uk-filter="target: .js-filter; animation: slide">
-    <ul class="uk-subnav uk-subnav-divider notification-wrapper uk-subnav-pill">
-      <li uk-filter-control="filter: .club-proposals">
-        <a class="text-center" href="#">
-          <h2 class="roboto" id="clubProposals">Club Proposals</h2>
-          <span class="uk-badge club-proposals-badge">1</span>
-        </a>
-      </li>
-      <li class="uk-active" uk-filter-control="filter: .approved-clubs">
-        <a class="notification-wrapper" href="#">
-          <h2 class="roboto" id="approvedClubs">Approved Clubs</h2>
-          <span class="uk-badge approved-clubs-badge">0</span>
-        </a>
-      </li>
-    </ul>
 
-    <div id="clubProposalList" class="club-proposals js-filter uk-grid-column-small uk-grid-row-small" uk-grid
-      uk-sortable>
-      No Club Proposals
-    </div>
-
-    <div id="approvedClubList" class="approved-clubs clubList js-filter uk-grid-column-small uk-grid-row-small" uk-grid
-      uk-sortable>
-      No Approved Clubs
-    </div>
-    <div id="delete-confirmation" uk-modal>
-      <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
-        <h2 class="uk-modal-title roboto">ARE YOU SURE?</h2>
-        <p id="delete-confirmation-body">OK</p>
-        <p class="uk-text-right">
-          <button class="uk-button uk-button-primary uk-modal-close" type="button">
-            Cancel
-          </button>
-          <button id="delete-btn" class="uk-button uk-button-danger uk-modal-close" type="button">
-            Delete
-          </button>
-        </p>
-      </div>
-    </div>
-  </div>
   <!--MAIN DASHBOARD PANEL END-->
   </div>
   </div>
