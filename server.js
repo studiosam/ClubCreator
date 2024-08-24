@@ -43,6 +43,10 @@ app.use(express.urlencoded({ extended: true }));
 // CORS middleware for allowing cross-origin requests
 app.use(cors());
 
+app.get('/', (req, res) => {
+  res.send('HELLO')
+});
+
 //API endpoint to get the teacher info
 app.get("/getUserInfo", async (req, res) => {
   let email = req.query.email;

@@ -39,7 +39,7 @@ async function addStudents(allStudents) {
             const password = passwordDate + firstThree;
             student.password = await encryptPassword(password);
             student.isTeacher = false
-            db.addUser(student)
+            db.addStudentFromSpreadsheet(student)
             console.log(`Student added: ${student.firstName}`)
         }
     })

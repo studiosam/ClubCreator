@@ -1,5 +1,25 @@
 const form = document.querySelector("#login");
-const error = document.querySelector('#error')
+const error = document.querySelector('#error');
+const serverStatus = document.querySelector('#server-status');
+checkServerStatus()
+
+async function checkServerStatus() {
+    try {
+        let status = await fetch(`http://${serverAddress}:3000/`)
+        if (status.ok) {
+
+            console.log('Sever Online')
+        }
+    } catch (e) {
+        console.log('Server Offline')
+        document.querySelector('#password').disabled = true
+        document.querySelector('#email').disabled = true
+        serverStatus.innerHTML = `<h1 class="server-status">Server Offline</h1>
+            <p>Please Contact An Adminstrator</p>`
+    }
+
+}
+
 form.addEventListener("submit", (event) => {
     event.preventDefault();
     login();

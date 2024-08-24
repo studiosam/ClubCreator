@@ -475,6 +475,22 @@ async function getUnapprovedClubs() {
 
 function addUser(user) {
   if (user.email !== "" && user.email !== undefined) {
+    const sql = `INSERT INTO users (firstName, lastName, email, password, grade, isTeacher) VALUES (?, ?, ?, ?, ?, ?)`;
+    db.run(sql, [
+      user.firstName,
+      user.lastName,
+      user.email,
+      user.password,
+      parseInt(user.grade),
+      user.isTeacher,
+    ]);
+  } else {
+    console.log("No email provided.");
+  }
+}
+
+function addStudentFromSpreadsheet(user) {
+  if (user.email !== "" && user.email !== undefined) {
     const sql = `INSERT INTO users (firstName, lastName, email, password, grade, isTeacher) VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT(email) DO NOTHING`;
     db.run(sql, [
       user.firstName,
@@ -1070,6 +1086,7 @@ module.exports = {
   checkResetPasswordToken,
   resetUserPassword,
   createRandomTeachers,
-  getAttendanceFromDate
+  getAttendanceFromDate,
+  addStudentFromSpreadsheet
   // Export other database functions here
 };

@@ -1,6 +1,13 @@
 .hidden {
   display: none;
 }
+.server-status {
+  font-size: 50px;
+  color: #bb5252 !important;
+}
+#server-status {
+  text-align: center;
+}
 .dark {
   color: #0e0e11;
 }
