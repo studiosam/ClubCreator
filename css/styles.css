@@ -306,7 +306,7 @@ ul {
   color: #0e0e11;
 }
 .club-descripton{
-  
+  padding-right: 25px;
 }
 .club-choice {
   display: flex;
@@ -387,10 +387,11 @@ tbody tr:hover {
   margin-right: 25px;
 }
 
-#student-club-wrapper {
+.student-club-wrapper {
   color: whitesmoke;
   display: flex;
   align-items: center;
+  background-size: cover;
 }
 
 .red-boarder {

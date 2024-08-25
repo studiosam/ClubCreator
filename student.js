@@ -124,7 +124,7 @@ async function finishStudentDashboard() {
       ) {
         coverPhotoUrl = `${club.coverPhoto}`;
       }
-      allClubs.innerHTML += `<div id="student-club-wrapper"><div style="background-image: url('${coverPhotoUrl}')" class="club-choice"><input id="${club.clubId}-${club.clubName}" class="club-input" type="checkbox">
+      allClubs.innerHTML += `<div class="student-club-wrapper" style="background-image: url('${coverPhotoUrl}')" ><div class="club-choice"><input id="${club.clubId}-${club.clubName}" class="club-input" type="checkbox">
             <div id="${club.clubId}student-club-cover" class="student-club-cover" style="background-image: url('${coverPhotoUrl}')"></div><a href="http://${serverAddress}:3000/club-info/${club.clubId}" class="uk-link-text">
         <div class="club">
           <p class="uk-card-title roboto" style="color:white">${club.clubName}</p>
