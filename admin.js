@@ -186,15 +186,15 @@ async function getAllApprovedClubs() {
               `http://${serverAddress}:3000/getUserInfo?userId=${club.primaryTeacherId}`
             );
             if (!clubInfo.status == 200) {
-              throw new Error(
-                `Failed to fetch club info for club ID ${club.clubId}`
-              );
+              console.log(`Failed to fetch club info for club ID ${club.clubId}`)
+            } else {
+              teacherInfo = await clubInfo.json();
+              isPrimaryId = "";
+              teacherFirstName = teacherInfo.firstName;
+              teacherLastName = teacherInfo.lastName;
             }
-            teacherInfo = await clubInfo.json();
-
-            isPrimaryId = "";
-            teacherFirstName = teacherInfo.firstName;
-            teacherLastName = teacherInfo.lastName;
+          } else {
+            console.log(`Failed to fetch club info for club ID ${club.clubId}`)
           }
           const response = await fetch(
             `http://${serverAddress}:3000/get-cosponsors/${club.clubId}`
@@ -450,57 +450,73 @@ async function removeCoSponsor(club, primeTeacher) {
 
 ////////////////////
 async function getAllUnapprovedClubs(clubs) {
-  // console.log(clubs);
   const filteredClubs = clubs.filter((obj) => obj.isApproved !== 1);
-  // console.log(filteredClubs);
-  document.querySelector(".club-proposals-badge").innerHTML =
-    filteredClubs.length;
-  if (filteredClubs.length <= 0) {
-    clubProposals.innerHTML = "";
-    return;
+
+  // Update the badge count
+  document.querySelector(".club-proposals-badge").innerHTML = filteredClubs.length;
+
+  // Clear the proposals list
+  clubProposals.innerHTML = "";
+
+  if (filteredClubs.length === 0) {
+    return; // Nothing to display, so exit early
   }
-  if (filteredClubs.length > 0) {
-    clubProposals.innerHTML = "";
-  }
-  filteredClubs.forEach(async (club) => {
-    let clubInfo = await fetch(
-      `http://${serverAddress}:3000/getUserInfo?userId=${club.primaryTeacherId}`
-    );
-    if (!clubInfo.ok) {
-      throw new Error(`Failed to fetch club info for club ID ${club.clubId}`);
+
+  for (const club of filteredClubs) {
+    let teacherFirstName = "No";
+    let teacherLastName = "Teacher";
+
+    try {
+      if (club.primaryTeacherId) {
+        const response = await fetch(
+          `http://${serverAddress}:3000/getUserInfo?userId=${club.primaryTeacherId}`
+        );
+
+        if (response.status === 200) {
+          const teacherInfo = await response.json();
+          teacherFirstName = teacherInfo.firstName || "No";
+          teacherLastName = teacherInfo.lastName || "Teacher";
+        } else {
+          console.log(`Failed to fetch club info for club ID ${club.clubId}`);
+        }
+      } else {
+        console.log(`Primary teacher ID is null for club ID ${club.clubId}`);
+      }
+    } catch (error) {
+      console.log(`Failed to fetch club info for club ID ${club.clubId}: ${error.message}`);
     }
 
-    teacherInfo = await clubInfo.json();
-    teacherFirstName = teacherInfo.firstName;
-    teacherLastName = teacherInfo.lastName;
-    clubProposals.innerHTML += `<div id="club-${club.clubId}" class="uk-card uk-width-1-2 club-proposals uk-container-expand">
-    <div class="uk-card uk-card-default uk-card-body uk-card-hover">
-    <div class="uk-card-badge uk-label uk-label-warning">Unapproved</div>
-     <div class="uk-background-blend-multiply uk-background-secondary" id="cover-photo-card" style="background-image : url('${club.coverPhoto}')"> 
-    <a href="http://${serverAddress}/club-info.html?club-id=${club.clubId}"><h2 id="${club.clubId}clubName" class="roboto uk-card-title cover-card-text">${club.clubName}</h2></a>
-    </div> 
-    <div class="uk-card-body">
-        <p class="uk-text-bold">${club.clubDescription}</p>
-        <p class="text-center uk-text-bold">Submited By:</p>
-        <p class="text-center uk-text-bold">${teacherFirstName} ${teacherLastName}</p>
+    // Render the club proposal
+    clubProposals.innerHTML += `
+      <div id="club-${club.clubId}" class="uk-card uk-width-1-2 club-proposals uk-container-expand">
+        <div class="uk-card uk-card-default uk-card-body uk-card-hover">
+          <div class="uk-card-badge uk-label uk-label-warning">Unapproved</div>
+          <div class="uk-background-blend-multiply uk-background-secondary" id="cover-photo-card" style="background-image : url('${club.coverPhoto}')"> 
+            <a href="http://${serverAddress}/club-info.html?club-id=${club.clubId}">
+              <h2 id="${club.clubId}clubName" class="roboto uk-card-title cover-card-text">${club.clubName}</h2>
+            </a>
+          </div> 
+          <div class="uk-card-body">
+            <p class="uk-text-bold">${club.clubDescription}</p>
+            <p class="text-center uk-text-bold">Submitted By:</p>
+            <p class="text-center uk-text-bold">${teacherFirstName} ${teacherLastName}</p>
+          </div>
+          <div class="uk-card-footer text-center">
+            <button class="uk-button uk-button-primary uk-width-1-1" onclick="approveClub(${club.clubId},'${club.clubName}')">Approve</button>
+            <div>
+              <button class="delete" uk-toggle="target: #delete-confirmation" type="button">
+                <img id="delete-link-${club.clubId}" src="/img/trash-can.png" width="40px">
+              </button>
+            </div>
+          </div>
         </div>
-        <div class="uk-card-footer text-center">
-        <button class="uk-button uk-button-primary uk-width-1-1" onclick="approveClub(${club.clubId},'${club.clubName}')">Approve</button>
-        <div>
-        <button class="delete" uk-toggle="target: #delete-confirmation" type="button">
-        <img id="delete-link-${club.clubId}" src="/img/trash-can.png" width="40px">
-        </button>
-        </div>
-        </div>
-        </div>
-        </div>
-        `;
-  });
+      </div>`;
+  }
 
+  // Add event listeners for delete buttons
   document.querySelectorAll(".delete").forEach((element) => {
     element.addEventListener("click", (e) => {
-      console.log("Delete!");
-      clubId = e.target.id.match(/\D(\d+)$/)[1];
+      const clubId = e.target.id.match(/\D(\d+)$/)[1];
       const clubName = document.querySelector(`#club-${clubId} h2`).innerHTML;
       document.querySelector(
         "#delete-confirmation-body"
@@ -511,6 +527,7 @@ async function getAllUnapprovedClubs(clubs) {
     });
   });
 }
+
 
 async function deleteClub(clubId, clubName) {
   const response = await fetch(`http://${serverAddress}:3000/deleteClub`, {

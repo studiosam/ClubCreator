@@ -183,7 +183,8 @@ app.get("/usersInfo/:user", async (req, res) => {
   res.json(user);
 })
 
-app.get("/users/update/:user/:club", async (req, res) => {
+app.get("/users/update/:user/:club/", async (req, res) => {
+
   let userId = req.params.user;
   let clubId = req.params.club;
   const club = await db.getClubInfo(clubId);
@@ -194,12 +195,14 @@ app.get("/users/update/:user/:club", async (req, res) => {
       await db.updateClubValue(club.clubId, "primaryTeacherId", null);
       await db.updateClubValue(club.clubId, "isApproved", false);
     }
-  });
+  }
+
+  );
 
   const added = await db.assignClub(userId, clubId, user.isTeacher);
   if (added) {
     console.log(`Club ${clubId} added to user ${user.userId}`);
-    res.send({ body: "Success" });
+    res.send({ body: true, club });
   }
 });
 app.get("/users/updateStudentClub/:user/:club", async (req, res) => {

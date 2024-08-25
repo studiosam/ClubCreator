@@ -43,6 +43,7 @@ async function createClub() {
     document.querySelector("#status-message").innerHTML = `${responseStatus.clubInfo.preferredClub} Successfully Created!`;
     document.querySelector("#status").classList.add("uk-alert-success");
     document.querySelector("#status").style.display = "block";
+    window.location.replace('/')
   } else {
     document.querySelector("#status-message").innerHTML = `Error : ${responseStatus.body}`;
     document.querySelector("#status").classList.add("uk-alert-danger");
@@ -67,7 +68,7 @@ async function getAllClubs() {
     const coSponsorsStillNeeded =
       club.coSponsorsNeeded - currentCoSponsors;
     if (coSponsorsStillNeeded > 0) {
-      document.querySelector("#existingClubsList").innerHTML += `<li class="club-create-list-clubs"><span>${club.clubName}</span><button>Co-Sponsor</button></li>`
+      document.querySelector("#existingClubsList").innerHTML += `<li class="club-create-list-clubs"><span>${club.clubName}</span><button class="uk-button uk-button-primary" onclick="addToClub(${club.clubId})">Co-Sponsor</button></li>`
     } else {
       document.querySelector("#existingClubsList").innerHTML += `<li class="club-create-list-clubs"><span>${club.clubName}</span></li>`
     }
@@ -77,5 +78,32 @@ async function getAllClubs() {
 
 
 }
+
+
+async function addToClub(clubId) {
+  const response = await fetch(
+    `http://${serverAddress}:3000/users/update/${user.userId}/${clubId}`
+  );
+
+  const responseStatus = await response.json()
+  if (responseStatus.body === true) {
+    UIkit.notification({
+      message: `Success!`,
+      status: 'success',
+      pos: 'top-center',
+      timeout: 5000
+    });
+
+    document.body.innerHTML = `<div>
+    <a href="home-teacher.html?random=${Math.random()}">
+    <button class="uk-button uk-button-primary">Click Here to Return Home</button></a>
+    </div>`
+
+
+  }
+}
+
+
+
 
 getAllClubs();

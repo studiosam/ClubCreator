@@ -305,10 +305,14 @@ ul {
   background-color: #8f2d00;
   color: #0e0e11;
 }
-
+.club-descripton{
+  
+}
 .club-choice {
   display: flex;
   align-items: center;
+  background-size: cover;
+  
 }
 .club-input {
   margin-top: 10px !important;
@@ -377,13 +381,14 @@ tbody tr:hover {
 }
 
 .student-club-cover {
-  width: 100px;
+  /* width: 100px;
   height: 100px;
-  background-size: cover;
+  background-size: cover; */
   margin-right: 25px;
 }
 
 #student-club-wrapper {
+  color: whitesmoke;
   display: flex;
   align-items: center;
 }
@@ -397,6 +402,7 @@ tbody tr:hover {
 }
 
 .club {
+  color: white !important;
   padding-left: 15px;
   min-width: 675px !important;
 }

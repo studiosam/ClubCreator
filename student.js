@@ -105,7 +105,6 @@ async function finishStudentDashboard() {
     `;
     });
   } else {
-    // this is the else statement that i was right about 2024.06.09.22:43 per discord pinned message
     const allClubs = document.querySelector("#my-club");
     document.querySelector(
       "#menuInstructions"
@@ -113,22 +112,26 @@ async function finishStudentDashboard() {
         <p><strong class="red">You must select exactly 5 choices.</strong></p>`;
 
     clubs.forEach((club) => {
-      let coverPhotoUrl = `https://ui-avatars.com/api/?name=${club.clubName}&background=0D8ABC&color=fff`;
+      const clubsplit = club.clubName.replaceAll(" ", "-");
+      let coverPhotoUrl = `https://ui-avatars.com/api/?name=${clubsplit}&background=0D8ABC&color=fff`;
+      console.log(coverPhotoUrl);
       if (
         club.coverPhoto &&
         club.coverPhoto !== "NULL" &&
         club.coverPhoto !== "null" &&
-        club.coverPhoto !== null
+        club.coverPhoto !== null &&
+        club.coverPhoto !== ""
       ) {
         coverPhotoUrl = `${club.coverPhoto}`;
       }
-      allClubs.innerHTML += `<div id="student-club-wrapper"><div class="club-choice"><input id="${club.clubId}-${club.clubName}" class="club-input" type="checkbox">
-            <div id="${club.clubId}student-club-cover" class="student-club-cover" style="background-image : url('${club.coverPhoto}')"></div><a href="http://${serverAddress}:3000/club-info/${club.clubId}" class="uk-link-text">
+      allClubs.innerHTML += `<div id="student-club-wrapper"><div style="background-image: url('${coverPhotoUrl}')" class="club-choice"><input id="${club.clubId}-${club.clubName}" class="club-input" type="checkbox">
+            <div id="${club.clubId}student-club-cover" class="student-club-cover" style="background-image: url('${coverPhotoUrl}')"></div><a href="http://${serverAddress}:3000/club-info/${club.clubId}" class="uk-link-text">
         <div class="club">
-          <p class="uk-card-title roboto">${club.clubName}</p>
+          <p class="uk-card-title roboto" style="color:white">${club.clubName}</p>
           </div>
-          <p id="${club.clubId}club-description">${club.clubDescription}</p>
-          
+          <div>
+          <p class="club-descripton" id="${club.clubId}club-description">${club.clubDescription}</p>
+          </div>
         </div></a>
         
         </div>
