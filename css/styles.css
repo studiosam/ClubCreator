@@ -1,6 +1,17 @@
 .hidden {
   display: none;
 }
+
+#all-approved{
+  width: 30%;
+  margin-left: 50px;
+}
+.club-create-list-clubs{
+  display: flex;
+  gap: 25px;
+  align-items: center!important;
+  justify-content: space-between;
+}
 .server-status {
   font-size: 50px;
   color: #bb5252 !important;

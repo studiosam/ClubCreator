@@ -49,3 +49,33 @@ async function createClub() {
     document.querySelector("#status").style.display = "block";
   }
 }
+
+async function getAllClubs() {
+
+  const response = await fetch(`http://${serverAddress}:3000/getAllClubs`);
+  const clubs = await response.json();
+
+  const filteredClubs = clubs.filter((obj) => obj.isApproved !== 0);
+
+  filteredClubs.forEach(async (club) => {
+    const response = await fetch(
+      `http://${serverAddress}:3000/get-cosponsors/${club.clubId}`
+    );
+    const coSponsors = await response.json();
+
+    const currentCoSponsors = coSponsors.cosponsors.length;
+    const coSponsorsStillNeeded =
+      club.coSponsorsNeeded - currentCoSponsors;
+    if (coSponsorsStillNeeded > 0) {
+      document.querySelector("#existingClubsList").innerHTML += `<li class="club-create-list-clubs"><span>${club.clubName}</span><button>Co-Sponsor</button></li>`
+    } else {
+      document.querySelector("#existingClubsList").innerHTML += `<li class="club-create-list-clubs"><span>${club.clubName}</span></li>`
+    }
+
+  })
+
+
+
+}
+
+getAllClubs();

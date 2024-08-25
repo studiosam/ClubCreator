@@ -37,10 +37,12 @@ async function addStudents(allStudents) {
             const passwordDate = student.DOB.split("/").join("");
             const firstThree = student.firstName.replace("'", "").substring(0, 3).toLowerCase();
             const password = passwordDate + firstThree;
+            //password will be birthday plus first 3 letters of legal first name MMDDYYYYabc
+            console.log(password);
             student.password = await encryptPassword(password);
             student.isTeacher = false
-            db.addStudentFromSpreadsheet(student)
-            console.log(`Student added: ${student.firstName}`)
+            await db.addStudentFromSpreadsheet(student)
+
         }
     })
 }

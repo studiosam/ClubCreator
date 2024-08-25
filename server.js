@@ -56,18 +56,23 @@ app.get("/getUserInfo", async (req, res) => {
   try {
     if (userId) {
       const user = await db.getUserInfo(userId, "userId");
-      res.send(user);
+      if (user !== undefined) {
+        res.send(user)
+      };
     } else if (email) {
       const user = await db.getUserInfo(email, "email");
-      res.send(user);
+      if (user !== undefined) {
+        res.send(user);
+      }
+
     } else {
       res
         .status(400)
-        .send("Bad Request: Either userId or email must be provided.");
+        .send({ body: "Bad Request: Either userId or email must be provided." });
     }
   } catch (err) {
     console.error("Error fetching user info:", err);
-    res.status(500).send("Error fetching user info");
+    res.status(500).send({ body: "Error fetching user info" });
   }
 });
 
@@ -126,7 +131,7 @@ app.get("/getUnapprovedClubs", async (req, res) => {
     res.json(unApprovedClubs);
   } catch (err) {
     console.error("Error: ", err);
-    res.status(500).send("Error fetching clubs");
+    res.send({ body: "Error fetching clubs" });
   }
 });
 app.get("/getAllClubs", async (req, res) => {
@@ -135,7 +140,7 @@ app.get("/getAllClubs", async (req, res) => {
     res.send(allClubs);
   } catch (err) {
     console.error("Error: ", err);
-    res.status(500).send("Error fetching clubs");
+    res.send({ body: "Error fetching clubs" });
   }
 });
 app.get("/getClubById", async (req, res) => {

@@ -244,10 +244,11 @@ async function getUserInfo(data, type) {
   return new Promise((resolve, reject) => {
     db.get(sql, [data], (err, row) => {
       if (err) {
+        console.error(err)
         return reject(err);
       } else {
         resolve(row);
-        // console.log(row)
+
         return row;
       }
     });
@@ -489,9 +490,9 @@ function addUser(user) {
   }
 }
 
-function addStudentFromSpreadsheet(user) {
+async function addStudentFromSpreadsheet(user) {
   if (user.email !== "" && user.email !== undefined) {
-    const sql = `INSERT INTO users (firstName, lastName, email, password, grade, isTeacher) VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT(email) DO NOTHING`;
+    const sql = `INSERT INTO users (firstName, lastName, email, password, grade, isTeacher) VALUES (?, ?, ?, ?, ?, ?)`;
     db.run(sql, [
       user.firstName,
       user.lastName,
@@ -499,9 +500,16 @@ function addStudentFromSpreadsheet(user) {
       user.password,
       parseInt(user.grade),
       user.isTeacher,
-    ]);
+    ], function (err) {
+      if (err) {
+        console.error(`Student Account Already Exists: ${user.firstName} ${user.lastName}`);
+        return;
+      }
+      console.log(`Student added: ${user.firstName} ${user.lastName}`);
+    });
+
   } else {
-    console.log("No email provided.");
+    console.log(`No email provided for: ${user.firstName} ${user.lastName}`);
   }
 }
 

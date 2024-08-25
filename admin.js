@@ -185,13 +185,13 @@ async function getAllApprovedClubs() {
             let clubInfo = await fetch(
               `http://${serverAddress}:3000/getUserInfo?userId=${club.primaryTeacherId}`
             );
-            if (!clubInfo.ok) {
+            if (!clubInfo.status == 200) {
               throw new Error(
                 `Failed to fetch club info for club ID ${club.clubId}`
               );
             }
-
             teacherInfo = await clubInfo.json();
+
             isPrimaryId = "";
             teacherFirstName = teacherInfo.firstName;
             teacherLastName = teacherInfo.lastName;
