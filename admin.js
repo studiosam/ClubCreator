@@ -414,7 +414,7 @@ async function addCosponsor(club, teacher) {
   );
   teachers = await getTeachers.json();
 
-  teachers = teachers.filter((teacher) => teacher.clubId === null);
+  teachers = teachers.filter((teacher) => teacher.clubId === null || teacher.clubId === "");
 
   list.innerHTML = `<span>Co Sponsor</span> <div class="uk-margin">
   <select id="coSponsorDrop${club}" name="addedCoSponsor" class="primaryTeacher uk-select uk-form-width-medium" aria-label="Select">

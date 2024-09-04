@@ -170,8 +170,8 @@ async function getTeacherDashboard() {
     ) {
       coverPhotoUrl = `${club.coverPhoto}`;
     }
-    myClubs.innerHTML += `<div class="co-sponser-wrapper">
-    <div class="club-thumbnail" style="background-image: url(&quot;${coverPhotoUrl}&quot;)">
+    myClubs.innerHTML += `<div style="background-image: url('${coverPhotoUrl}'); background-size:cover;" class="co-sponser-wrapper">
+    <div class="club-thumbnail">
     </div>
     <a href="http://${serverAddress}:3000/club-info/${club.clubId}" class="uk-link-text">
     <div class="club">
@@ -200,8 +200,8 @@ async function displayClubsThatNeedCosponsors(clubsThatNeedCosponsors) {
         if (club.coverPhoto) {
           coverPhotoUrl = `${club.coverPhoto}`;
         }
-        coSponsorClubs.innerHTML += `<div class="co-sponser-wrapper">
-            <div class="club-thumbnail" style="background-image: url(&quot;${coverPhotoUrl}&quot;)">
+        coSponsorClubs.innerHTML += `<div style="background-image: url('${coverPhotoUrl}'); background-size:cover;" class="co-sponser-wrapper">
+            <div class="club-thumbnail">
     </div>
         <a href="http://${serverAddress}:3000/club-info/${club.clubId}" class="uk-link-text">
         
