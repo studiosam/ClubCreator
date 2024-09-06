@@ -170,12 +170,12 @@ async function getTeacherDashboard() {
     ) {
       coverPhotoUrl = `${club.coverPhoto}`;
     }
-    myClubs.innerHTML += `<div style="background-image: url('${coverPhotoUrl}'), #555555; background-blend-mode: multiply; background-size:cover;" class="co-sponser-wrapper">
+    myClubs.innerHTML += `<div style="background: url('${coverPhotoUrl}'), #555555; background-blend-mode: multiply; background-size:cover;" class="co-sponser-wrapper">
     <div class="club-thumbnail">
     </div>
     <a href="http://${serverAddress}:3000/club-info/${club.clubId}" class="uk-link-text">
     <div class="club">
-      <p class="uk-card-title roboto">${club.clubName}</p>
+      <p class="uk-card-title roboto" style="color: white">${club.clubName}</p>
       <p>${club.clubDescription}</p>
     </div></a></div><hr>`;
   });
@@ -200,14 +200,14 @@ async function displayClubsThatNeedCosponsors(clubsThatNeedCosponsors) {
         if (club.coverPhoto) {
           coverPhotoUrl = `${club.coverPhoto}`;
         }
-        coSponsorClubs.innerHTML += `<div style="background-image: url('${coverPhotoUrl}'); background-size:cover;" class="co-sponser-wrapper">
+        coSponsorClubs.innerHTML += `<div style="background: url('${coverPhotoUrl}'), #555555; background-blend-mode: multiply; background-size:cover;" class="co-sponser-wrapper">
             <div class="club-thumbnail">
     </div>
         <a href="http://${serverAddress}:3000/club-info/${club.clubId}" class="uk-link-text">
         
         <div class="club">
         
-          <p class="uk-card-title roboto">${club.clubName}</p>
+          <p class="uk-card-title roboto" style="color: white">${club.clubName}</p>
           <p>${club.clubDescription}</p>
           <button class="uk-button uk-button-primary" onclick="addToClub(${club.clubId})" id="${club.clubId}">Co-Sponsor Club</button>
         </div></a></div><hr>`;
