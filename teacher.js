@@ -170,7 +170,7 @@ async function getTeacherDashboard() {
     ) {
       coverPhotoUrl = `${club.coverPhoto}`;
     }
-    myClubs.innerHTML += `<div style="background-image: url('${coverPhotoUrl}'); background-size:cover;" class="co-sponser-wrapper">
+    myClubs.innerHTML += `<div style="background-image: url('${coverPhotoUrl}'), #555555; background-blend-mode: multiply; background-size:cover;" class="co-sponser-wrapper">
     <div class="club-thumbnail">
     </div>
     <a href="http://${serverAddress}:3000/club-info/${club.clubId}" class="uk-link-text">
