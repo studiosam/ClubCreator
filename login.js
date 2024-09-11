@@ -27,11 +27,10 @@ form.addEventListener("submit", (event) => {
 
 async function login() {
     console.log('login');
-    const userEmail = form.email.value.toLowerCase().trim();
-    const formData = new FormData(form);
-    formData.set("username", userEmail);
-    const jsonData = new URLSearchParams(formData);
-    const response = await fetch(`http://${serverAddress}:3000/login`, { method: "post", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: jsonData });
+    document.querySelector('#submit').disabled = true
+    const email = form.email.value.toLowerCase().trim() || "";
+    const password = form.password.value || "";
+    const response = await fetch(`http://${serverAddress}:3000/login`, { method: "post", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: email, password: password }) });
     const responseStatus = await response.json();
     console.log(responseStatus);
     if (responseStatus.body) {
@@ -43,6 +42,7 @@ async function login() {
             window.location.href = `./home-student.html`;
         }
     } else {
+        document.querySelector('#submit').disabled = false
         document.querySelector('#errormessage').innerHTML = `${responseStatus.error}`;
         error.style.display = "block"
         console.log("failed login"); // handle failed login on screen

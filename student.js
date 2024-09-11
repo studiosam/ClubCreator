@@ -203,6 +203,8 @@ function selectedClubList(clubs) {
   document
     .querySelector("#submit-selections")
     .addEventListener("click", async () => {
+      document
+        .querySelector("#submit-selections").disabled = true
       const user = JSON.parse(localStorage.getItem("user"));
       const userId = user.userId;
       console.log("USERID", userId);
@@ -225,6 +227,7 @@ function selectedClubList(clubs) {
       const userResult = await response.json();
       console.log(userResult);
       if (userResult.body === "Success") {
+        window.location.reload();
         UIkit.notification({
           message: "Your club preferences have been saved!",
           status: "success",
