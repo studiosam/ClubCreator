@@ -531,7 +531,7 @@ app.post("/login", async (req, res) => {
     }
   } catch (e) {
     console.log(e);
-    res.send("Error. Contact admin")
+    res.redirect("https://forms.gle/G9LTphV8L3rpDGkF7")
     console.log("This is the messed up error that was happening when the body was empty")
   }
 });
