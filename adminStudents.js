@@ -211,6 +211,8 @@ async function displayStudents(page, searchQuery = "") {
 
     students.forEach((student) => {
       const club = clubs.find((obj) => obj.clubId === student.clubId);
+      console.log(club);
+      const clubRoom = club ? club.room : "Cafeteria";
       const clubName = club ? club.clubName : "None";
       let avatarUrl = `https://ui-avatars.com/api/?name=${student.firstName}+${student.lastName}&background=0D8ABC&color=fff`;
       if (student.avatar) {
@@ -225,7 +227,7 @@ async function displayStudents(page, searchQuery = "") {
           <td class="">${student.firstName} ${student.lastName}</td>
           <td>${student.email}</td>
           <td class="uk-text-nowrap">${student.grade || "None"}</td>
-          <td class="uk-text-nowrap">${student.room || "None"}</td>
+          <td class="uk-text-nowrap">${clubRoom}</td>
           <td class="uk-text-nowrap uk-table-link"><a href="http://${serverAddress}/club-info.html?club-id=${student.clubId
         }">${clubName}</a></td>
         </tr>`;
