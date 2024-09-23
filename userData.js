@@ -37,8 +37,8 @@ if (user) {
     ).innerHTML += `<div style="text-align:right"class="blue"><span>Teacher</span></div>`;
     document.querySelector("#homepage-link").href = "home-teacher.html";
   } else {
-    document.querySelector('#create-link').remove()
-    document.querySelector('#account-settings').remove()
+    //document.querySelector('#create-link').remove()
+    //document.querySelector('#account-settings').remove()
     console.log("student");
     document.querySelector(
       "#user-name"

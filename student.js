@@ -15,6 +15,7 @@ async function getUser() {
 getUser();
 
 async function getStudentDashboard() {
+  console.log('CLUBID', user.clubId)
   if (user.clubId !== null) {
     await finishStudentDashboard();
   } else if (
@@ -79,8 +80,8 @@ async function finishStudentDashboard() {
     console.log(hasAvailableSlots);
     return minSlotsGrade > 0 || (totalMinSlots === 0 && hasAvailableSlots);
   });
-  console.log(clubStudentCounts);
-  const myAssignedClub = await clubs.filter(
+  console.log(clubs)
+  const myAssignedClub = await respClubs.filter(
     (obj) => obj.clubId === user.clubId
   );
   if (myAssignedClub.length > 0) {
@@ -97,10 +98,11 @@ async function finishStudentDashboard() {
       }
       myClubs.innerHTML += `<a href="http://${serverAddress}/club-info.html?club-id=${club.clubId}" class="uk-link-text">
     <div class="club">
+    <p class="uk-card-title roboto">${club.clubName}</p>
     <div class="club-thumbnail" style="background-image: url(&quot;${coverPhotoUrl}&quot;)">
     </div>
-      <p class="uk-card-title roboto">${club.clubName}</p>
-      <p>${club.clubDescription}</p>
+      <p class="dark">Room: ${club.room}</p>
+      <p class="dark">${club.clubDescription}</p>
     </div></a><hr>
     `;
     });
