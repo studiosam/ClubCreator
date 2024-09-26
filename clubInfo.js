@@ -8,8 +8,11 @@ async function getClubInfo() {
     `http://${serverAddress}:3000/club-info/${clubId}?view=true`
   );
   const json = await response.json();
-  document.querySelector("#clubName").innerHTML = json.clubInfo.clubName;
-  document.querySelector("#clubDescription").innerHTML = json.clubInfo.clubName;
+  console.log(json.clubInfo.primaryTeacherId)
+  const getTeacherResponse = await fetch(`http://${serverAddress}:3000/usersInfo/${json.clubInfo.primaryTeacherId}`)
+  const teacherJson = await getTeacherResponse.json();
+
+  document.querySelector("#clubName").innerHTML = `<div><p>${json.clubInfo.clubName}</p></div>`;
   const coverPhotoDisplay = document.querySelector("#cover-photo");
   coverPhotoDisplay.style.backgroundImage = `url("${json.clubInfo.coverPhoto}")`;
   const clubData = document.querySelector("#clubData");
@@ -24,6 +27,10 @@ async function getClubInfo() {
   });
   clubData.innerHTML += `
 
+    <tr>
+      <td>${json.clubInfo.clubName}</td>
+      <td>${teacherJson.firstName} ${teacherJson.lastName}</td>
+  </tr>
     <tr>
       <td>Club Description</td>
       <td>${json.clubInfo.clubDescription}</td>

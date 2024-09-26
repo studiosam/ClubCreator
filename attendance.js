@@ -1,6 +1,7 @@
 const form = document.querySelector("form");
 const attendanceDiv = document.querySelector('#attendance')
 const printbtn = document.querySelectorAll('.printbtn');
+const clubsWithoutAttendanceDiv = document.querySelector('#clubs-without-attendance');
 printbtn.forEach((btn) => {
     btn.addEventListener('click', () => {
         let divContents = attendanceDiv.innerHTML;
@@ -35,6 +36,9 @@ function getDate() {
 }
 
 async function getAttendanceFromDate(date) {
+    const allClubsArray = []
+    const clubsWithAttendance = []
+
     const response = await fetch(`http://${serverAddress}:3000/getAttendanceFromDate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -42,17 +46,41 @@ async function getAttendanceFromDate(date) {
 
     });
     const json = await response.json();
+
+    const allClubs = await fetch(`http://${serverAddress}:3000/getAllClubs`);
+    const allClubsJson = await allClubs.json();
+    allClubsJson.forEach((club) => {
+        allClubsArray.push(club.clubId)
+    });
+
+    json.attendance.forEach((clubs) => {
+        clubsWithAttendance.push(clubs.clubId)
+    })
+
+    const clubsWithoutAttendance = allClubsArray.filter((clubId) => !clubsWithAttendance.includes(clubId))
+
+    clubsWithoutAttendance.forEach(async (club) => {
+        const response = await fetch(`http://${serverAddress}:3000/getClubById?club=${club}`)
+        const clubJson = await response.json();
+        const clubName = clubJson.clubName
+
+        clubsWithoutAttendanceDiv.innerHTML += `<a href="http://${serverAddress}/club-info.html?club-id=${clubJson.clubId}"><p>${clubName}</p></a>`
+    })
     displayAttendance(json)
 }
 
 async function displayAttendance(attendance) {
 
+    if (attendance.attendance.length <= 0) {
+        return;
+    }
     attendanceDiv.innerHTML = ""
     const fetchPromises = attendance.attendance.flatMap(club =>
-        club.studentsAbsent.split(',').map(student =>
+        club.studentsAbsent ? club.studentsAbsent.split(',').map(student =>
             fetch(`http://${serverAddress}:3000/usersInfo/${student}`)
                 .then(response => response.json())
         )
+            : []
     );
 
     const studentNames = await Promise.all(fetchPromises);
