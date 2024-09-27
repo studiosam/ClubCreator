@@ -388,8 +388,9 @@ app.post("/submit-attendance", async (req, res) => {
       res.send({ body: "Error" });
     }
   } catch (e) {
+    const timestamp = new Date().toLocaleString();
     console.log(e);
-    console.log("Can't /submit-attendance");
+    console.log(`Can't /submit-attendance at ${timestamp}`);
     res.send("Error. Contact admin")
   }
 });
@@ -497,15 +498,17 @@ app.post("/getAttendanceFromDate", async (req, res) => {
     let attendance = await db.getAttendanceFromDate(req.body.date);
     res.send({ attendance: attendance });
   } catch (e) {
+    const timestamp = new Date().toLocaleString();
     console.log(e);
-    console.log("Can't /getAttendanceFromDate");
+    console.log(`Can't /getAttendanceFromDate at ${timestamp}`);
     res.send("Error. Contact admin")
   }
 })
 
 app.post("/login", async (req, res) => {
+  const timestamp = new Date().toLocaleString();
   try {
-    console.log(`Login Attempt : ${req.body.email}`);
+    console.log(`Login Attempt : ${req.body.email} at ${timestamp}`);
     const email = req.body.email.toLowerCase();
     const password = req.body.password;
     const userCheckData = await db.checkUser(email);
@@ -520,13 +523,13 @@ app.post("/login", async (req, res) => {
 
         res.send({
           body: false,
-          error: "You have entered a Wrong Password. Please try again.",
+          error: "Your password is incorrect. Please try again.",
         });
       }
     } else {
       res.send({
         body: false,
-        error: "This User Does Not Exist. Please create an account.",
+        error: "User not found",
       });
     }
   } catch (e) {

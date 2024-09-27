@@ -2,6 +2,22 @@
 let params = new URL(document.location.toString()).searchParams;
 const clubId = params.get("club-id");
 const attendancebutton = document.querySelector("#attendance-submission");
+const printRosterButton = document.querySelector(".printbtn");
+const rosterDiv = document.querySelector("#club-students");
+
+printRosterButton.addEventListener('click', () => {
+  let divContents = rosterDiv.innerHTML;
+  if (divContents !== '') {
+    let a = window.open('', '');
+    a.document.write('<html>');
+    a.document.write('<body>');
+    a.document.write(divContents);
+    a.document.write('</body></html>');
+    a.document.close();
+    a.print();
+  }
+})
+
 
 async function getClubInfo() {
   const response = await fetch(
