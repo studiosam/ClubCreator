@@ -8,7 +8,7 @@ printbtn.forEach((btn) => {
         if (divContents !== '') {
             let a = window.open('', '');
             a.document.write('<html>');
-            a.document.write('<body>');
+            a.document.write('<body">');
             a.document.write(divContents);
             a.document.write('</body></html>');
             a.document.close();
