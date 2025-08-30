@@ -187,7 +187,7 @@ async function getAllApprovedClubs() {
             let clubInfo = await fetch(
               `http://${serverAddress}:3000/getUserInfo?userId=${club.primaryTeacherId}`
             );
-            if (!clubInfo.status == 200) {
+            if (clubInfo.status !== 200) {
               console.log(`Failed to fetch club info for club ID ${club.clubId}`)
             } else {
               teacherInfo = await clubInfo.json();
