@@ -10,6 +10,7 @@ async function loadPage() {
   const json = await userUpdate.json()
   console.log(json)
   localStorage.setItem("user", JSON.stringify(json));
+  localStorage.setItem("user_timestamp", String(Date.now()));
 
   const user = JSON.parse(localStorage.getItem("user"));
   console.log(user);
@@ -67,6 +68,7 @@ async function buildAdminMenu() {
 
 function logout() {
   localStorage.removeItem("user");
+  localStorage.removeItem("user_timestamp");
   console.log("User has been cleared from local storage");
   window.location.href = "./index.html";
 }

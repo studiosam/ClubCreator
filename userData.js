@@ -1,10 +1,34 @@
+// Session management (24h TTL)
+const SESSION_TTL_MS = 24 * 60 * 60 * 1000;
+
+function isSessionExpired() {
+  const tsRaw = localStorage.getItem("user_timestamp");
+  const ts = tsRaw ? parseInt(tsRaw, 10) : 0;
+  if (!ts) return true;
+  return Date.now() - ts > SESSION_TTL_MS;
+}
+
+function forceLogoutAndRedirect() {
+  localStorage.removeItem("user");
+  localStorage.removeItem("user_timestamp");
+  window.location.href = "./index.html";
+}
+
+// Early check before any usage
+const existingUserRaw = localStorage.getItem("user");
+if (!existingUserRaw || isSessionExpired()) {
+  forceLogoutAndRedirect();
+}
+
 const userUpdate = fetch(
   `http://${serverAddress}:3000/getUserInfo?userId=${JSON.parse(localStorage.getItem("user")).userId
   }`
 )
   .then((response) => response.json())
   .then((user) => {
+    // Refresh user object and session timestamp on page load
     localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("user_timestamp", String(Date.now()));
   });
 
 const user = JSON.parse(localStorage.getItem("user"));
@@ -60,6 +84,7 @@ async function buildAdminMenu() {
 
 function logout() {
   localStorage.removeItem("user");
+  localStorage.removeItem("user_timestamp");
   console.log("User has been cleared from local storage");
   window.location.href = "./index.html";
 }

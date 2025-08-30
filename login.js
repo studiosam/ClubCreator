@@ -51,6 +51,7 @@ async function login() {
 
 function logout() {
     localStorage.removeItem("user");
+    localStorage.removeItem("user_timestamp");
     console.log("User has been cleared from local storage");
     window.location.href = "./index.html";
 }
@@ -58,21 +59,28 @@ function logout() {
 function setUser(userInfo) {
     const user = JSON.stringify(userInfo);
     localStorage.setItem("user", user);
+    // Record login timestamp for session expiry (24h)
+    localStorage.setItem("user_timestamp", String(Date.now()));
 }
 
 async function getUser() {
+    const userRaw = localStorage.getItem("user");
+    const tsRaw = localStorage.getItem("user_timestamp");
+    const ts = tsRaw ? parseInt(tsRaw, 10) : 0;
+    const TTL = 24 * 60 * 60 * 1000;
 
-    const user = JSON.parse(localStorage.getItem("user"));
-
-    if (user) {
+    if (userRaw && ts && Date.now() - ts <= TTL) {
+        const user = JSON.parse(userRaw);
         console.log(`${user}`);
         if (user.isTeacher) {
             window.location.href = "./home-teacher.html";
         } else {
             window.location.href = "./home-student.html";
         }
-
     } else {
+        // Clear any stale session data
+        localStorage.removeItem("user");
+        localStorage.removeItem("user_timestamp");
         console.log(`Nobody is logged in`);
     }
 }
