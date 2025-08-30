@@ -715,23 +715,30 @@ async function importTeachersFromOldDb() {
     UIkit.notification({ message: "Please select an old DB file", status: "warning" });
     return;
   }
+  const statusEl = document.getElementById("import-status");
+  if (statusEl) statusEl.innerHTML = '<div class="uk-alert-primary" uk-alert>Uploading old database…</div>';
   const formData = new FormData();
   formData.append("olddb", oldDbFile);
   formData.append("isAdmin", user.isAdmin ? "true" : "false");
+  let result;
   const res = await fetch(`http://${serverAddress}:3000/admin-import-teachers`, {
     method: "POST",
     body: formData,
   });
-  const result = await res.json();
-  if (result.body === "Success") {
+  try { result = await res.json(); } catch (e) { result = { body: "Error", error: "Invalid server response" }; }
+  if (res.ok && result.body === "Success") {
+    console.log("Success");
     UIkit.notification({
       message: `Imported ${result.imported} teachers (skipped ${result.skipped})`,
       status: "success",
       pos: "top-center",
       timeout: 5000,
     });
+    if (statusEl) statusEl.innerHTML = `<div class="uk-alert-success" uk-alert>Imported ${result.imported} teachers (skipped ${result.skipped})</div>`;
   } else {
-    UIkit.notification({ message: `Import failed`, status: "danger" });
+    const msg = result && result.error ? result.error : res.statusText || "Import failed";
+    UIkit.notification({ message: `Teacher import failed: ${msg}`, status: "danger", pos: "top-center" });
+    if (statusEl) statusEl.innerHTML = `<div class=\"uk-alert-danger\" uk-alert>Teacher import failed: ${msg}</div>`;
   }
 }
 
@@ -740,23 +747,29 @@ async function importStudentsFromXls() {
     UIkit.notification({ message: "Please select an XLS file", status: "warning" });
     return;
   }
+  const statusEl = document.getElementById("import-status");
+  if (statusEl) statusEl.innerHTML = '<div class="uk-alert-primary" uk-alert>Uploading student spreadsheet…</div>';
   const formData = new FormData();
   formData.append("studentsXls", xlsFile);
   formData.append("isAdmin", user.isAdmin ? "true" : "false");
+  let result;
   const res = await fetch(`http://${serverAddress}:3000/admin-import-students-xls`, {
     method: "POST",
     body: formData,
   });
-  const result = await res.json();
-  if (result.body === "Success") {
+  try { result = await res.json(); } catch (e) { result = { body: "Error", error: "Invalid server response" }; }
+  if (res.ok && result.body === "Success") {
     UIkit.notification({
       message: `Imported ${result.imported} students (skipped ${result.skipped})`,
       status: "success",
       pos: "top-center",
       timeout: 5000,
     });
+    if (statusEl) statusEl.innerHTML = `<div class="uk-alert-success" uk-alert>Imported ${result.imported} students (skipped ${result.skipped})</div>`;
   } else {
-    UIkit.notification({ message: `Import failed`, status: "danger" });
+    const msg = result && result.error ? result.error : res.statusText || "Import failed";
+    UIkit.notification({ message: `Student import failed: ${msg}`, status: "danger", pos: "top-center" });
+    if (statusEl) statusEl.innerHTML = `<div class=\"uk-alert-danger\" uk-alert>Student import failed: ${msg}</div>`;
   }
 }
 
