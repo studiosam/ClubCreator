@@ -10,6 +10,8 @@ const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 const PORT = 3000;
 const fs = require("node:fs");
+const fsPromises = require("node:fs/promises");
+const sqlite3 = require("sqlite3").verbose();
 const ip = require("ip");
 const serverAddress = ip.address("public");
 const content = `const serverAddress = '${serverAddress}'`;
@@ -23,10 +25,10 @@ fs.writeFile("./serverVariables.js", content, (err) => {
 const storage = multer.diskStorage({
   destination: async (req, file, cb) => {
     try {
-      await fs.access("uploads/");
+      await fsPromises.access("uploads/");
     } catch (err) {
-      if (err.code === "ENOENT") {
-        await fs.mkdir("uploads/", { recursive: true });
+      if (err && err.code === "ENOENT") {
+        await fsPromises.mkdir("uploads/", { recursive: true });
       }
     }
     cb(null, "uploads/");
@@ -614,6 +616,155 @@ app.post("/admin-create-teachers", async (req, res) => {
     console.log(e);
     console.log("Can't /admin-create-teachers");
     res.send("Error. Contact admin")
+  }
+});
+
+// Import teachers from an uploaded old SQLite database
+app.post("/admin-import-teachers", upload.single("olddb"), async (req, res) => {
+  try {
+    const adminFlag = String(req.body.isAdmin || "").toLowerCase();
+    const isAdmin = ["true", "1", "yes", "on"].includes(adminFlag);
+    if (!isAdmin) {
+      return res.status(403).send({ body: "Error", error: "Not authorized" });
+    }
+    if (!req.file) {
+      return res.status(400).send({ body: "Error", error: "No database file uploaded" });
+    }
+
+    const oldDbPath = req.file.path;
+    const openOldDb = (p) =>
+      new Promise((resolve, reject) => {
+        const odb = new sqlite3.Database(p, sqlite3.OPEN_READONLY, (err) => {
+          if (err) return reject(err);
+          resolve(odb);
+        });
+      });
+    let oldDb;
+    try {
+      oldDb = await openOldDb(oldDbPath);
+    } catch (e) {
+      console.error("Error opening old database:", e);
+      return res.status(400).send({ body: "Error", error: "Cannot open uploaded database file" });
+    }
+
+    const selectTeachers = () =>
+      new Promise((resolve, reject) => {
+        oldDb.all("SELECT * FROM users WHERE isTeacher = 1", [], (err, rows) => {
+          if (err) return reject(err);
+          resolve(rows || []);
+        });
+      });
+
+    const teachers = await selectTeachers();
+    let imported = 0;
+    let skipped = 0;
+
+    for (const t of teachers) {
+      // Prefer copying minimal safe fields; keep existing password hashes
+      const sql = `INSERT OR IGNORE INTO users (firstName, lastName, avatar, grade, clubId, room, email, password, isTeacher, isAdmin, clubPreferences)
+                   VALUES (?,?,?,?,?,?,?,?,?,?,?)`;
+      try {
+        await db.run(sql, [
+          t.firstName || null,
+          t.lastName || null,
+          t.avatar || null,
+          t.grade ?? null,
+          null, // do not carry over old clubId into fresh DB
+          t.room || null,
+          t.email || null,
+          t.password || null,
+          1,
+          t.isAdmin ? 1 : 0,
+          null,
+        ]);
+        imported++;
+      } catch (e) {
+        // Likely unique(email) conflict, treat as skipped
+        skipped++;
+      }
+    }
+
+    oldDb.close();
+    res.send({ body: "Success", imported, skipped });
+  } catch (e) {
+    console.error(e);
+    res.status(500).send({ body: "Error", error: "Failed to import teachers" });
+  }
+});
+
+// Import students from uploaded XLS file (drag-and-drop)
+app.post("/admin-import-students-xls", upload.single("studentsXls"), async (req, res) => {
+  try {
+    const adminFlag = String(req.body.isAdmin || "").toLowerCase();
+    const isAdmin = ["true", "1", "yes", "on"].includes(adminFlag);
+    if (!isAdmin) {
+      return res.status(403).send({ body: "Error", error: "Not authorized" });
+    }
+    if (!req.file) {
+      return res.status(400).send({ body: "Error", error: "No XLS file uploaded" });
+    }
+    const node_xj = require("xls-to-json");
+
+    const parseXls = (filePath) =>
+      new Promise((resolve, reject) => {
+        node_xj(
+          {
+            input: filePath,
+            output: null,
+            rowsToSkip: 0,
+            allowEmptyKey: false,
+          },
+          (err, result) => {
+            if (err) return reject(err);
+            resolve(result || []);
+          }
+        );
+      });
+
+    const records = await parseXls(req.file.path);
+
+    const encryptPassword = (password) => bcrypt.hash(password, 10);
+
+    const formatDOBToMMDDYYYY = (dob) => {
+      if (!dob) return "";
+      const s = dob.toString().trim();
+      const m = s.match(/(\d{1,2})\D(\d{1,2})\D(\d{2,4})/);
+      if (!m) return s.replace(/\D/g, "");
+      let month = m[1].padStart(2, "0");
+      let day = m[2].padStart(2, "0");
+      let year = m[3];
+      if (year.length === 2) {
+        year = parseInt(year, 10) >= 70 ? `19${year}` : `20${year}`;
+      } else {
+        year = year.padStart(4, "0");
+      }
+      return `${month}${day}${year}`;
+    };
+
+    // Preprocess + hash in parallel (limited by libuv threadpool)
+    const candidates = records.filter((r) => r.First_Name);
+    const prepared = await Promise.all(
+      candidates.map(async (student) => {
+        const firstName = (student.First_Name || "").toString();
+        const lastName = (student.Last_Name || "").toString();
+        const email = (student.Student_Email_DONOTUSE || "").toString().toLowerCase();
+        const gradeRaw = student.Grade_Level;
+        const grade =
+          gradeRaw === "" || gradeRaw == null ? null : parseInt(gradeRaw);
+        const dob = (student.DOB || "").toString();
+        const passwordDate = formatDOBToMMDDYYYY(dob);
+        const firstThree = firstName.replace("'", "").substring(0, 3).toLowerCase();
+        const passwordPlain = `${passwordDate}${firstThree}`;
+        const password = await encryptPassword(passwordPlain);
+        return { firstName, lastName, email, grade, password };
+      })
+    );
+
+    const { imported, skipped } = await db.addStudentsBulk(prepared);
+    res.send({ body: "Success", imported, skipped });
+  } catch (e) {
+    console.error(e);
+    res.status(500).send({ body: "Error", error: "Failed to import students" });
   }
 });
 

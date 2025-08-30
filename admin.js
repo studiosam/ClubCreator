@@ -1,6 +1,8 @@
 const approvedClubList = document.querySelector("#approvedClubList");
 const clubProposals = document.querySelector("#clubProposalList");
 const socket = new WebSocket(`ws://${serverAddress}:8008`);
+let oldDbFile = null;
+let xlsFile = null;
 async function deleteAllUserClubs() {
   const response = await fetch(`http://${serverAddress}:3000/admin-erase`, {
     method: "POST",
@@ -663,3 +665,100 @@ socket.onmessage = function (event) {
     createdItemContainer.innerHTML = studentHTML;
   }
 };
+
+// --- Import Handlers ---
+function setupImportUI() {
+  const olddbDrop = document.getElementById("olddb-drop");
+  const xlsDrop = document.getElementById("xls-drop");
+  const olddbInput = document.getElementById("olddb-input");
+  const xlsInput = document.getElementById("xls-input");
+  const olddbSelected = document.getElementById("olddb-selected");
+  const xlsSelected = document.getElementById("xls-selected");
+
+  if (olddbDrop && olddbInput) {
+    ;["dragover", "drop"].forEach((evt) => {
+      olddbDrop.addEventListener(evt, (e) => e.preventDefault());
+    });
+    olddbDrop.addEventListener("drop", (e) => {
+      oldDbFile = e.dataTransfer.files[0];
+      olddbSelected.textContent = oldDbFile ? `Selected: ${oldDbFile.name}` : "";
+    });
+    olddbInput.addEventListener("change", (e) => {
+      oldDbFile = e.target.files[0];
+      olddbSelected.textContent = oldDbFile ? `Selected: ${oldDbFile.name}` : "";
+    });
+    document
+      .getElementById("import-teachers-btn")
+      .addEventListener("click", importTeachersFromOldDb);
+  }
+
+  if (xlsDrop && xlsInput) {
+    ;["dragover", "drop"].forEach((evt) => {
+      xlsDrop.addEventListener(evt, (e) => e.preventDefault());
+    });
+    xlsDrop.addEventListener("drop", (e) => {
+      xlsFile = e.dataTransfer.files[0];
+      xlsSelected.textContent = xlsFile ? `Selected: ${xlsFile.name}` : "";
+    });
+    xlsInput.addEventListener("change", (e) => {
+      xlsFile = e.target.files[0];
+      xlsSelected.textContent = xlsFile ? `Selected: ${xlsFile.name}` : "";
+    });
+    document
+      .getElementById("import-students-btn")
+      .addEventListener("click", importStudentsFromXls);
+  }
+}
+
+async function importTeachersFromOldDb() {
+  if (!oldDbFile) {
+    UIkit.notification({ message: "Please select an old DB file", status: "warning" });
+    return;
+  }
+  const formData = new FormData();
+  formData.append("olddb", oldDbFile);
+  formData.append("isAdmin", user.isAdmin ? "true" : "false");
+  const res = await fetch(`http://${serverAddress}:3000/admin-import-teachers`, {
+    method: "POST",
+    body: formData,
+  });
+  const result = await res.json();
+  if (result.body === "Success") {
+    UIkit.notification({
+      message: `Imported ${result.imported} teachers (skipped ${result.skipped})`,
+      status: "success",
+      pos: "top-center",
+      timeout: 5000,
+    });
+  } else {
+    UIkit.notification({ message: `Import failed`, status: "danger" });
+  }
+}
+
+async function importStudentsFromXls() {
+  if (!xlsFile) {
+    UIkit.notification({ message: "Please select an XLS file", status: "warning" });
+    return;
+  }
+  const formData = new FormData();
+  formData.append("studentsXls", xlsFile);
+  formData.append("isAdmin", user.isAdmin ? "true" : "false");
+  const res = await fetch(`http://${serverAddress}:3000/admin-import-students-xls`, {
+    method: "POST",
+    body: formData,
+  });
+  const result = await res.json();
+  if (result.body === "Success") {
+    UIkit.notification({
+      message: `Imported ${result.imported} students (skipped ${result.skipped})`,
+      status: "success",
+      pos: "top-center",
+      timeout: 5000,
+    });
+  } else {
+    UIkit.notification({ message: `Import failed`, status: "danger" });
+  }
+}
+
+// Initialize on admin page load
+document.addEventListener("DOMContentLoaded", setupImportUI);

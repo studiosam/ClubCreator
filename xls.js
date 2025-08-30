@@ -3,6 +3,21 @@ const db = require("./database.js")
 const bcrypt = require("bcrypt")
 let allStudents = [];
 
+function formatDOBToMMDDYYYY(dob) {
+    if (!dob) return "";
+    const s = dob.toString().trim();
+    const m = s.match(/(\d{1,2})\D(\d{1,2})\D(\d{2,4})/);
+    if (!m) return s.replace(/\D/g, "");
+    let month = m[1].padStart(2, "0");
+    let day = m[2].padStart(2, "0");
+    let year = m[3];
+    if (year.length === 2) {
+        year = parseInt(year, 10) >= 70 ? `19${year}` : `20${year}`;
+    } else {
+        year = year.padStart(4, "0");
+    }
+    return `${month}${day}${year}`;
+}
 
 async function parseXls() {
     await node_xj(
@@ -27,24 +42,22 @@ async function parseXls() {
 
 
 async function addStudents(allStudents) {
-
-    allStudents.forEach(async (student) => {
-        if (student.First_Name) {
-            student.firstName = student.First_Name
-            student.lastName = student.Last_Name
-            student.email = student.Student_Email_DONOTUSE
-            student.grade = student.Grade_Level
-            const passwordDate = student.DOB.split("/").join("");
-            const firstThree = student.firstName.replace("'", "").substring(0, 3).toLowerCase();
-            const password = passwordDate + firstThree;
-            //password will be birthday plus first 3 letters of legal first name MMDDYYYYabc
-            console.log(password);
-            student.password = await encryptPassword(password);
-            student.isTeacher = false
-            await db.addStudentFromSpreadsheet(student)
-
-        }
-    })
+    const candidates = allStudents.filter((s) => s.First_Name);
+    const prepared = await Promise.all(
+        candidates.map(async (student) => {
+            const firstName = student.First_Name;
+            const lastName = student.Last_Name;
+            const email = (student.Student_Email_DONOTUSE || "").toString().toLowerCase();
+            const grade = student.Grade_Level;
+            const passwordDate = formatDOBToMMDDYYYY(student.DOB);
+            const firstThree = firstName.replace("'", "").substring(0, 3).toLowerCase();
+            const passwordPlain = passwordDate + firstThree;
+            const password = await encryptPassword(passwordPlain);
+            return { firstName, lastName, email, grade, password };
+        })
+    );
+    const result = await db.addStudentsBulk(prepared);
+    console.log(`Imported: ${result.imported}, Skipped: ${result.skipped}`);
 }
 
 async function encryptPassword(password) {

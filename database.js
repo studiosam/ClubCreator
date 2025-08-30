@@ -513,6 +513,56 @@ async function addStudentFromSpreadsheet(user) {
   }
 }
 
+// Bulk insert students efficiently using a single transaction + prepared statement
+// Expects array of objects: { firstName, lastName, email, password, grade }
+async function addStudentsBulk(students) {
+  return new Promise((resolve, reject) => {
+    if (!Array.isArray(students) || students.length === 0) {
+      return resolve({ imported: 0, skipped: 0 });
+    }
+
+    let imported = 0;
+    let skipped = 0;
+
+    db.serialize(() => {
+      db.run("BEGIN TRANSACTION");
+
+      const stmt = db.prepare(
+        "INSERT OR IGNORE INTO users (firstName, lastName, email, password, grade, isTeacher) VALUES (?,?,?,?,?,0)"
+      );
+
+      students.forEach((u) => {
+        const params = [
+          u.firstName || null,
+          u.lastName || null,
+          u.email || null,
+          u.password || null,
+          u.grade == null || u.grade === "" ? null : parseInt(u.grade),
+        ];
+        stmt.run(params, function (err) {
+          if (err) {
+            skipped++;
+          } else {
+            // this.changes === 1 if a row was inserted, 0 if ignored (duplicate)
+            if (this.changes === 1) imported++;
+            else skipped++;
+          }
+        });
+      });
+
+      stmt.finalize((err) => {
+        if (err) {
+          return db.run("ROLLBACK", () => reject(err));
+        }
+        db.run("COMMIT", (err2) => {
+          if (err2) return reject(err2);
+          resolve({ imported, skipped });
+        });
+      });
+    });
+  });
+}
+
 async function removeClubFromUser(userId) {
   const sql = `UPDATE users SET clubId = null WHERE userId = ?`;
   db.run(sql, [userId], function (err) {
@@ -1095,6 +1145,7 @@ module.exports = {
   resetUserPassword,
   createRandomTeachers,
   getAttendanceFromDate,
-  addStudentFromSpreadsheet
+  addStudentFromSpreadsheet,
+  addStudentsBulk
   // Export other database functions here
 };

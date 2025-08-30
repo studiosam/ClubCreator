@@ -88,6 +88,40 @@
           uk-grid uk-sortable>
           No Approved Clubs
         </div>
+        <hr class="uk-margin-large">
+        <div class="uk-grid-small uk-child-width-1-2@m uk-grid" uk-grid>
+          <div>
+            <div class="uk-card uk-card-default uk-card-body">
+              <h3 class="roboto">Import Teachers (old .db)</h3>
+              <div id="olddb-drop" class="uk-placeholder uk-text-center">
+                <span uk-icon="icon: database"></span>
+                <span class="uk-text-middle">Drag and drop old SQLite DB here or</span>
+                <div uk-form-custom>
+                  <input type="file" id="olddb-input" accept=".db,.sqlite" />
+                  <span class="uk-link">select a file</span>
+                </div>
+              </div>
+              <p id="olddb-selected" class="uk-text-small uk-text-muted"></p>
+              <button class="uk-button uk-button-primary" id="import-teachers-btn">Import Teachers</button>
+            </div>
+          </div>
+          <div>
+            <div class="uk-card uk-card-default uk-card-body">
+              <h3 class="roboto">Import Students (.xls)</h3>
+              <div id="xls-drop" class="uk-placeholder uk-text-center">
+                <span uk-icon="icon: file-text"></span>
+                <span class="uk-text-middle">Drag and drop XLS here or</span>
+                <div uk-form-custom>
+                  <input type="file" id="xls-input" accept=".xls" />
+                  <span class="uk-link">select a file</span>
+                </div>
+              </div>
+              <p id="xls-selected" class="uk-text-small uk-text-muted"></p>
+              <button class="uk-button uk-button-primary" id="import-students-btn">Import Students</button>
+            </div>
+          </div>
+        </div>
+        <div class="uk-margin-top" id="import-status"></div>
         <div id="delete-confirmation" uk-modal>
           <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
             <h2 class="uk-modal-title roboto">ARE YOU SURE?</h2>
