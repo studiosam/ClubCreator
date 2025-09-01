@@ -39,7 +39,7 @@ if (document.querySelector(".avatar")) {
     });
   } else {
     document.querySelectorAll(".avatar").forEach((avatar) => {
-      avatar.src = `https://ui-avatars.com/api/?name=${user.firstName}+${user.lastName}&background=0D8ABC&color=fff`;
+      avatar.src = `https://ui-avatars.com/api/?name=${user.firstName}+${user.lastName}&background=005DB4&color=fff`;
     });
   }
 }
@@ -55,6 +55,8 @@ if (user) {
       "#user-name"
     ).innerHTML += `<div><a href="home-admin.html">ADMIN</a></div>`;
     document.querySelector("#homepage-link").href = "home-teacher.html";
+    // After building admin menu, ensure active state is highlighted
+    requestAnimationFrame(highlightActiveNav);
   } else if (user.isTeacher) {
     document.querySelector(
       "#user-name"
@@ -80,6 +82,8 @@ async function buildAdminMenu() {
   <li><a class="gold" href="/users-students.html"><span uk-icon="icon: pencil"></span>Students</a></li>
   <li><a class="gold" href="/users-teachers.html"><span uk-icon="icon: database"></span>Teachers</a></li>
 `;
+  // Highlight correct item after dynamic menu injection
+  highlightActiveNav();
 }
 
 function logout() {
@@ -88,3 +92,27 @@ function logout() {
   console.log("User has been cleared from local storage");
   window.location.href = "./index.html";
 }
+
+// Highlight the current page in the left nav
+function highlightActiveNav() {
+  try {
+    const currentPath = new URL(window.location.href).pathname;
+    const links = document.querySelectorAll('#side-nav .dash-nav a[href]');
+    if (!links.length) return;
+    links.forEach((link) => {
+      const li = link.closest('li');
+      if (!li) return;
+      const linkPath = new URL(link.getAttribute('href'), window.location.origin).pathname;
+      if (linkPath === currentPath) {
+        li.classList.add('uk-active');
+      } else {
+        li.classList.remove('uk-active');
+      }
+    });
+  } catch (_) {
+    // no-op
+  }
+}
+
+// Run once on page load as well
+document.addEventListener('DOMContentLoaded', highlightActiveNav);

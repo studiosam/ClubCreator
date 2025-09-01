@@ -29,16 +29,14 @@
         <li>
           <a href="clubsList.html"><span uk-icon="info"></span>Club List</a>
         </li>
-        <li>
-          <a href="account-settings.html"><span uk-icon="cog"></span>Account Settings</a>
-        </li>
+        
       </ul>
     </div>
     <div id="right">
 
       <div class="menu-panel">
-        <a href="account-settings.html"><img class="uk-preserve-width uk-border-circle uk-margin-small-right avatar"
-            src="" width="40" height="40" alt="user avatar" /></a>
+        <img class="uk-preserve-width uk-border-circle uk-margin-small-right avatar"
+            src="" width="40" height="40" alt="user avatar" />
         <p id="user-name">Name</p>
         <button class="uk-button logout-button" onclick="logout()">
           Logout
@@ -48,11 +46,12 @@
       <div id="side-panel" class="uk-offcanvas" uk-offcanvas="mode: slide; bg-close:false;esc-close=true">
         <div class="uk-offcanvas-bar uk-flex uk-flex-column">
           <button class="uk-offcanvas-close" type="button" uk-close></button>
-          <h3 class="uk-margin-remove-bottom">User Actions</h3>
+          <h3 id="panel-title" class="uk-margin-remove-bottom">User Actions</h3>
+          <div id="selected-user-name" class="uk-text-meta uk-margin-small-top"></div>
           <ul class="uk-nav uk-nav-default uk-margin-top">
 
             <li class="uk-margin-medium-top">
-              <p>Add User(s) to Club</p>
+              <p id="assign-label">Assign Student to Club</p>
               <div class="uk-margin-small-top">
                 <select id="club-select" class="uk-select">
                   <!-- Options will be populated dynamically -->
@@ -69,7 +68,7 @@
 
         </div>
       </div>
-      <h1 class="uk-margin-medium-left">Welcome, Admin!</h1>
+      <h1 class="uk-margin-medium-left">ADMIN MENU</h1>
       <div class="uk-container uk-width-1-1">
         <div id="search-bar">
           <div class="uk-search uk-search-default uk-width-medium">
@@ -81,7 +80,6 @@
           <table class="uk-table uk-table-middle uk-table-divider">
             <thead>
               <tr class="table-heading">
-                <th class="uk-table-shrink">Select</th>
                 <th class="uk-table-shrink">Avatar</th>
                 <th class="uk-table-shrink uk-text-nowrap" onclick="sortTable(2, 'userId')">
                   User ID

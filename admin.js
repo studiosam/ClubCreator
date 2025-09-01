@@ -236,7 +236,7 @@ async function getAllApprovedClubs() {
     <div class="uk-card-badge uk-label ${badgeType}">${clubStatus}</div>
     <div class="uk-background-blend-multiply uk-background-secondary" id="cover-photo-card" style="background-image : url('${club.coverPhoto
             }')">   
-    <a class="cover-card-text" href="http://${serverAddress}/club-info.html?club-id=${club.clubId
+    <a class="cover-card-text" href="./club-info.html?club-id=${club.clubId
             }"><p class="roboto uk-text-bold clubName" id="${club.clubId
             }clubName">${club.clubName}</p></a>
     <input type="hidden" name="clubName" value="${club.clubName}">
@@ -494,7 +494,7 @@ async function getAllUnapprovedClubs(clubs) {
         <div class="uk-card uk-card-default uk-card-body uk-card-hover">
           <div class="uk-card-badge uk-label uk-label-warning">Unapproved</div>
           <div class="uk-background-blend-multiply uk-background-secondary" id="cover-photo-card" style="background-image : url('${club.coverPhoto}')"> 
-            <a href="http://${serverAddress}/club-info.html?club-id=${club.clubId}">
+            <a href="./club-info.html?club-id=${club.clubId}">
               <h2 id="${club.clubId}clubName" class="roboto uk-card-title cover-card-text">${club.clubName}</h2>
             </a>
           </div> 

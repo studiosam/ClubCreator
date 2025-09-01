@@ -64,7 +64,7 @@ async function getAttendanceFromDate(date) {
         const clubJson = await response.json();
         const clubName = clubJson.clubName
 
-        clubsWithoutAttendanceDiv.innerHTML += `<a href="http://${serverAddress}/club-info.html?club-id=${clubJson.clubId}"><p>${clubName}</p></a>`
+        clubsWithoutAttendanceDiv.innerHTML += `<a href="./club-info.html?club-id=${clubJson.clubId}"><p>${clubName}</p></a>`
     })
     displayAttendance(json)
 }

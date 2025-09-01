@@ -29,22 +29,20 @@
         <li>
           <a href="clubsList.html"><span uk-icon="info"></span>Club List</a>
         </li>
-        <li>
-          <a href="account-settings.html"><span uk-icon="cog"></span>Account Settings</a>
-        </li>
+        
       </ul>
     </div>
     <div id="right">
       <div class="menu-panel">
-        <a href="account-settings.html"><img class="uk-preserve-width uk-border-circle uk-margin-small-right avatar"
-            src="" width="40" height="40" alt="user avatar" /></a>
+        <img class="uk-preserve-width uk-border-circle uk-margin-small-right avatar"
+            src="" width="40" height="40" alt="user avatar" />
         <p id="user-name">Name</p>
         <button class="uk-button logout-button" onclick="logout()">
           Logout
         </button>
       </div>
       <!--MAIN DASHBOARD PANEL START-->
-      <h1 class="roboto uk-margin-medium-left">Welcome, Admin!</h1>
+      <h1 class="roboto uk-margin-medium-left">ADMIN MENU</h1>
       <div class="uk-flex uk-margin-medium-left">
         <div>
 
@@ -91,9 +89,9 @@
         <hr class="uk-margin-large">
         <div class="uk-grid-small uk-child-width-1-2@m uk-grid" uk-grid>
           <div>
-            <div class="uk-card uk-card-default uk-card-body">
+            <div class="uk-card uk-card-default uk-card-body uk-border-rounded">
               <h3 class="roboto">Import Teachers (old .db)</h3>
-              <div id="olddb-drop" class="uk-placeholder uk-text-center">
+              <div id="olddb-drop" class="uk-placeholder uk-text-center uk-border-rounded">
                 <span uk-icon="icon: database"></span>
                 <span class="uk-text-middle">Drag and drop old SQLite DB here or</span>
                 <div uk-form-custom>
@@ -106,9 +104,9 @@
             </div>
           </div>
           <div>
-            <div class="uk-card uk-card-default uk-card-body">
+            <div class="uk-card uk-card-default uk-card-body uk-border-rounded">
               <h3 class="roboto">Import Students (.xls)</h3>
-              <div id="xls-drop" class="uk-placeholder uk-text-center">
+              <div id="xls-drop" class="uk-placeholder uk-text-center uk-border-rounded">
                 <span uk-icon="icon: file-text"></span>
                 <span class="uk-text-middle">Drag and drop XLS here or</span>
                 <div uk-form-custom>

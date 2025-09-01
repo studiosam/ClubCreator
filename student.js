@@ -87,7 +87,7 @@ async function finishStudentDashboard() {
   if (myAssignedClub.length > 0) {
     const myClubs = document.querySelector("#my-club");
     myAssignedClub.forEach((club) => {
-      let coverPhotoUrl = `https://ui-avatars.com/api/?name=${club.clubName}&background=0D8ABC&color=fff`;
+      let coverPhotoUrl = `https://ui-avatars.com/api/?name=${club.clubName}&background=005DB4&color=fff`;
       if (
         club.coverPhoto &&
         club.coverPhoto !== "NULL" &&
@@ -115,7 +115,7 @@ async function finishStudentDashboard() {
 
     clubs.forEach((club) => {
       const clubsplit = club.clubName.replaceAll(" ", "-");
-      let coverPhotoUrl = `https://ui-avatars.com/api/?name=${clubsplit}&background=0D8ABC&color=fff`;
+      let coverPhotoUrl = `https://ui-avatars.com/api/?name=${clubsplit}&background=005DB4&color=fff`;
       console.log(coverPhotoUrl);
       if (
         club.coverPhoto &&
@@ -126,7 +126,7 @@ async function finishStudentDashboard() {
       ) {
         coverPhotoUrl = `${club.coverPhoto}`;
       }
-      allClubs.innerHTML += `<div class="student-club-wrapper"  style="background: url('${coverPhotoUrl}'), #555555; background-blend-mode: multiply; background-size: cover" ><div class="club-choice"><input id="${club.clubId}-${club.clubName}" class="club-input" type="checkbox">
+      allClubs.innerHTML += `<div class="student-club-wrapper"  style="background: linear-gradient(rgba(0,93,180,.88), rgba(0,93,180,.88)), url('${coverPhotoUrl}'); background-size: cover; background-position: center" ><div class="club-choice"><input id="${club.clubId}-${club.clubName}" class="club-input" type="checkbox">
             <div id="${club.clubId}student-club-cover" class="student-club-cover"></div><a href="http://${serverAddress}:3000/club-info/${club.clubId}" class="uk-link-text">
         <div class="club">
           <p class="uk-card-title roboto" style="color:white">${club.clubName}</p>

@@ -20,7 +20,7 @@
   text-align: center;
 }
 .dark {
-  color: #0e0e11;
+  color: #0a0a0a;
 }
 .text-center {
   text-align: center;
@@ -72,7 +72,7 @@ input[type="date"]:focus {
 }
 
 .warning {
-  background-color: #007bff;
+  background-color: var(--brand);
   margin-top: 20px;
   padding-top: 5px;
   padding-bottom: 5px;
@@ -111,17 +111,17 @@ body {
   min-height: 100vh;
   width: 100%;
   color: azure;
-  background-color: #0e0e11;
+  background-color: #0a0a0a;
 }
 
 .blue {
-  color: #007bff !important;
+  color: var(--accent) !important;
 }
 .white {
   color: azure;
 }
 .gold {
-  color: goldenrod !important;
+  color: var(--muted);
 }
 
 .red {
@@ -178,7 +178,7 @@ textarea:focus {
 
 .uk-subnav-pill > .uk-active > a {
   background: none !important;
-  border-bottom: 3px solid rgb(60, 138, 255);
+  border-bottom: 3px solid var(--accent);
   padding: 0;
   margin: 0;
 }
@@ -195,7 +195,7 @@ textarea:focus {
 }
 
 #side-nav {
-  background-color: #191f36;
+  background-color: #2e2e2e; /* neutral dark grey */
   width: 19rem;
   min-height: 100%;
   position: fixed;
@@ -213,7 +213,13 @@ textarea:focus {
   font-size: 1.2rem;
 }
 #side-nav .uk-active a {
-  color: rgb(79, 236, 236);
+  color: var(--brand);
+}
+
+/* Transparent highlight for active nav item */
+#side-nav .dash-nav li.uk-active > a {
+  background-color: rgba(255, 255, 255, 0.92); /* near-white for contrast */
+  border-radius: 8px;
 }
 
 h1,
@@ -239,8 +245,17 @@ h6 {
 }
 
 .logout-button {
-  background-color: #16458d;
+  background-color: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
   height: 100%;
+}
+
+.logout-button:hover,
+.logout-button:focus {
+  background-color: var(--brand-700);
+  border-color: var(--brand-700);
+  color: #fff;
 }
 
 #right {
@@ -249,11 +264,147 @@ h6 {
   width: 100%;
 }
 
+/* ------------------------------ */
+/* Auth Page – Scoped Enhancements */
+/* ------------------------------ */
+:root {
+  --bg: #0a0a0a;
+  --text-inverse: #f3f4f6;
+  --text-primary: #111827;
+  --muted: #6b7280;
+  /* Brand palette (updated to match #005DB4) */
+  --brand: #005DB4;       /* primary brand */
+  --brand-700: #004a99;   /* hover/active */
+  --accent: #0a6fd6;      /* secondary accent */
+  --danger: #bb5252;
+  --success: #52bb81;
+  --card-bg: #ffffff;
+  --card-border: #e5e7eb;
+}
+
+/* Primary UI overrides to match brand */
+.uk-button-primary {
+  background-color: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+}
+.uk-button-primary:hover,
+.uk-button-primary:focus {
+  background-color: var(--brand-700);
+  border-color: var(--brand-700);
+  color: #fff;
+}
+
+a,
+.uk-link,
+.uk-text-primary {
+  color: var(--accent);
+}
+a:hover,
+.uk-link:hover {
+  color: var(--brand-700);
+}
+
+.auth-page .wrapper {
+  min-height: 100vh;
+  padding: 4rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+}
+
+/* Scale all typography on auth page proportionally to viewport */
+.auth-page {
+  font-size: clamp(20px, 1.8vw, 24px);
+}
+
+.auth-page .logo {
+  height: clamp(140px, 14vw, 220px);
+  width: auto;
+  margin-bottom: 0.75rem;
+}
+
+.auth-page .brand {
+  color: var(--text-inverse);
+  font-size: clamp(2.4rem, 4vw, 4rem);
+  margin: .25rem 0 1.5rem;
+  line-height: 1.2;
+}
+
+.auth-page #server-status {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: var(--muted);
+}
+
+/* Tame the big offline heading only on auth page */
+.auth-page .server-status {
+  color: var(--danger) !important;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0 0 .25rem 0;
+}
+
+.auth-page .auth-card {
+  background: var(--card-bg);
+  color: var(--text-primary);
+  border-radius: 12px;
+  border: 1px solid var(--card-border);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  width: clamp(320px, 28vw, 560px); /* narrower, scales with viewport */
+  padding: 32px;
+  margin: 0 auto;
+  font-size: clamp(18px, 1.6vw, 22px); /* scale inner controls */
+}
+
+/* refine card width across breakpoints */
+@media (min-width: 640px) {
+  .auth-page .auth-card { width: clamp(380px, 34vw, 640px); }
+}
+@media (min-width: 960px) {
+  .auth-page .auth-card { width: clamp(420px, 30vw, 700px); padding: 36px; }
+}
+@media (min-width: 1400px) {
+  .auth-page .auth-card { width: clamp(480px, 26vw, 760px); }
+}
+
+.auth-card label {
+  display: block;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.auth-card .uk-input {
+  min-height: 3.1em; /* scales with font-size */
+  border-radius: 10px;
+  font-size: 1em; /* inherit scaled size */
+}
+
+.auth-card .uk-form-icon {
+  color: #9ca3af;
+  font-size: 1.1em;
+}
+
+.auth-card #submit {
+  width: 100%;
+  border-radius: 10px;
+  font-weight: 600;
+  height: 3em; /* scale with font-size */
+  font-size: 1em;
+}
+
+.auth-card #error {
+  border-left: 4px solid #ef4444;
+}
+
 .horizontal {
   display: flex;
   gap: 15px;
   align-items: center;
-  justify-content: center;
+  justify-content: start;
 }
 
 ul {
@@ -270,14 +421,27 @@ ul {
 #current-clubs {
   font-size: 2rem;
   font-weight: bold;
-  color: #0e0e11;
+  color: #0a0a0a;
 }
 
 .uk-card-header {
   background-color: azure;
 }
 .uk-card-header h3 {
-  color: #0e0e11 !important;
+  color: #0a0a0a !important;
+}
+/* Ensure rounded cards clip header/footer backgrounds */
+.uk-card.uk-border-rounded {
+  border-radius: 12px !important;
+  overflow: hidden;
+}
+
+/* Rounded drop zones (admin + create-club) */
+#olddb-drop,
+#xls-drop,
+#cover-photo-up {
+  border-radius: 10px !important;
+  overflow: hidden;
 }
 .student-attendance-card,
 .student-attendance-absent {
@@ -294,7 +458,7 @@ ul {
 }
 
 .uk-modal-body {
-  background-color: #0e0e11;
+  background-color: #0a0a0a;
 }
 
 .uk-radio:checked {
@@ -303,7 +467,7 @@ ul {
 
 .uk-checkbox:checked {
   background-color: #8f2d00;
-  color: #0e0e11;
+  color: #0a0a0a;
 }
 .club-descripton{
   padding-right: 25px;
@@ -313,6 +477,19 @@ ul {
   align-items: center;
   background-size: cover;
   
+}
+.co-sponser-wrapper,
+.student-club-wrapper {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* Rounded look for sortable selections */
+#student-club-wrapper {
+  border-radius: 8px;
+  border: 1px solid var(--card-border);
+  background: var(--card-bg);
+  padding: 8px 12px;
 }
 .club-input {
   margin-top: 10px !important;
@@ -324,11 +501,11 @@ ul {
 }
 
 tbody tr:hover {
-  background-color: rgb(50, 31, 104);
+  background-color: #2b2f36; /* dark grey row hover */
 }
 
 .uk-sortable-drag {
-  color: #154a86;
+  color: #374151; /* dark grey text */
 }
 
 #avatar-upload {
@@ -339,7 +516,7 @@ tbody tr:hover {
 }
 
 .upload-button {
-  background-color: goldenrod;
+  background-color: var(--muted);
   color: aliceblue;
 }
 .settings-avatar {
@@ -351,7 +528,7 @@ tbody tr:hover {
 
 .student-attendance-card {
   background-color: #52bb81;
-  color: #191f36;
+  color: var(--text-primary);
 }
 
 #cover-photo {
@@ -407,6 +584,51 @@ tbody tr:hover {
   padding-left: 15px;
   min-width: 675px !important;
 }
+
+/* Align club text consistently inside overlays on key pages */
+#my-club .club,
+#my-clubs .club,
+#unapproved-clubs .club,
+#cosponsor-clubs .club,
+.student-club-wrapper .club {
+  /* More right padding to prevent clipping; ensure content wraps */
+  padding: 16px 28px 16px 18px;
+  min-width: 0 !important;
+  text-align: left; /* default to left for body text */
+  width: 100%;
+  box-sizing: border-box;
+  overflow-wrap: anywhere; /* wrap long tokens */
+  word-break: break-word;
+}
+
+/* Center only the club title */
+#my-club .club .uk-card-title,
+#my-clubs .club .uk-card-title,
+#unapproved-clubs .club .uk-card-title,
+#cosponsor-clubs .club .uk-card-title,
+.student-club-wrapper .club .uk-card-title {
+  margin: 0.25rem 0 0.5rem;
+  text-align: left;
+  display: block;
+}
+
+/* Ensure descriptions render left-aligned with spacing */
+#my-club .club p:not(.uk-card-title),
+#my-clubs .club p:not(.uk-card-title),
+#unapproved-clubs .club p:not(.uk-card-title),
+#cosponsor-clubs .club p:not(.uk-card-title),
+.student-club-wrapper .club p:not(.uk-card-title),
+.club-descripton {
+  text-align: left;
+  margin-top: 0.25rem;
+}
+
+/* Remove left gap created by unused thumbnail blocks */
+.co-sponser-wrapper .club-thumbnail,
+.student-club-wrapper .club-thumbnail {
+  display: none;
+}
+.co-sponser-wrapper { gap: 0; }
 
 .co-sponser-wrapper {
   display: flex;

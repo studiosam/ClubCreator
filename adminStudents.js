@@ -8,6 +8,10 @@ const paginationInfo = document.getElementById("page-info");
 const prevButton = document.getElementById("prev-button");
 const nextButton = document.getElementById("next-button");
 const deletionItems = document.getElementById("deletion-items");
+const panelTitle = document.getElementById("panel-title");
+const selectedUserNameEl = document.getElementById("selected-user-name");
+let currentSelectedUserId = null; // single-selection via name click
+let currentSelectedUserName = "";
 let currentPage = 1;
 const itemsPerPage = 10;
 let sortBy = "userId";
@@ -39,23 +43,14 @@ function intermediateBoxes(start, end) {
     return boxes.indexOf(start) < key && key < boxes.indexOf(end);
   });
 }
-function handleSelection() {
-  students = studentsTable.querySelectorAll(".userId");
-  const checkboxes = studentsTable.querySelectorAll('input[type="checkbox"]');
-
-  const selectedUsers = [];
-  checkboxes.forEach((checkbox, index) => {
-    if (checkbox.checked) {
-      selectedUsers.push(students[index].innerHTML);
-    }
-  });
-
-  if (selectedUsers.length > 0) {
-    deletionItems.innerHTML = selectedUsers.length;
-    showSidePanel();
-  } else {
-    hideSidePanel();
-  }
+// Name-click opens the side panel for a single user
+function selectUserAndOpenPanel(userId, name) {
+  currentSelectedUserId = String(userId);
+  currentSelectedUserName = name || "";
+  if (panelTitle) panelTitle.textContent = `User Actions — ${currentSelectedUserName}`;
+  if (selectedUserNameEl) selectedUserNameEl.textContent = currentSelectedUserName;
+  if (deletionItems) deletionItems.innerHTML = "1";
+  showSidePanel();
 }
 
 function showSidePanel() {
@@ -176,15 +171,16 @@ async function addToClub() {
 }
 
 function getSelectedUserIds() {
-  students = studentsTable.querySelectorAll(".userId");
+  // Prefer current single selection (name click)
+  if (currentSelectedUserId) return [currentSelectedUserId];
+  // Fallback: legacy checkbox path (if any remain)
+  const students = studentsTable.querySelectorAll(".userId");
   const checkboxes = studentsTable.querySelectorAll('input[type="checkbox"]');
-  const selectedUserIds = [];
+  const ids = [];
   checkboxes.forEach((checkbox, index) => {
-    if (checkbox.checked) {
-      selectedUserIds.push(students[index].innerHTML); // Assuming students array is defined
-    }
+    if (checkbox.checked) ids.push(students[index].innerHTML);
   });
-  return selectedUserIds;
+  return ids;
 }
 
 async function fetchStudents(
@@ -214,27 +210,24 @@ async function displayStudents(page, searchQuery = "") {
       console.log(club);
       const clubRoom = club ? club.room : "Cafeteria";
       const clubName = club ? club.clubName : "None";
-      let avatarUrl = `https://ui-avatars.com/api/?name=${student.firstName}+${student.lastName}&background=0D8ABC&color=fff`;
+      let avatarUrl = `https://ui-avatars.com/api/?name=${student.firstName}+${student.lastName}&background=005DB4&color=fff`;
       if (student.avatar) {
         avatarUrl = `${student.avatar}`;
       }
 
       studentsTable.innerHTML += `<tr>
-         <td><input class="" type="checkbox" aria-label="Checkbox"></td>
-        <td><img class="uk-preserve-width uk-border-circle"
-         src="${avatarUrl}" width="40" height="40" alt=""></td>
+         <td><img class="uk-preserve-width uk-border-circle"
+          src="${avatarUrl}" width="40" height="40" alt=""></td>
           <td class="userId">${student.userId}</td>
-          <td class="">${student.firstName} ${student.lastName}</td>
+          <td class="student-name" data-user-id="${student.userId}"><a href="#" class="uk-link-text">${student.firstName} ${student.lastName}</a></td>
           <td>${student.email}</td>
           <td class="uk-text-nowrap">${student.grade || "None"}</td>
           <td class="uk-text-nowrap">${clubRoom}</td>
-          <td class="uk-text-nowrap uk-table-link"><a href="http://${serverAddress}/club-info.html?club-id=${student.clubId
+          <td class="uk-text-nowrap uk-table-link"><a href="./club-info.html?club-id=${student.clubId
         }">${clubName}</a></td>
         </tr>`;
     });
     updatePaginationInfo(page, data.total, totalPages);
-    boxes = Array.from(studentsTable.querySelectorAll('[type="checkbox"]'));
-    boxes.forEach((item) => item.addEventListener("click", changeBox));
   } else {
     studentsTable.innerHTML = "<p>No Students!</p>";
   }
@@ -286,6 +279,15 @@ async function init() {
 }
 
 init();
-studentsTable.addEventListener("change", () => {
-  handleSelection();
+// Delegate clicks on the name cell
+studentsTable.addEventListener("click", (e) => {
+  const cell = e.target.closest('.student-name');
+  if (cell && studentsTable.contains(cell)) {
+    const id = cell.getAttribute('data-user-id');
+    const name = cell.textContent.trim();
+    if (id) {
+      e.preventDefault();
+      selectUserAndOpenPanel(id, name);
+    }
+  }
 });

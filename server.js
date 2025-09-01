@@ -925,12 +925,12 @@ app.post("/request-password-reset", async (req, res) => {
         from: "RBHS Club Creator Password Reset <form@gbs423.com>",
         to: email,
         subject: "Password Reset",
-        html: `<div style="padding-top:50px;height:100vh ;background-color:#0e0e11; color:white; font-size:1.5rem; text-align:center">
+        html: `<div style="padding-top:50px;height:100vh ;background-color:#0a0a0a; color:white; font-size:1.5rem; text-align:center">
   <div><img src="https://upload.wikimedia.org/wikipedia/en/0/0d/Logo_for_Red_Bank_High_School.png"></div>
   <h1>Hello ${userObject.firstName}!</h1>
         <p>You requested a password reset. Please follow the link below to reset your password:</p>
   <a style="text-decoration:none; color:#0f7ae5" href="http://${serverAddress}/reset-password.html?token=${token}">Click Here To Reset Password</a>
-  <p style="color:goldenrod">If you did not request a password change, you may ignore this email.</p>
+  <p style="color:#9ca3af">If you did not request a password change, you may ignore this email.</p>
         </div>`,
       };
 

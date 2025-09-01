@@ -21,7 +21,7 @@ async function loadPage() {
       });
     } else {
       document.querySelectorAll(".avatar").forEach((avatar) => {
-        avatar.src = `https://ui-avatars.com/api/?name=${user.firstName}+${user.lastName}&background=0D8ABC&color=fff`;
+        avatar.src = `https://ui-avatars.com/api/?name=${user.firstName}+${user.lastName}&background=005DB4&color=fff`;
       });
     }
   }
@@ -142,7 +142,7 @@ async function getTeacherDashboard() {
 
   // Populate unapproved clubs
   myUnapprovedClubs.forEach((club) => {
-    let coverPhotoUrl = `https://ui-avatars.com/api/?name=${club.clubName}&background=0D8ABC&color=fff`;
+    let coverPhotoUrl = `https://ui-avatars.com/api/?name=${club.clubName}&background=005DB4&color=fff`;
     if (
       club.coverPhoto &&
       club.coverPhoto !== "NULL" &&
@@ -163,7 +163,7 @@ async function getTeacherDashboard() {
 
   // Populate approved clubs
   myApprovedClubs.forEach((club) => {
-    let coverPhotoUrl = `https://ui-avatars.com/api/?name=${club.clubName}&background=0D8ABC&color=fff`;
+    let coverPhotoUrl = `https://ui-avatars.com/api/?name=${club.clubName}&background=005DB4&color=fff`;
     if (
       club.coverPhoto &&
       club.coverPhoto !== "NULL" &&
@@ -172,7 +172,7 @@ async function getTeacherDashboard() {
     ) {
       coverPhotoUrl = `${club.coverPhoto}`;
     }
-    myClubs.innerHTML += `<div style="background: url('${coverPhotoUrl}'), #555555; background-blend-mode: multiply; background-size:cover;" class="co-sponser-wrapper">
+    myClubs.innerHTML += `<div style="background: linear-gradient(rgba(0,93,180,.88), rgba(0,93,180,.88)), url('${coverPhotoUrl}'); background-size:cover; background-position:center;" class="co-sponser-wrapper">
     <div class="club-thumbnail">
     </div>
     <a href="http://${serverAddress}:3000/club-info/${club.clubId}" class="uk-link-text">
@@ -198,11 +198,11 @@ async function displayClubsThatNeedCosponsors(clubsThatNeedCosponsors) {
       const requiresCoSponsor = club.coSponsorsNeeded - numCoSponsors > 0;
       console.log("requiresCoSponsor", requiresCoSponsor);
       if (requiresCoSponsor && club.isApproved === 1) {
-        let coverPhotoUrl = `https://ui-avatars.com/api/?name=${club.clubName}&background=0D8ABC&color=fff`;
+        let coverPhotoUrl = `https://ui-avatars.com/api/?name=${club.clubName}&background=005DB4&color=fff`;
         if (club.coverPhoto) {
           coverPhotoUrl = `${club.coverPhoto}`;
         }
-        coSponsorClubs.innerHTML += `<div style="background: url('${coverPhotoUrl}'), #555555; background-blend-mode: multiply; background-size:cover;" class="co-sponser-wrapper">
+        coSponsorClubs.innerHTML += `<div style="background: linear-gradient(rgba(0,93,180,.88), rgba(0,93,180,.88)), url('${coverPhotoUrl}'); background-size:cover; background-position:center;" class="co-sponser-wrapper">
             <div class="club-thumbnail">
     </div>
         <a href="http://${serverAddress}:3000/club-info/${club.clubId}" class="uk-link-text">

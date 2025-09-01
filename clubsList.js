@@ -34,7 +34,7 @@ async function getClubsList() {
         const response = await fetch(`http://${serverAddress}:3000/getClubById?club=${club.clubId}`)
         const clubJson = await response.json();
         const clubName = clubJson.clubName
-        clubsDiv.innerHTML += `<div><a href="http://${serverAddress}/club-info.html?club-id=${clubJson.clubId}"><span>${clubName}</span></a><span> | ${teacher.firstName} ${teacher.lastName}</span><span> | Room: ${club.room}</span></div>`
+        clubsDiv.innerHTML += `<div><a href="./club-info.html?club-id=${clubJson.clubId}"><span>${clubName}</span></a><span> | ${teacher.firstName} ${teacher.lastName}</span><span> | Room: ${club.room}</span></div>`
 
     });
 

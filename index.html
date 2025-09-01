@@ -14,45 +14,43 @@
   <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/js/uikit-icons.min.js"></script>
 </head>
 
-<body>
+<body class="auth-page">
   <div class="uk-width-1 wrapper">
-    <a href="index.html"><img src="/img/rbhs.png" /></a>
-    <h1 class="roboto uk-heading-large text-center uk-text-bold">
-      RBHS Clubs
-    </h1>
-    <div id="server-status">
+    <a href="index.html" aria-label="Home">
+      <img src="./img/rbhs.png" alt="RBHS logo" class="logo" />
+    </a>
+    <h1 class="roboto uk-text-bold text-center brand">RBHS Clubs</h1>
 
-    </div>
+    <div id="server-status" aria-live="polite"></div>
 
-    <div class="uk-container uk-align-center">
-      <form class="" id="login">
-        <label class="" for="email">Email Address:</label>
-        <div class="uk-margin-small">
-          <div class="uk-inline uk-width-1">
-            <span class="uk-form-icon" uk-icon="icon: user"></span>
-            <input class="uk-input" type="email" id="email" name="email" required />
+    <div class="uk-container uk-container-expand uk-align-center">
+      <div class="auth-card uk-card uk-card-default uk-card-body uk-margin-auto">
+        <form id="login" novalidate>
+          <label for="email">Email Address</label>
+          <div class="uk-margin-small">
+            <div class="uk-inline uk-width-1-1">
+              <span class="uk-form-icon" uk-icon="icon: user"></span>
+              <input class="uk-input" type="email" id="email" name="email" autocomplete="email" autofocus aria-describedby="errormessage" required />
+            </div>
           </div>
-        </div>
-        <label class="" for="password">Password:</label>
-        <div class="uk-margin-small">
-          <div class="uk-inline uk-width-1">
-            <span class="uk-form-icon" uk-icon="icon: lock"></span>
-            <input class="uk-input" type="password" id="password" name="password" required />
+
+          <label for="password">Password</label>
+          <div class="uk-margin-small">
+            <div class="uk-inline uk-width-1-1">
+              <span class="uk-form-icon" uk-icon="icon: lock"></span>
+              <input class="uk-input" type="password" id="password" name="password" autocomplete="current-password" aria-describedby="errormessage" required />
+            </div>
           </div>
-        </div>
 
-        <button class="uk-button uk-button-primary uk-margin-small-top uk-align-center uk-width-1" type="submit"
-          id="submit">
-          Login
-        </button>
+          <button class="uk-button uk-button-primary uk-margin-small-top" type="submit" id="submit">
+            Login
+          </button>
 
-        <div id="error" class="uk-alert-danger hidden" uk-alert>
-          <a href class="uk-alert-close" uk-close></a>
-          <p id="errormessage"></p>
-        </div>
-      </form>
-      <div class="text-center">
-
+          <div id="error" class="uk-alert-danger hidden uk-margin-small-top" role="alert" uk-alert>
+            <a href="#" class="uk-alert-close" uk-close aria-label="Close alert"></a>
+            <p id="errormessage"></p>
+          </div>
+        </form>
       </div>
       <!-- <div class="text-center uk-margin-small-top"><a href="reset.html">Reset Password</a></div> -->
     </div>
@@ -60,6 +58,6 @@
   </div>
   <script src="serverVariables.js"></script>
   <script src="./login.js"></script>
-</body>
+  </body>
 
 </html>

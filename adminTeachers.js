@@ -5,6 +5,12 @@ const teachersTable = document.querySelector("#teachers-table");
 const paginationInfo = document.getElementById("page-info");
 const prevButton = document.getElementById("prev-button");
 const nextButton = document.getElementById("next-button");
+const sidePanel = document.getElementById("side-panel");
+const clubSelect = document.getElementById("club-select");
+const panelTitle = document.getElementById("panel-title");
+const selectedUserNameEl = document.getElementById("selected-user-name");
+let currentSelectedUserId = null;
+let currentSelectedUserName = "";
 
 let currentPage = 1;
 const itemsPerPage = 10;
@@ -38,22 +44,21 @@ async function displayTeachers(page, searchQuery = "") {
     teachers.forEach((teacher) => {
       const club = clubs.find((obj) => obj.clubId === teacher.clubId);
       const clubName = club ? club.clubName : "None";
-      let avatarUrl = `https://ui-avatars.com/api/?name=${teacher.firstName}+${teacher.lastName}&background=0D8ABC&color=fff`;
+      let avatarUrl = `https://ui-avatars.com/api/?name=${teacher.firstName}+${teacher.lastName}&background=005DB4&color=fff`;
       if (teacher.avatar) {
         avatarUrl = `${teacher.avatar}`;
       }
 
       teachersTable.innerHTML += `<tr>
-         <td><input class="uk-checkbox" type="checkbox" aria-label="Checkbox"></td>
-        <td><img class="uk-preserve-width uk-border-circle"
-         src="${avatarUrl}" width="40" height="40" alt=""></td>
+         <td><img class="uk-preserve-width uk-border-circle"
+          src="${avatarUrl}" width="40" height="40" alt=""></td>
           <td class="">${teacher.userId}</td>
-          <td class="">${teacher.firstName} ${teacher.lastName}</td>
+          <td class="teacher-name" data-user-id="${teacher.userId}"><a href="#" class="uk-link-text">${teacher.firstName} ${teacher.lastName}</a></td>
           <td>${teacher.email}</td>
           <td class="uk-text-nowrap">${teacher.grade || "None"}</td>
           <td class="uk-text-nowrap">${teacher.room || "None"}</td>
-          <td class="uk-text-nowrap uk-table-link"><a href="http://${serverAddress}/club-info.html?club-id=${
-        teacher.clubId
+          <td class="uk-text-nowrap uk-table-link"><a href="./club-info.html?club-id=${
+         teacher.clubId
       }">${clubName}</a></td>
         </tr>`;
     });
@@ -105,3 +110,55 @@ function sortTable(columnIndex, sortKey) {
 document.getElementById("search-input").addEventListener("input", () => {
   searchTable();
 });
+
+// Populate clubs into the select
+async function populateClubSelect() {
+  try {
+    const response = await fetch(`http://${serverAddress}:3000/getAllClubs`);
+    const clubs = await response.json();
+    if (clubSelect) {
+      clubSelect.innerHTML = clubs
+        .map((club) => `<option value="${club.clubId}">${club.clubName}</option>`) 
+        .join("");
+    }
+  } catch (err) {
+    console.error("Error fetching clubs", err);
+  }
+}
+
+function showSidePanel() {
+  if (sidePanel) UIkit.offcanvas(sidePanel).show();
+}
+function hideSidePanel() {
+  if (sidePanel) UIkit.offcanvas(sidePanel).hide();
+}
+
+// Open on teacher name click
+teachersTable.addEventListener("click", (e) => {
+  const cell = e.target.closest('.teacher-name');
+  if (cell && teachersTable.contains(cell)) {
+    e.preventDefault();
+    currentSelectedUserId = String(cell.getAttribute('data-user-id'));
+    currentSelectedUserName = cell.textContent.trim();
+    if (panelTitle) panelTitle.textContent = `User Actions — ${currentSelectedUserName}`;
+    if (selectedUserNameEl) selectedUserNameEl.textContent = currentSelectedUserName;
+    showSidePanel();
+  }
+});
+
+async function addToClub() {
+  try {
+    const clubId = clubSelect ? clubSelect.value : null;
+    if (!currentSelectedUserId || !clubId) return;
+    await fetch(`http://${serverAddress}:3000/users/update/${currentSelectedUserId}/${clubId}`);
+    await displayTeachers(currentPage);
+    hideSidePanel();
+    UIkit.notification({ message: "Teacher updated", status: "success", pos: "top-center", timeout: 3000 });
+  } catch (err) {
+    console.error(err);
+    UIkit.notification({ message: "Failed to update teacher", status: "danger", pos: "top-center", timeout: 4000 });
+  }
+}
+
+// Init
+populateClubSelect();
