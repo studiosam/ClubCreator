@@ -106,7 +106,7 @@ async function getUser() {
     const userRaw = localStorage.getItem("user");
     const tsRaw = localStorage.getItem("user_timestamp");
     const ts = tsRaw ? parseInt(tsRaw, 10) : 0;
-    const TTL = 24 * 60 * 60 * 1000;
+    const TTL = 8 * 60 * 60 * 1000;
 
     if (userRaw && ts && Date.now() - ts <= TTL) {
         const user = JSON.parse(userRaw);

@@ -2,26 +2,31 @@
   display: none;
 }
 
-#all-approved{
+#all-approved {
   width: 30%;
   margin-left: 50px;
 }
-.club-create-list-clubs{
+
+.club-create-list-clubs {
   display: flex;
   gap: 25px;
-  align-items: center!important;
+  align-items: center !important;
   justify-content: space-between;
 }
+
 .server-status {
-  font-size: 50px;
+  font-size: clamp(1.2rem, 2vw, 2.5rem);
   color: #bb5252 !important;
 }
+
 #server-status {
   text-align: center;
 }
+
 .dark {
   color: #0a0a0a;
 }
+
 .text-center {
   text-align: center;
 }
@@ -41,30 +46,32 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh;
   flex-direction: column;
 }
-.bosab{
+
+.bosab {
   display: flex;
   gap: 10px;
   align-items: center;
   justify-content: start;
   text-align: left;
 }
+
 .roboto {
   font-family: "Roboto Slab", sans-serif !important;
 }
 
-#attendance-form{
+#attendance-form {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 10px;
 }
+
 #date {
-  font-size: 28px;
+  font-size: clamp(1.2rem, 1.8vw, 1.6rem);
   font-weight: bold;
-  
 }
 
 input[type="date"]:focus {
@@ -74,16 +81,16 @@ input[type="date"]:focus {
 .warning {
   background-color: var(--brand);
   margin-top: 20px;
-  padding-top: 5px;
-  padding-bottom: 5px;
-
+  padding: 5px 0;
 }
+
 .warning-text-center {
   display: flex;
   justify-content: center;
   align-items: center;
 }
-.warning-text{
+
+.warning-text {
   width: 50%;
   text-align: center;
 }
@@ -94,11 +101,18 @@ input[type="date"]:focus {
   width: 100%;
 }
 
+/* Clubs list (clubsList.html) */
+#clubs { text-align: left; }
+.clubs-table th, .clubs-table td { vertical-align: middle; }
+.club-item { padding: 10px 12px; border-bottom: 1px solid var(--card-border); }
+.club-name { font-weight: 600; margin-bottom: 4px; }
+.club-meta { color: #c7d2fe; }
+
 #attendance {
   display: flex;
   flex-direction: column;
   text-align: left;
-  font-size: 18px !important;
+  font-size: 1.125rem !important;
 }
 
 #attendance-out {
@@ -114,30 +128,17 @@ body {
   background-color: #0a0a0a;
 }
 
-.blue {
-  color: var(--accent) !important;
-}
-.white {
-  color: azure;
-}
-.gold {
-  color: var(--muted);
-}
+.blue { color: var(--accent) !important; }
+.white { color: azure; }
+.gold { color: var(--muted); }
+.red { color: rgb(192, 43, 43); }
+.green { color: #52bb81; }
 
-.red {
-  color: rgb(192, 43, 43);
-}
-.minSlots {
+.minSlots, .maxSlots {
   display: flex;
   gap: 5px;
   justify-content: center;
   margin-bottom: 10px;
-}
-
-.maxSlots {
-  display: flex;
-  gap: 5px;
-  justify-content: center;
   align-items: center;
 }
 
@@ -155,8 +156,7 @@ body {
   gap: 10px;
 }
 
-input:focus,
-textarea:focus {
+input:focus, textarea:focus {
   background: rgba(0, 0, 0, 0.11) !important;
   border-radius: 5px;
 }
@@ -191,12 +191,13 @@ textarea:focus {
 }
 
 #logo {
-  height: 150px;
+  height: auto;
+  max-width: clamp(100px, 15vw, 180px);
 }
 
 #side-nav {
-  background-color: #2e2e2e; /* neutral dark grey */
-  width: 19rem;
+  background-color: #2e2e2e;
+  width: clamp(220px, 18vw, 300px);
   min-height: 100%;
   position: fixed;
   top: 0;
@@ -205,7 +206,10 @@ textarea:focus {
 }
 
 #right {
-  margin-left: 19rem;
+  margin-left: clamp(220px, 18vw, 300px);
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
 #side-nav a {
@@ -216,24 +220,19 @@ textarea:focus {
   color: var(--brand);
 }
 
-/* Transparent highlight for active nav item */
 #side-nav .dash-nav li.uk-active > a {
-  background-color: rgba(255, 255, 255, 0.92); /* near-white for contrast */
+  background-color: rgba(255, 255, 255, 0.92);
   border-radius: 8px;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+h1, h2, h3, h4, h5, h6 {
   color: azure;
 }
+
 #user-name {
-  margin: 0;
-  margin-right: 15px;
+  margin: 0 15px 0 0;
 }
+
 .menu-panel {
   padding-right: 0;
   display: flex;
@@ -250,18 +249,11 @@ h6 {
   color: #fff;
   height: 100%;
 }
-
 .logout-button:hover,
 .logout-button:focus {
   background-color: var(--brand-700);
   border-color: var(--brand-700);
   color: #fff;
-}
-
-#right {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
 }
 
 /* ------------------------------ */
@@ -272,17 +264,15 @@ h6 {
   --text-inverse: #f3f4f6;
   --text-primary: #111827;
   --muted: #6b7280;
-  /* Brand palette (updated to match #005DB4) */
-  --brand: #005DB4;       /* primary brand */
-  --brand-700: #004a99;   /* hover/active */
-  --accent: #0a6fd6;      /* secondary accent */
+  --brand: #005DB4;
+  --brand-700: #004a99;
+  --accent: #0a6fd6;
   --danger: #bb5252;
   --success: #52bb81;
   --card-bg: #ffffff;
   --card-border: #e5e7eb;
 }
 
-/* Primary UI overrides to match brand */
 .uk-button-primary {
   background-color: var(--brand);
   border-color: var(--brand);
@@ -295,16 +285,16 @@ h6 {
   color: #fff;
 }
 
-a,
-.uk-link,
-.uk-text-primary {
+a, .uk-link, .uk-text-primary {
   color: var(--accent);
 }
-a:hover,
-.uk-link:hover {
+a:hover, .uk-link:hover {
   color: var(--brand-700);
 }
 
+.auth-page {
+  font-size: clamp(14px, 1vw, 16px);
+}
 .auth-page .wrapper {
   min-height: 100vh;
   padding: 4rem 1.5rem;
@@ -315,21 +305,16 @@ a:hover,
   gap: 1.25rem;
 }
 
-/* Scale all typography on auth page proportionally to viewport */
-.auth-page {
-  font-size: clamp(20px, 1.8vw, 24px);
-}
-
 .auth-page .logo {
-  height: clamp(140px, 14vw, 220px);
+  height: clamp(100px, 10vw, 160px);
+  margin-bottom: 0.5rem;
   width: auto;
-  margin-bottom: 0.75rem;
 }
 
 .auth-page .brand {
   color: var(--text-inverse);
-  font-size: clamp(2.4rem, 4vw, 4rem);
-  margin: .25rem 0 1.5rem;
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  margin: 0.25rem 0 1rem;
   line-height: 1.2;
 }
 
@@ -339,7 +324,6 @@ a:hover,
   color: var(--muted);
 }
 
-/* Tame the big offline heading only on auth page */
 .auth-page .server-status {
   color: var(--danger) !important;
   font-size: 1.15rem;
@@ -353,13 +337,12 @@ a:hover,
   border-radius: 12px;
   border: 1px solid var(--card-border);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
-  width: clamp(320px, 28vw, 560px); /* narrower, scales with viewport */
-  padding: 32px;
+  width: clamp(280px, 20vw, 400px); /* narrower than before */
+  padding: 20px;                    /* less padding */
   margin: 0 auto;
-  font-size: clamp(18px, 1.6vw, 22px); /* scale inner controls */
+  font-size: clamp(13px, 0.9vw, 15px); /* smaller text inside */
 }
 
-/* refine card width across breakpoints */
 @media (min-width: 640px) {
   .auth-page .auth-card { width: clamp(380px, 34vw, 640px); }
 }
@@ -378,9 +361,9 @@ a:hover,
 }
 
 .auth-card .uk-input {
-  min-height: 3.1em; /* scales with font-size */
+  min-height: 3.1em;
   border-radius: 10px;
-  font-size: 1em; /* inherit scaled size */
+  font-size: 1em;
 }
 
 .auth-card .uk-form-icon {
@@ -392,7 +375,7 @@ a:hover,
   width: 100%;
   border-radius: 10px;
   font-weight: 600;
-  height: 3em; /* scale with font-size */
+  height: 3em;
   font-size: 1em;
 }
 
@@ -419,7 +402,7 @@ ul {
 
 #pending-clubs,
 #current-clubs {
-  font-size: 2rem;
+  font-size: clamp(1.25rem, 2vw, 1.75rem);
   font-weight: bold;
   color: #0a0a0a;
 }
@@ -430,23 +413,21 @@ ul {
 .uk-card-header h3 {
   color: #0a0a0a !important;
 }
-/* Ensure rounded cards clip header/footer backgrounds */
+
 .uk-card.uk-border-rounded {
   border-radius: 12px !important;
   overflow: hidden;
 }
 
-/* Rounded drop zones (admin + create-club) */
-#olddb-drop,
-#xls-drop,
-#cover-photo-up {
+#olddb-drop, #xls-drop, #cover-photo-up {
   border-radius: 10px !important;
   overflow: hidden;
 }
-.student-attendance-card,
-.student-attendance-absent {
+
+.student-attendance-card, .student-attendance-absent {
   cursor: pointer;
 }
+
 .dash-nav {
   padding-left: 35px;
 }
@@ -461,36 +442,34 @@ ul {
   background-color: #0a0a0a;
 }
 
-.uk-radio:checked {
-  background-color: #52bb81;
-}
+.uk-radio:checked { background-color: #52bb81; }
+.uk-checkbox:checked { background-color: #8f2d00; color: #0a0a0a; }
 
-.uk-checkbox:checked {
-  background-color: #8f2d00;
-  color: #0a0a0a;
-}
-.club-descripton{
+.club-descripton {
   padding-right: 25px;
 }
+
 .club-choice {
   display: flex;
   align-items: center;
   background-size: cover;
-  
 }
+
 .co-sponser-wrapper,
 .student-club-wrapper {
   border-radius: 10px;
   overflow: hidden;
+  display: flex;
+  gap: 15px;
 }
 
-/* Rounded look for sortable selections */
 #student-club-wrapper {
   border-radius: 8px;
   border: 1px solid var(--card-border);
   background: var(--card-bg);
   padding: 8px 12px;
 }
+
 .club-input {
   margin-top: 10px !important;
   margin-right: 10px !important;
@@ -500,13 +479,9 @@ ul {
   text-align: end;
 }
 
-tbody tr:hover {
-  background-color: #2b2f36; /* dark grey row hover */
-}
+tbody tr:hover { background-color: #2b2f36; }
 
-.uk-sortable-drag {
-  color: #374151; /* dark grey text */
-}
+.uk-sortable-drag { color: #374151; }
 
 #avatar-upload {
   display: flex;
@@ -519,12 +494,8 @@ tbody tr:hover {
   background-color: var(--muted);
   color: aliceblue;
 }
-.settings-avatar {
-  border-radius: 10px;
-}
-.green {
-  color: #52bb81;
-}
+
+.settings-avatar { border-radius: 10px; }
 
 .student-attendance-card {
   background-color: #52bb81;
@@ -532,20 +503,21 @@ tbody tr:hover {
 }
 
 #cover-photo {
-  height: 500px;
+  min-height: 50vh;
   background-size: cover;
   display: flex;
   justify-content: center;
   align-items: center;
+  background-position: center;
 }
 
 .cover-photo-text {
   color: white;
-  font-size: 5rem;
+  font-size: clamp(2rem, 5vw, 4rem);
 }
 .cover-card-text {
   color: white !important;
-  font-size: 2rem;
+  font-size: clamp(1.25rem, 3vw, 2rem);
 }
 
 #cover-photo-card {
@@ -557,12 +529,7 @@ tbody tr:hover {
   align-items: center;
 }
 
-.student-club-cover {
-  /* width: 100px;
-  height: 100px;
-  background-size: cover; */
-  margin-right: 25px;
-}
+.student-club-cover { margin-right: 25px; }
 
 .student-club-wrapper {
   color: whitesmoke;
@@ -571,37 +538,31 @@ tbody tr:hover {
   background-size: cover;
 }
 
-.red-boarder {
-  border: 5px solid red;
-}
-
-.blue-boarder {
-  border: 5px solid rgb(0, 140, 255);
-}
+.red-boarder { border: 5px solid red; }
+.blue-boarder { border: 5px solid rgb(0, 140, 255); }
 
 .club {
   color: white !important;
   padding-left: 15px;
-  min-width: 675px !important;
+  min-width: 0 !important;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
-/* Align club text consistently inside overlays on key pages */
 #my-club .club,
 #my-clubs .club,
 #unapproved-clubs .club,
 #cosponsor-clubs .club,
 .student-club-wrapper .club {
-  /* More right padding to prevent clipping; ensure content wraps */
   padding: 16px 28px 16px 18px;
   min-width: 0 !important;
-  text-align: left; /* default to left for body text */
+  text-align: left;
   width: 100%;
   box-sizing: border-box;
-  overflow-wrap: anywhere; /* wrap long tokens */
+  overflow-wrap: anywhere;
   word-break: break-word;
 }
 
-/* Center only the club title */
 #my-club .club .uk-card-title,
 #my-clubs .club .uk-card-title,
 #unapproved-clubs .club .uk-card-title,
@@ -612,7 +573,6 @@ tbody tr:hover {
   display: block;
 }
 
-/* Ensure descriptions render left-aligned with spacing */
 #my-club .club p:not(.uk-card-title),
 #my-clubs .club p:not(.uk-card-title),
 #unapproved-clubs .club p:not(.uk-card-title),
@@ -623,16 +583,9 @@ tbody tr:hover {
   margin-top: 0.25rem;
 }
 
-/* Remove left gap created by unused thumbnail blocks */
 .co-sponser-wrapper .club-thumbnail,
 .student-club-wrapper .club-thumbnail {
   display: none;
-}
-.co-sponser-wrapper { gap: 0; }
-
-.co-sponser-wrapper {
-  display: flex;
-  gap: 15px;
 }
 
 .club-thumbnail {
@@ -642,9 +595,7 @@ tbody tr:hover {
   background-size: cover;
 }
 
-.co-sponsor-list {
-  list-style: none;
-}
+.co-sponsor-list { list-style: none; }
 
 #cover-photo-upload {
   text-align: end;
@@ -658,12 +609,11 @@ tbody tr:hover {
   margin-top: 15px;
 }
 
-
 #student-grade {
-align-items: center !important;
-display: flex;
-justify-content: center;
-gap: 15px;
+  align-items: center !important;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
 }
 
 .grade {
@@ -679,5 +629,9 @@ gap: 15px;
 #incorrectEmailMessage {
   color: red;
   padding-left: 35px;
-  font-weight: 1;
+  font-weight: 400;
+}
+
+html {
+  font-size: clamp(12px, 0.9vw, 16px);
 }

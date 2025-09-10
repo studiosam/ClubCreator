@@ -172,7 +172,7 @@ async function getTeacherDashboard() {
     ) {
       coverPhotoUrl = `${club.coverPhoto}`;
     }
-    myClubs.innerHTML += `<div style="background: linear-gradient(rgba(0,93,180,.88), rgba(0,93,180,.88)), url('${coverPhotoUrl}'); background-size:cover; background-position:center;" class="co-sponser-wrapper">
+    myClubs.innerHTML += `<div style="background: linear-gradient(rgba(0,0,0,.55), rgba(0,0,0,.55)), url('${coverPhotoUrl}'); background-size:cover; background-position:center;" class="co-sponser-wrapper">
     <div class="club-thumbnail">
     </div>
     <a href="http://${serverAddress}:3000/club-info/${club.clubId}" class="uk-link-text">
@@ -202,7 +202,7 @@ async function displayClubsThatNeedCosponsors(clubsThatNeedCosponsors) {
         if (club.coverPhoto) {
           coverPhotoUrl = `${club.coverPhoto}`;
         }
-        coSponsorClubs.innerHTML += `<div style="background: linear-gradient(rgba(0,93,180,.88), rgba(0,93,180,.88)), url('${coverPhotoUrl}'); background-size:cover; background-position:center;" class="co-sponser-wrapper">
+        coSponsorClubs.innerHTML += `<div style="background: linear-gradient(rgba(0,0,0,.55), rgba(0,0,0,.55)), url('${coverPhotoUrl}'); background-size:cover; background-position:center;" class="co-sponser-wrapper">
             <div class="club-thumbnail">
     </div>
         <a href="http://${serverAddress}:3000/club-info/${club.clubId}" class="uk-link-text">

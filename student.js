@@ -126,7 +126,7 @@ async function finishStudentDashboard() {
       ) {
         coverPhotoUrl = `${club.coverPhoto}`;
       }
-      allClubs.innerHTML += `<div class="student-club-wrapper"  style="background: linear-gradient(rgba(0,93,180,.88), rgba(0,93,180,.88)), url('${coverPhotoUrl}'); background-size: cover; background-position: center" ><div class="club-choice"><input id="${club.clubId}-${club.clubName}" class="club-input" type="checkbox">
+      allClubs.innerHTML += `<div class="student-club-wrapper"  style="background: linear-gradient(rgba(0,0,0,.55), rgba(0,0,0,.55)), url('${coverPhotoUrl}'); background-size: cover; background-position: center" ><div class="club-choice"><input id="${club.clubId}-${club.clubName}" class="club-input" type="checkbox">
             <div id="${club.clubId}student-club-cover" class="student-club-cover"></div><a href="http://${serverAddress}:3000/club-info/${club.clubId}" class="uk-link-text">
         <div class="club">
           <p class="uk-card-title roboto" style="color:white">${club.clubName}</p>

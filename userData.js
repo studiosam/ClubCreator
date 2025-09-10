@@ -1,5 +1,5 @@
 // Session management (24h TTL)
-const SESSION_TTL_MS = 24 * 60 * 60 * 1000;
+const SESSION_TTL_MS = 8 * 60 * 60 * 1000;
 
 function isSessionExpired() {
   const tsRaw = localStorage.getItem("user_timestamp");
