@@ -95,7 +95,7 @@ async function getClubInfo() {
       const studentsPresentArray = studentsPresent.split(",");
 
       document.querySelector("#students-title").innerHTML = "Students";
-      attendancebutton.innerHTML = `<button onclick="submitAttendace(${json.clubInfo.clubId})" class="uk-button uk-button-primary uk-margin-medium-top">Submit Attendance</button>`;
+      attendancebutton.innerHTML = `<button onclick="submitAttendace(${json.clubInfo.clubId})" class="btn-modern btn-primary">Submit Attendance</button>`;
 
       clubData.innerHTML += `
       <tr>
@@ -117,10 +117,10 @@ async function getClubInfo() {
       }
     } else {
       document.querySelector("#students-title").innerHTML = "Students";
-      attendancebutton.innerHTML = `<button onclick="submitAttendace(${json.clubInfo.clubId})" class="uk-button uk-button-primary uk-margin-medium-top">Submit Attendance</button>`;
+      attendancebutton.innerHTML = `<button onclick="submitAttendace(${json.clubInfo.clubId})" class="btn-modern btn-primary">Submit Attendance</button>`;
       json.clubStudents.forEach((student) => {
         document.querySelector("#club-students").innerHTML += `<div>
-        <div id="${student.userId}" class="uk-card uk-card-default uk-card-body student" uk-toggle="target: #${student.userId}; cls: student-attendance-card; animation: uk-animation-fade"><p>${student.firstName} ${student.lastName}</p></div>`;
+        <div id="${student.userId}" class="uk-card uk-card-default uk-card-body student student-attendance-card" uk-toggle="target: #${student.userId}; cls: student-attendance-card; animation: uk-animation-fade"><p>${student.firstName} ${student.lastName}</p></div>`;
       });
       if (studentsPresent.length > 0) {
         studentsPresentArray.forEach((student) => {

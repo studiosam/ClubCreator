@@ -18,6 +18,26 @@ const db = new sqlite3.Database(
   }
 );
 
+// Ensure an index on users.email for fast lookup (safe if table exists)
+(function ensureUsersEmailIndex() {
+  try {
+    db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='users'", [], (err, row) => {
+      if (err) return; // silently ignore
+      if (row) {
+        db.run("CREATE UNIQUE INDEX IF NOT EXISTS idx_users_email ON users(email)", [], function (e) {
+          if (e) {
+            console.log("Could not create unique index on users(email). Possible duplicate emails present.");
+          } else {
+            console.log("Ensured index on users(email)");
+          }
+        });
+      }
+    });
+  } catch (_) { /* ignore */ }
+})();
+
+// Note: timestamp prefixing is handled globally in server.js
+
 async function checkAttendance(clubId, date) {
   return new Promise((resolve, reject) => {
     const sql = `
@@ -49,7 +69,7 @@ async function submitAttendance(presentStudents, absentStudents, clubId, date) {
       clubId,
       date,
     ]);
-    console.log("Attendance submitted successfully.");
+    console.log(`Saved attendance: clubId ${clubId} date ${date}`);
     return true;
   } catch (err) {
     console.error("Error inserting or updating attendance:", err);
@@ -63,15 +83,21 @@ async function addClub(newClubInfo) {
       .normalize(newClubInfo.cover)
       .replace(/\\/g, "/");
 
-    const sqlInsert = `INSERT INTO clubs (clubName, clubDescription, coSponsorsNeeded, maxSlots, primaryTeacherId, coverPhoto) VALUES (?, ?, ?, ?, ?,?)`;
-    const insertResult = await run(sqlInsert, [
+    const sqlInsert = `INSERT INTO clubs (clubName, clubDescription, coSponsorsNeeded, maxSlots, room, primaryTeacherId, coverPhoto) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+    const result = await run(sqlInsert, [
       newClubInfo.preferredClub,
       newClubInfo.preferredClubDescription,
       newClubInfo.coSponsorsNeeded,
       newClubInfo.maxCapacity,
+      newClubInfo.room || null,
       newClubInfo.teacherId,
       normalizedPath,
     ]);
+    const newClubId = result && result.lastID;
+    if (newClubId && newClubInfo.teacherId) {
+      await updateUserValue(newClubInfo.teacherId, 'clubId', newClubId);
+    }
+    return { clubId: newClubId };
   } catch (err) {
     console.error("Error in addClub function:", err.message);
   }
@@ -286,41 +312,48 @@ async function getUserByEmail(email) {
 async function setResetPasswordToken(userId, token, expiration) {
   const sql = `INSERT INTO password_reset_requests (user_id, token, expiration) VALUES (?, ?, ?)`;
   return new Promise((resolve, reject) => {
-    db.get(sql, [userId, token, expiration], (err, row) => {
+    db.run(sql, [userId, token, expiration], function (err) {
       if (err) {
         return reject(err);
       } else {
-        resolve(row);
-        // console.log(row)
-        return row;
+        resolve({ lastID: this.lastID, changes: this.changes });
       }
     });
   });
 }
 async function checkResetPasswordToken(token) {
-  const sql = `SELECT * FROM password_reset_requests WHERE token = '${token}'`;
+  const sql = `SELECT * FROM password_reset_requests WHERE token = ?`;
   return new Promise((resolve, reject) => {
-    db.get(sql, (err, row) => {
+    db.get(sql, [token], (err, row) => {
       if (err) {
         return reject(err);
       } else {
         resolve(row);
-
         return row;
       }
     });
   });
 }
-async function resetUserPassword(userId, newPassword) {
-  const sql = `UPDATE users SET password = '${newPassword}' WHERE userId = ${userId}`;
+async function deleteResetPasswordToken(token) {
+  const sql = `DELETE FROM password_reset_requests WHERE token = ?`;
   return new Promise((resolve, reject) => {
-    db.get(sql, (err, row) => {
+    db.run(sql, [token], function (err) {
       if (err) {
         return reject(err);
       } else {
-        resolve(row);
-        // console.log(row)
-        return row;
+        resolve(true);
+      }
+    });
+  });
+}
+async function resetUserPassword(userId, newPassword) {
+  const sql = `UPDATE users SET password = ? WHERE userId = ?`;
+  return new Promise((resolve, reject) => {
+    db.run(sql, [newPassword, userId], function (err) {
+      if (err) {
+        return reject(err);
+      } else {
+        resolve({ changes: this.changes });
       }
     });
   });
@@ -339,21 +372,15 @@ async function getClubInfo(clubId) {
   });
 }
 
-async function checkUser(user) {
+async function checkUser(userEmail) {
   try {
-    const currentUsers = await getUsers();
-    const findUser = currentUsers.find((search) => search.email === user);
-    if (findUser) {
-      return {
-        userExists: true,
-        password: findUser.password,
-      };
-    } else {
-      return "User does not exist";
+    const row = await get("SELECT email, password FROM users WHERE email = ?", [String(userEmail).toLowerCase().trim()]);
+    if (row) {
+      return { userExists: true, password: row.password };
     }
+    return "User does not exist";
   } catch (err) {
     console.log(err);
-
     return "Error";
   }
 }
@@ -620,8 +647,8 @@ async function deleteAllClubs() {
     const sqlDelete = `DELETE FROM clubs`;
 
     await db.run(sqlDelete);
-
-    console.log("All Clubs Deleted");
+    const ts = new Date().toLocaleString();
+    console.log(`Deleted all clubs at ${ts}`);
     return true;
   } catch (err) {
     console.error("Error deleting clubs:", err.message);
@@ -630,13 +657,13 @@ async function deleteAllClubs() {
 
 // update a single club value
 async function updateClubValue(clubId, key, value) {
-  console.log(`clubId: ${clubId}, key: ${key}, value: ${value}`);
   const sql = `UPDATE clubs SET ${key} = ? WHERE clubId = ?`;
   db.run(sql, [value, clubId], function (err) {
     if (err) {
-      return console.error(err.message);
+      return console.error(`Update club ${clubId} failed (${key}): ${err.message}`);
     }
-    console.log(`Row(s) updated: ${this.changes}`);
+    const n = this && this.changes != null ? this.changes : 0;
+    console.log(`Updated club ${clubId}: ${key} = ${value} (${n} row${n===1?"":"s"})`);
   });
 }
 
@@ -709,7 +736,7 @@ async function uploadAvatar(userId, newAvatarPath) {
 
   db.get("SELECT avatar FROM users WHERE userId = ?", [userId], (err, row) => {
     if (err) {
-      console.error("Error fetching user:", err.message);
+      console.error(`Fetch user ${userId} failed: ${err.message}`);
       return { message: "Database error" };
     }
 
@@ -718,18 +745,17 @@ async function uploadAvatar(userId, newAvatarPath) {
 
       // Delete the old avatar file
       fs.unlink(oldAvatarPath, (err) => {
-        if (err) {
-          console.error("No old Avatar found");
-        }
+        if (err) { console.log(`No existing avatar to remove for user ${userId}`); }
 
         const sqlUpdate = "UPDATE users SET avatar = ? WHERE userId = ?";
         const params = [normalizedPath, userId];
 
         db.run(sqlUpdate, params, function (err) {
-          if (err) {
-            console.error("Error updating user:", err.message);
-            return { message: "Database error" };
-          }
+        if (err) {
+          console.error(`Update avatar failed for user ${userId}: ${err.message}`);
+          return { message: "Database error" };
+        }
+          console.log(`Updated avatar for user ${userId}`);
           return true;
         });
       });
@@ -739,10 +765,11 @@ async function uploadAvatar(userId, newAvatarPath) {
       const params = [normalizedPath, userId];
 
       db.run(sqlUpdate, params, function (err) {
-        if (err) {
-          console.error("Error updating user:", err.message);
+      if (err) {
+          console.error(`Update avatar failed for user ${userId}: ${err.message}`);
           return { message: "Database error" };
         }
+        console.log(`Updated avatar for user ${userId}`);
         return true;
       });
     }
@@ -759,7 +786,7 @@ async function uploadCover(clubId, newAvatarPath) {
     [clubId],
     (err, row) => {
       if (err) {
-        console.error("Error fetching user:", err.message);
+      console.error(`Fetch club ${clubId} failed: ${err.message}`);
         return { message: "Database error" };
       }
 
@@ -768,18 +795,17 @@ async function uploadCover(clubId, newAvatarPath) {
 
         // Delete the old avatar file
         fs.unlink(oldAvatarPath, (err) => {
-          if (err) {
-            console.error("No old Avatar found");
-          }
+          if (err) { console.log(`No existing cover photo to remove for club ${clubId}`); }
 
           const sqlUpdate = "UPDATE clubs SET coverPhoto = ? WHERE clubId = ?";
           const params = [normalizedPath, clubId];
 
           db.run(sqlUpdate, params, function (err) {
-            if (err) {
-              console.error("Error updating user:", err.message);
+          if (err) {
+              console.error(`Update cover photo failed for club ${clubId}: ${err.message}`);
               return { message: "Database error" };
             }
+            console.log(`Updated cover photo for club ${clubId}`);
             return true;
           });
         });
@@ -789,12 +815,13 @@ async function uploadCover(clubId, newAvatarPath) {
         const params = [normalizedPath, clubId];
 
         db.run(sqlUpdate, params, function (err) {
-          if (err) {
-            console.error("Error updating user:", err.message);
-            return { message: "Database error" };
-          }
-          return true;
-        });
+        if (err) {
+          console.error(`Update cover photo failed for club ${clubId}: ${err.message}`);
+          return { message: "Database error" };
+        }
+        console.log(`Updated cover photo for club ${clubId}`);
+        return true;
+      });
       }
     }
   );
@@ -811,21 +838,49 @@ function closeDatabase() {
   });
 }
 
+// Human-friendly DB logging helpers
+function describeSql(sql) {
+  try {
+    const s = String(sql || "");
+    const ins = s.match(/\binsert\s+into\s+([\w.]+)/i);
+    if (ins) return { op: "INSERT", table: ins[1] };
+    const upd = s.match(/\bupdate\s+([\w.]+)/i);
+    if (upd) return { op: "UPDATE", table: upd[1] };
+    const del = s.match(/\bdelete\s+from\s+([\w.]+)/i);
+    if (del) return { op: "DELETE", table: del[1] };
+    const sel = s.match(/\bselect\b[\s\S]*?\bfrom\s+([\w.]+)/i);
+    if (sel) return { op: "SELECT", table: sel[1] };
+  } catch (_) {}
+  return { op: "QUERY", table: null };
+}
+
 function run(sql, params = []) {
   return new Promise((resolve, reject) => {
     db.run(sql, params, function (err) {
+      const { op, table } = describeSql(sql);
+      const name = (table || "records").replace(/_/g, " ");
+      const singular = name.endsWith("s") ? name.slice(0, -1) : name;
+      const rowText = (n) => `${n} row${n === 1 ? "" : "s"}`;
       if (err) {
-        console.error(
-          "Error running SQL:",
-          sql,
-          "Params:",
-          params,
-          "Error:",
-          err
-        );
+        const action = op === "INSERT" ? "Create"
+                      : op === "UPDATE" ? "Update"
+                      : op === "DELETE" ? "Delete"
+                      : "Query";
+        console.log(`${action} ${op === "INSERT" ? singular : name} failed: ${err.message}`);
         reject(err);
       } else {
-        console.log("SQL run successfully:", sql, "Params:", params);
+        if (op === "INSERT") {
+          const idInfo = this && this.lastID != null ? ` (id ${this.lastID})` : "";
+          console.log(`Created ${singular}${idInfo}`);
+        } else if (op === "UPDATE") {
+          const n = this && this.changes != null ? this.changes : 0;
+          console.log(`Updated ${name}: ${rowText(n)}`);
+        } else if (op === "DELETE") {
+          const n = this && this.changes != null ? this.changes : 0;
+          console.log(`Deleted from ${name}: ${rowText(n)}`);
+        } else {
+          console.log(`Executed query on ${name}`);
+        }
         resolve(this);
       }
     });
@@ -835,25 +890,14 @@ function run(sql, params = []) {
 function get(sql, params = []) {
   return new Promise((resolve, reject) => {
     db.get(sql, params, (err, row) => {
+      const { op, table } = describeSql(sql);
+      const name = (table || "records").replace(/_/g, " ");
       if (err) {
-        console.error(
-          "Error getting SQL:",
-          sql,
-          "Params:",
-          params,
-          "Error:",
-          err
-        );
+        const action = op === "SELECT" ? "Fetch from" : "Query";
+        console.log(`${action} ${name} failed: ${err.message}`);
         reject(err);
       } else {
-        console.log(
-          "SQL get successfully:",
-          sql,
-          "Params:",
-          params,
-          "Row:",
-          row
-        );
+        console.log(`Fetched ${row ? "1 row" : "no rows"} from ${name}`);
         resolve(row);
       }
     });
@@ -1142,6 +1186,7 @@ module.exports = {
   getCoSponsors,
   setResetPasswordToken,
   checkResetPasswordToken,
+  deleteResetPasswordToken,
   resetUserPassword,
   createRandomTeachers,
   getAttendanceFromDate,

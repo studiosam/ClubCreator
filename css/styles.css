@@ -3,8 +3,17 @@
 }
 
 #all-approved {
-  width: 30%;
-  margin-left: 50px;
+  width: clamp(520px, 65%, 1000px);
+  margin: 0 auto;
+}
+
+#existingClubsList {
+  margin: 0 auto;
+}
+
+#create-club-form-wrap {
+  width: clamp(520px, 65%, 1000px);
+  margin: 24px auto 40px auto;
 }
 
 .club-create-list-clubs {
@@ -103,7 +112,10 @@ input[type="date"]:focus {
 
 /* Clubs list (clubsList.html) */
 #clubs { text-align: left; }
-.clubs-table th, .clubs-table td { vertical-align: middle; }
+.clubs-table th, .clubs-table td {
+  vertical-align: middle;
+  text-align: left;
+}
 .club-item { padding: 10px 12px; border-bottom: 1px solid var(--card-border); }
 .club-name { font-weight: 600; margin-bottom: 4px; }
 .club-meta { color: #c7d2fe; }
@@ -127,6 +139,165 @@ body {
   color: azure;
   background-color: #0a0a0a;
 }
+
+/* Attendance cards (club-info.html) */
+#club-students .student {
+  cursor: pointer;
+  background-color: transparent !important;
+  border: 1px solid transparent;
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+#club-students .student.student-attendance-card {
+  /* Present (green) */
+  background-color: rgba(82, 187, 129, 0.2) !important; /* var(--success) tint */
+  border-color: var(--success);
+}
+#club-students .student:not(.student-attendance-card) {
+  /* Absent (light red) */
+  background-color: rgba(187, 82, 82, 0.2) !important; /* var(--danger) tint */
+  border-color: var(--danger);
+}
+
+.attendance-key {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin: 8px 0 12px 0;
+}
+.attendance-key .key {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+}
+.attendance-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  border: 2px solid transparent;
+  display: inline-block;
+}
+.attendance-swatch.present {
+  background-color: rgba(82, 187, 129, 0.8);
+  border-color: var(--success);
+}
+.attendance-swatch.absent {
+  background-color: rgba(187, 82, 82, 0.8);
+  border-color: var(--danger);
+}
+
+/* Attendance actions (Submit / Print) */
+.attendance-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+.attendance-actions .btn-modern {
+  min-width: 220px;
+  min-height: 48px;
+  font-size: 1.0625rem; /* 17px for a touch larger tap target */
+}
+.btn-modern {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  border: 1px solid transparent;
+  transition: background-color 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
+  text-decoration: none !important;
+}
+.btn-modern.btn-primary {
+  background-color: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+}
+.btn-modern.btn-primary:hover,
+.btn-modern.btn-primary:focus {
+  background-color: var(--brand-700);
+  border-color: var(--brand-700);
+}
+.btn-modern.btn-secondary {
+  background-color: #fff;
+  color: var(--text-primary);
+  border-color: var(--card-border);
+}
+.btn-modern.btn-secondary:hover,
+.btn-modern.btn-secondary:focus {
+  border-color: var(--muted);
+}
+
+/* Dark variant for print roster */
+.btn-modern.btn-dark {
+  background-color: #2b2f36;
+  color: #fff;
+  border-color: #1f2329;
+}
+.btn-modern.btn-dark:hover,
+.btn-modern.btn-dark:focus {
+  background-color: #23272d;
+  border-color: #1a1e23;
+}
+
+/* Make existing UIkit buttons adopt modern styling site‑wide (no min-width) */
+.uk-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  border: 1px solid transparent;
+  transition: background-color 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
+}
+.uk-button-default {
+  background-color: #fff;
+  color: var(--text-primary);
+  border-color: var(--card-border);
+}
+.uk-button-default:hover,
+.uk-button-default:focus {
+  border-color: var(--muted);
+}
+.uk-button-secondary {
+  background-color: #2b2f36;
+  color: #fff;
+  border-color: #1f2329;
+}
+.uk-button-secondary:hover,
+.uk-button-secondary:focus {
+  background-color: #23272d;
+  border-color: #1a1e23;
+}
+.uk-button-danger {
+  background-color: var(--danger);
+  border-color: var(--danger);
+  color: #fff;
+}
+.uk-button-danger:hover,
+.uk-button-danger:focus {
+  filter: brightness(0.9);
+}
+
+/* Normalize button sizing across site */
+.uk-button, .btn-modern {
+  font-size: 1rem;
+  min-height: 44px;
+  min-width: 200px;
+  cursor: pointer;
+}
+
+/* Avoid tiny pagination buttons while keeping layout */
+#pagination .uk-button { min-width: 200px; }
+
+/* Ensure logout uses normalized sizing */
+.logout-button { height: auto; padding: 0.6rem 1rem; }
 
 .blue { color: var(--accent) !important; }
 .white { color: azure; }
@@ -480,6 +651,11 @@ ul {
 }
 
 tbody tr:hover { background-color: #2b2f36; }
+
+/* Disable hover highlight on club info table completely */
+/* Completely disable hover effects for the club info table rows */
+#clubData tr { pointer-events: none !important; }
+#clubData tr, #clubData td, #clubData th { transition: none !important; }
 
 .uk-sortable-drag { color: #374151; }
 

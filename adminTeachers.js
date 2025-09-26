@@ -44,6 +44,7 @@ async function displayTeachers(page, searchQuery = "") {
     teachers.forEach((teacher) => {
       const club = clubs.find((obj) => obj.clubId === teacher.clubId);
       const clubName = club ? club.clubName : "None";
+      const clubRoom = club && club.room ? club.room : "None";
       let avatarUrl = `https://ui-avatars.com/api/?name=${teacher.firstName}+${teacher.lastName}&background=005DB4&color=fff`;
       if (teacher.avatar) {
         avatarUrl = `${teacher.avatar}`;
@@ -55,8 +56,7 @@ async function displayTeachers(page, searchQuery = "") {
           <td class="">${teacher.userId}</td>
           <td class="teacher-name" data-user-id="${teacher.userId}"><a href="#" class="uk-link-text">${teacher.firstName} ${teacher.lastName}</a></td>
           <td>${teacher.email}</td>
-          <td class="uk-text-nowrap">${teacher.grade || "None"}</td>
-          <td class="uk-text-nowrap">${teacher.room || "None"}</td>
+          <td class="uk-text-nowrap">${clubRoom}</td>
           <td class="uk-text-nowrap uk-table-link"><a href="./club-info.html?club-id=${
          teacher.clubId
       }">${clubName}</a></td>

@@ -47,6 +47,13 @@ async function login() {
       pos: "top-center",
       timeout: 5000,
     });
+  } else if (responseStatus && responseStatus.body === "NotTeacher") {
+    UIkit.notification({
+      message: "Password resets are restricted to teachers.",
+      status: "warning",
+      pos: "top-center",
+      timeout: 7000,
+    });
   } else {
     UIkit.notification({
       message: "Error Sending Email. Please try again",

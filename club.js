@@ -14,6 +14,8 @@ async function getUser() {
 }
 getUser();
 const form = document.querySelector("#clubCreation");
+const adminAssignWrap = document.querySelector('#admin-assign-teacher');
+const assignedTeacherSelect = document.querySelector('#assignedTeacherSelect');
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
   await createClub();
@@ -28,7 +30,12 @@ if (document.querySelector("#cover-input")) {
 async function createClub() {
   const user = JSON.parse(localStorage.getItem("user"));
   const formData = new FormData(form);
-  formData.set("teacherId", user.userId);
+  // If admin selected a teacher, use that; otherwise use current user
+  let targetTeacherId = user.userId;
+  if (user && user.isAdmin && assignedTeacherSelect && assignedTeacherSelect.value) {
+    targetTeacherId = assignedTeacherSelect.value;
+  }
+  formData.set("teacherId", targetTeacherId);
   formData.set("requiredCosponsors", formData.get("coSponsorsNeeded"));
 
   // Remove URLSearchParams as it doesn't support file uploads
@@ -107,3 +114,25 @@ async function addToClub(clubId) {
 
 
 getAllClubs();
+
+// Populate teacher select for admins
+(async function initAdminTeacherSelect() {
+  try {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user && user.isAdmin && adminAssignWrap && assignedTeacherSelect) {
+      adminAssignWrap.style.display = '';
+      const resp = await fetch(`http://${serverAddress}:3000/getAllUsers?isTeacher=1`);
+      const teachers = await resp.json();
+      if (Array.isArray(teachers)) {
+        teachers.forEach(t => {
+          const opt = document.createElement('option');
+          opt.value = t.userId;
+          opt.textContent = `${t.firstName} ${t.lastName} (${t.email})`;
+          assignedTeacherSelect.appendChild(opt);
+        });
+      }
+    }
+  } catch (e) {
+    console.log('Error loading teachers for admin select', e);
+  }
+})();

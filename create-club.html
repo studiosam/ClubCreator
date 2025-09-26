@@ -59,7 +59,7 @@
             be rejected.</p>
         </div>
       </div>
-      <div class="uk-width-1-2" style="margin-left: 50px;">
+      <div id="create-club-form-wrap" class="uk-width-1-2">
         <form class="" id="clubCreation" enctype="multipart/form-data">
           <label for="preferredClub">Club you would like to host:</label>
           <input class="uk-input" type="text" id="preferredClub" name="preferredClub" required />
@@ -71,6 +71,15 @@
             required />
           <label for="maxCapacity">How many students do you have equipment for?</label>
           <input class="uk-input" type="number" min="5" id="maxCapacity" name="maxCapacity" required />
+          <label for="room">Room Number (optional)</label>
+          <input class="uk-input" type="text" id="room" name="room" placeholder="e.g., 1400" />
+          <!-- Admin-only: Assign primary teacher for this club -->
+          <div id="admin-assign-teacher" class="uk-margin-small" style="display:none;">
+            <label for="assignedTeacherSelect">Assign Teacher (admins only)</label>
+            <select class="uk-select" id="assignedTeacherSelect">
+              <option value="">-- Select a teacher (optional) --</option>
+            </select>
+          </div>
           <div class="uk-placeholder uk-border-rounded" id="cover-photo-up">
 
             <span>(Optional) Upload Cover Photo: </span>
