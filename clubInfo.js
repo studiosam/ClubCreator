@@ -5,6 +5,36 @@ const attendancebutton = document.querySelector("#attendance-submission");
 const printRosterButton = document.querySelector(".printbtn");
 const rosterDiv = document.querySelector("#club-students");
 
+// Safely read the current user without relying on userData.js load order
+const currentUser = (() => {
+  try {
+    return JSON.parse(localStorage.getItem("user"));
+  } catch (_) {
+    return null;
+  }
+})();
+
+// Immediately hide attendance legend for non-teachers/admins to avoid any flash
+try {
+  const isStaff = !!(currentUser && (currentUser.isTeacher || currentUser.isAdmin));
+  if (!isStaff) {
+    const keyEl = document.getElementById("attendance-key");
+    if (keyEl) {
+      keyEl.classList.add("hidden");
+      keyEl.setAttribute("hidden", "true");
+      keyEl.setAttribute("aria-hidden", "true");
+      keyEl.style.display = "none";
+    }
+    const instr = document.getElementById("attendance-instructions");
+    if (instr) {
+      instr.classList.add("hidden");
+      instr.setAttribute("hidden", "true");
+      instr.setAttribute("aria-hidden", "true");
+      instr.style.display = "none";
+    }
+  }
+} catch (_) { /* no-op */ }
+
 printRosterButton.addEventListener('click', () => {
   let divContents = rosterDiv.innerHTML;
   if (divContents !== '') {
@@ -56,8 +86,8 @@ async function getClubInfo() {
       <td>${json.clubInfo.room || "None"}</td>
   </tr>`;
   if (
-    (user.clubId === json.clubInfo.clubId && user.isTeacher) ||
-    user.isAdmin
+    (currentUser && currentUser.isTeacher && currentUser.clubId === json.clubInfo.clubId) ||
+    (currentUser && currentUser.isAdmin)
   ) {
     const photoUpload = document.querySelector("#cover-photo-upload");
     photoUpload.innerHTML = `<form id="uploadForm" enctype="multipart/form-data">
@@ -131,6 +161,52 @@ async function getClubInfo() {
       }
     }
   }
+  else {
+    // Non-teachers/admins: hide legend and entire roster section
+    const key = document.getElementById("attendance-key");
+    if (key) {
+      key.classList.add("hidden");
+      key.setAttribute("hidden", "true");
+      key.setAttribute("aria-hidden", "true");
+      key.style.display = "none";
+    }
+
+    const instr = document.getElementById("attendance-instructions");
+    if (instr) {
+      instr.classList.add("hidden");
+      instr.setAttribute("hidden", "true");
+      instr.setAttribute("aria-hidden", "true");
+      instr.style.display = "none";
+    }
+
+    const studentsTitle = document.getElementById("students-title");
+    if (studentsTitle) {
+      studentsTitle.classList.add("hidden");
+      studentsTitle.setAttribute("hidden", "true");
+      studentsTitle.setAttribute("aria-hidden", "true");
+      studentsTitle.style.display = "none";
+    }
+
+    const roster = document.getElementById("club-students");
+    if (roster) {
+      roster.innerHTML = ""; // ensure no names are present
+      roster.classList.add("hidden");
+      roster.setAttribute("hidden", "true");
+      roster.setAttribute("aria-hidden", "true");
+      roster.style.display = "none";
+    }
+
+    const actions = document.getElementById("attendance-actions");
+    if (actions) {
+      actions.classList.add("hidden");
+      actions.setAttribute("hidden", "true");
+      actions.setAttribute("aria-hidden", "true");
+      actions.style.display = "none";
+    }
+
+    // Ensure no attendance submission control is shown
+    attendancebutton.innerHTML = "";
+  }
   if (document.querySelector("#cover-input")) {
     document.querySelector("#cover-input").addEventListener("input", () => {
       if (document.querySelector("#cover-input").value) {
@@ -140,9 +216,9 @@ async function getClubInfo() {
       }
     });
   }
-  document
-    .getElementById("uploadForm")
-    .addEventListener("submit", async (e) => {
+  const uploadFormEl = document.getElementById("uploadForm");
+  if (uploadFormEl) {
+    uploadFormEl.addEventListener("submit", async (e) => {
       e.preventDefault();
       const formData = new FormData(e.target);
 
@@ -163,9 +239,11 @@ async function getClubInfo() {
           pos: "top-center",
           timeout: 5000,
         });
-        document.getElementById("upload-avatar").src = result.avatarPath;
+        const avatarImg = document.getElementById("upload-avatar");
+        if (avatarImg) avatarImg.src = result.avatarPath;
       }
     });
+  }
 }
 getClubInfo();
 

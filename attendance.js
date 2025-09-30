@@ -36,17 +36,51 @@ function getDate() {
 }
 
 async function getAttendanceFromDate(date) {
+    // Reset previous output to avoid duplication
+    attendanceDiv.innerHTML = "";
+    clubsWithoutAttendanceDiv.innerHTML = "";
+
     const allClubsArray = []
     const clubsWithAttendance = []
 
-    const response = await fetch(`http://${serverAddress}:3000/getAttendanceFromDate`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ date: date })
+    let json;
+    try {
+        const response = await fetch(`http://${serverAddress}:3000/getAttendanceFromDate`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ date: date })
+        });
+        json = await response.json();
+        if (!response.ok || (json && Array.isArray(json.attendance) && json.attendance.length === 0)) {
+            console.log(`[Attendance] No data for date ${date}`);
+            if (window.UIkit && UIkit.notification) {
+                UIkit.notification({
+                    message: `No attendance data exists for ${date}.`,
+                    status: 'danger',
+                    pos: 'top-center',
+                    timeout: 5000
+                });
+            }
+            // Show a simple inline message for accessibility
+            attendanceDiv.innerHTML = `<p class="uk-text-danger">No attendance data exists for ${date}.</p>`;
+            // Continue so we can still compute the clubs-without-attendance list
+            json = { attendance: [] };
+        }
+    } catch (e) {
+        console.error(`[Attendance] Error fetching date ${date}:`, e);
+        if (window.UIkit && UIkit.notification) {
+            UIkit.notification({
+                message: `Unable to load attendance for ${date}.`,
+                status: 'danger',
+                pos: 'top-center',
+                timeout: 5000
+            });
+        }
+        attendanceDiv.innerHTML = `<p class="uk-text-danger">Unable to load attendance for ${date}.</p>`;
+        return;
+    }
 
-    });
-    const json = await response.json();
-
+    // Continue with normal rendering path
     const allClubs = await fetch(`http://${serverAddress}:3000/getAllClubs`);
     const allClubsJson = await allClubs.json();
     allClubsJson.forEach((club) => {
@@ -71,7 +105,8 @@ async function getAttendanceFromDate(date) {
 
 async function displayAttendance(attendance) {
 
-    if (attendance.attendance.length <= 0) {
+    if (!attendance || !Array.isArray(attendance.attendance) || attendance.attendance.length <= 0) {
+        // Already handled upstream — just return silently to avoid duplicate messaging
         return;
     }
     attendanceDiv.innerHTML = ""

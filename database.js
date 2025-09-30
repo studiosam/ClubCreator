@@ -987,7 +987,6 @@ async function createRandomGuys(numberOfAccounts) {
 }
 async function createRandomTeachers(numberOfAccounts) {
   let isTeacher = true
-  console.log(typeof numberOfAccounts);
   const sql = `INSERT INTO users (firstName, lastName, email, password, grade, clubPreferences, isTeacher) VALUES (?,?,?,?,?,?,?)`;
 
   for (let i = 0; i < parseInt(numberOfAccounts); i++) {
@@ -1131,7 +1130,6 @@ async function createRandomClubs(numberOfClubs, teacherId) {
 }
 
 async function getAttendanceFromDate(dateString) {
-  console.log(typeof dateString);
   return new Promise((resolve, reject) => {
     const sql = `SELECT * FROM attendance WHERE date = ?`;
     db.all(sql, [dateString], (err, rows) => {

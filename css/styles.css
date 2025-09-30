@@ -188,6 +188,14 @@ body {
   border-color: var(--danger);
 }
 
+/* Attendance instructions (club-info.html) */
+.attendance-instructions {
+  text-align: center;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  margin: 0 0 12px 0;
+}
+
 /* Attendance actions (Submit / Print) */
 .attendance-actions {
   display: flex;
@@ -659,6 +667,32 @@ tbody tr:hover { background-color: #2b2f36; }
 
 .uk-sortable-drag { color: #374151; }
 
+/* Reorder list (student selection ordering) */
+#my-club .reorder-item { width: 100%; align-items: stretch; }
+.uk-card-body#my-club, #my-club { width: 100%; max-width: 100%; box-sizing: border-box; }
+.reorder-handle { min-width: 20px; color: var(--muted); cursor: grab; user-select: none; }
+.reorder-card, .student-reorder-card {
+  border-radius: 8px;
+  border: 1px solid var(--card-border);
+  background: var(--card-bg);
+  padding: 8px 12px;
+  width: 100%;
+  box-sizing: border-box;
+}
+.student-reorder-card .uk-card-title { margin: 0 0 6px 0; }
+.student-reorder-card p { margin: 0; }
+
+/* Keep layout stable while dragging */
+#my-club .uk-sortable-placeholder {
+  border: 2px dashed var(--card-border);
+  border-radius: 8px;
+  min-height: 60px;
+  background: rgba(0,0,0,0.025);
+  width: 100% !important;
+  box-sizing: border-box;
+}
+.uk-sortable-drag .reorder-card { box-shadow: 0 6px 16px rgba(0,0,0,.25); box-sizing: border-box; }
+
 #avatar-upload {
   display: flex;
   justify-content: center;
@@ -738,6 +772,13 @@ tbody tr:hover { background-color: #2b2f36; }
   overflow-wrap: anywhere;
   word-break: break-word;
 }
+
+/* Add comfortable spacing between cards on main pages */
+#my-club .club { margin-bottom: 16px; }
+.student-club-wrapper { margin-bottom: 16px; }
+
+/* Add spacing between draggable reorder items */
+#my-club .reorder-item { margin-bottom: 12px; }
 
 #my-club .club .uk-card-title,
 #my-clubs .club .uk-card-title,

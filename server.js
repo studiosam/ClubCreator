@@ -640,14 +640,20 @@ app.post("/addAccount", async (req, res) => {
 app.post("/getAttendanceFromDate", async (req, res) => {
   try {
     const ts = new Date().toLocaleString();
-    console.log(`Get Attendance From Date: date ${req.body.date}`);
-    let attendance = await db.getAttendanceFromDate(req.body.date);
-    console.log(`Get Attendance From Date Success: rows ${attendance ? attendance.length : 0}`);
-    res.send({ attendance: attendance });
+    const date = req.body.date;
+    console.log(`Get Attendance From Date: date ${date}`);
+    let attendance = await db.getAttendanceFromDate(date);
+    const count = attendance ? attendance.length : 0;
+    if (count === 0) {
+      console.log(`No attendance data exists for date ${date}`);
+      return res.status(404).send({ body: "NoData", attendance: [], message: "No attendance data exists for that date" });
+    }
+    console.log(`Get Attendance From Date Success: rows ${count}`);
+    res.send({ body: "Success", attendance });
   } catch (e) {
     const timestamp = new Date().toLocaleString();
     console.log(`Route /getAttendanceFromDate failed: ${String(e)}`);
-    res.send("Error. Contact admin")
+    res.status(500).send({ body: "Error" });
   }
 })
 
