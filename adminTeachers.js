@@ -150,7 +150,8 @@ async function addToClub() {
   try {
     const clubId = clubSelect ? clubSelect.value : null;
     if (!currentSelectedUserId || !clubId) return;
-    await fetch(`http://${serverAddress}:3000/users/update/${currentSelectedUserId}/${clubId}`);
+    const actor = (user && user.userId) || (JSON.parse(localStorage.getItem('user')||'{}').userId);
+    await fetch(`http://${serverAddress}:3000/users/update/${currentSelectedUserId}/${clubId}?actorId=${encodeURIComponent(actor)}`);
     await displayTeachers(currentPage);
     hideSidePanel();
     UIkit.notification({ message: "Teacher updated", status: "success", pos: "top-center", timeout: 3000 });

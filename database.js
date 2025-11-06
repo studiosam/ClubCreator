@@ -3,7 +3,21 @@ const path = require("path");
 const fs = require("fs");
 const fetch = require("node-fetch");
 const WebSocket = require("ws");
-const wss = new WebSocket.Server({ port: 8008 });
+let wss = null;
+// In PM2 cluster mode, each worker would try to bind the same WS port.
+// Only start WebSocket server on a single instance (instance 0 or single-process mode).
+const shouldStartWs = !process.env.NODE_APP_INSTANCE || process.env.NODE_APP_INSTANCE === "0";
+if (shouldStartWs) {
+  try {
+    wss = new WebSocket.Server({ port: 8008 });
+    wss.on("listening", () => console.log("WebSocket listening on :8008"));
+    wss.on("error", (e) => console.warn("WebSocket server error:", e.message));
+  } catch (e) {
+    console.warn("Skipping WebSocket server:", e.message);
+  }
+} else {
+  console.log(`Skipping WebSocket server in worker ${process.env.NODE_APP_INSTANCE}`);
+}
 
 // Open a database connection
 const db = new sqlite3.Database(
@@ -17,6 +31,32 @@ const db = new sqlite3.Database(
     }
   }
 );
+
+// Apply SQLite runtime settings at startup (no schema change, no rebuild)
+// WAL improves read concurrency; NORMAL reduces fsync cost; temp_store/cache_size cut disk I/O;
+// busy_timeout avoids transient SQLITE_BUSY under contention.
+try {
+  db.exec(
+    [
+      "PRAGMA journal_mode=WAL;",
+      "PRAGMA synchronous=NORMAL;",
+      "PRAGMA temp_store=MEMORY;",
+      "PRAGMA cache_size=-65536;", // ~64MB page cache
+      "PRAGMA busy_timeout=5000;"   // 5s
+    ].join("\n"),
+    (e) => {
+      if (e) {
+        console.warn("SQLite PRAGMA init failed:", e.message);
+      } else {
+        console.log(
+          "SQLite PRAGMAs applied: WAL, NORMAL, temp_store=MEMORY, cache_size=64MB, busy_timeout=5s"
+        );
+      }
+    }
+  );
+} catch (e) {
+  console.warn("Could not apply SQLite PRAGMAs:", e.message);
+}
 
 // Ensure an index on users.email for fast lookup (safe if table exists)
 (function ensureUsersEmailIndex() {
@@ -374,9 +414,9 @@ async function getClubInfo(clubId) {
 
 async function checkUser(userEmail) {
   try {
-    const row = await get("SELECT email, password FROM users WHERE email = ?", [String(userEmail).toLowerCase().trim()]);
+    const row = await get("SELECT email, password, isTeacher FROM users WHERE email = ?", [String(userEmail).toLowerCase().trim()]);
     if (row) {
-      return { userExists: true, password: row.password };
+      return { userExists: true, password: row.password, isTeacher: row.isTeacher };
     }
     return "User does not exist";
   } catch (err) {
@@ -412,36 +452,47 @@ async function getAllTeachersOrStudentsPagination(
     const offset = (page - 1) * limit;
     const searchQuery = `%${search}%`;
 
+    // Special-case: sorting by displayed club room requires a join (for both students and teachers lists)
+    const sortKey = String(sortBy || "userId");
+    const dir = String(sortDirection || "ASC").toUpperCase() === "DESC" ? "DESC" : "ASC";
+    const needsRoomJoin = (sortKey === "room");
+
+    const selectClause = needsRoomJoin ? "SELECT u.*" : "SELECT *";
+    const fromClause = needsRoomJoin
+      ? "FROM users u LEFT JOIN clubs c ON u.clubId = c.clubId"
+      : "FROM users";
+    const uAlias = needsRoomJoin ? "u" : "users";
+    const fullNameExpr = needsRoomJoin
+      ? "COALESCE(u.firstName,'') || ' ' || COALESCE(u.lastName,'')"
+      : "COALESCE(firstName,'') || ' ' || COALESCE(lastName,'')";
+    const whereClause = `WHERE ${uAlias}.isTeacher = ${isTeacherBool} AND (${uAlias}.firstName LIKE ? OR ${uAlias}.lastName LIKE ? OR ${uAlias}.email LIKE ? OR ${fullNameExpr} LIKE ?)`;
+    const orderClause = needsRoomJoin
+      ? `ORDER BY c.room ${dir}`
+      : `ORDER BY ${sortKey} ${dir}`;
+
     const sql = `
-      SELECT * FROM users
-      WHERE isTeacher = ${isTeacherBool} AND (firstName LIKE ? OR lastName LIKE ? OR email LIKE ?)
-      ORDER BY ${sortBy} ${sortDirection}
+      ${selectClause}
+      ${fromClause}
+      ${whereClause}
+      ${orderClause}
       LIMIT ? OFFSET ?
     `;
 
-    db.all(
-      sql,
-      [searchQuery, searchQuery, searchQuery, limit, offset],
-      (err, rows) => {
-        if (err) {
-          return reject(err);
-        } else {
-          const countSql = `SELECT COUNT(*) as count FROM users WHERE isTeacher = ${isTeacherBool} AND (firstName LIKE ? OR lastName LIKE ? OR email LIKE ?)`;
-          db.get(
-            countSql,
-            [searchQuery, searchQuery, searchQuery],
-            (err, countResult) => {
-              if (err) {
-                console.log(err);
-                return reject(err);
-              } else {
-                return resolve({ users: rows, total: countResult.count });
-              }
-            }
-          );
-        }
+    db.all(sql, [searchQuery, searchQuery, searchQuery, searchQuery, limit, offset], (err, rows) => {
+      if (err) {
+        return reject(err);
+      } else {
+        const countSql = `SELECT COUNT(*) as count FROM users WHERE isTeacher = ${isTeacherBool} AND (firstName LIKE ? OR lastName LIKE ? OR email LIKE ? OR (COALESCE(firstName,'') || ' ' || COALESCE(lastName,'')) LIKE ?)`;
+        db.get(countSql, [searchQuery, searchQuery, searchQuery, searchQuery], (err2, countResult) => {
+          if (err2) {
+            console.log(err2);
+            return reject(err2);
+          } else {
+            return resolve({ users: rows, total: countResult.count });
+          }
+        });
       }
-    );
+    });
   });
 }
 
@@ -450,10 +501,10 @@ async function getTotalUsersCount(isTeacherBool, search) {
     const sql = `
       SELECT COUNT(*) as count FROM users
       WHERE isTeacher = ${isTeacherBool}
-      AND (firstName LIKE ? OR lastName LIKE ? OR email LIKE ?)`;
+      AND (firstName LIKE ? OR lastName LIKE ? OR email LIKE ? OR (COALESCE(firstName,'') || ' ' || COALESCE(lastName,'')) LIKE ?)`;
 
     const searchPattern = `%${search}%`;
-    db.get(sql, [searchPattern, searchPattern, searchPattern], (err, row) => {
+    db.get(sql, [searchPattern, searchPattern, searchPattern, searchPattern], (err, row) => {
       if (err) {
         return reject(err);
       } else {
@@ -630,29 +681,113 @@ function setAdmin() {
   });
 }
 
-function deleteAllStudentClubs() {
-  const sql = `UPDATE users SET clubId = null WHERE isTeacher = false`;
-  db.run(sql, (err) => {
-    if (err) {
-      console.log(err);
-    }
-
-    console.log(`Row(s) updated: ${this.changes}`);
+async function deleteAllStudentClubs() {
+  try {
+    // Do not clear off-campus flags (clubId = -1)
+    const sql = `UPDATE users SET clubId = NULL WHERE isTeacher = false AND (clubId IS NULL OR clubId >= 0)`;
+    const changes = await new Promise((resolve, reject) => {
+      db.run(sql, function (err) {
+        if (err) return reject(err);
+        const n = this && this.changes != null ? this.changes : 0;
+        resolve(n);
+      });
+    });
+    console.log(`Student clubs cleared: ${changes}`);
     return true;
-  });
+  } catch (err) {
+    console.error("Error clearing student clubs:", err.message);
+    return false;
+  }
 }
 
 async function deleteAllClubs() {
   try {
     const sqlDelete = `DELETE FROM clubs`;
-
-    await db.run(sqlDelete);
+    await run(sqlDelete);
     const ts = new Date().toLocaleString();
     console.log(`Deleted all clubs at ${ts}`);
     return true;
   } catch (err) {
     console.error("Error deleting clubs:", err.message);
+    return false;
   }
+}
+
+// Get students with no club preferences (NULL or empty/whitespace)
+async function getStudentsWithoutPreferences() {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      SELECT * FROM users
+      WHERE isTeacher = 0
+        AND (clubPreferences IS NULL OR TRIM(clubPreferences) = '')
+        AND (clubId IS NULL OR clubId >= 0)
+      ORDER BY lastName ASC, firstName ASC
+    `;
+    db.all(sql, [], (err, rows) => {
+      if (err) {
+        return reject(err);
+      }
+      return resolve(rows || []);
+    });
+  });
+}
+
+// Paginated + searchable + sortable list of students without preferences
+async function getStudentsWithoutPreferencesPagination(
+  page,
+  limit,
+  search,
+  sortBy,
+  sortDirection
+) {
+  return new Promise((resolve, reject) => {
+    const offset = (page - 1) * limit;
+    const searchQuery = `%${search}%`;
+
+    const sortKey = String(sortBy || "userId");
+    const dir = String(sortDirection || "ASC").toUpperCase() === "DESC" ? "DESC" : "ASC";
+    const needsRoomJoin = (sortKey === "room");
+    const selectClause = needsRoomJoin ? "SELECT u.*" : "SELECT *";
+    const fromClause = needsRoomJoin
+      ? "FROM users u LEFT JOIN clubs c ON u.clubId = c.clubId"
+      : "FROM users";
+    const uAlias2 = needsRoomJoin ? "u" : "users";
+    const whereClause = `WHERE ${uAlias2}.isTeacher = 0
+        AND (${uAlias2}.clubPreferences IS NULL OR TRIM(${uAlias2}.clubPreferences) = '')
+        AND (${uAlias2}.clubId IS NULL OR ${uAlias2}.clubId >= 0)
+        AND (${uAlias2}.firstName LIKE ? OR ${uAlias2}.lastName LIKE ? OR ${uAlias2}.email LIKE ?)`;
+    const orderClause = needsRoomJoin
+      ? `ORDER BY c.room ${dir}`
+      : `ORDER BY ${sortKey} ${dir}`;
+
+    const sql = `
+      ${selectClause}
+      ${fromClause}
+      ${whereClause}
+      ${orderClause}
+      LIMIT ? OFFSET ?
+    `;
+
+    db.all(sql, [searchQuery, searchQuery, searchQuery, limit, offset], (err, rows) => {
+      if (err) {
+        return reject(err);
+      } else {
+        const countSql = `
+          SELECT COUNT(*) as count FROM users
+          WHERE isTeacher = 0
+            AND (clubPreferences IS NULL OR TRIM(clubPreferences) = '')
+            AND (clubId IS NULL OR clubId >= 0)
+            AND (firstName LIKE ? OR lastName LIKE ? OR email LIKE ?)
+        `;
+        db.get(countSql, [searchQuery, searchQuery, searchQuery], (err2, countResult) => {
+          if (err2) {
+            return reject(err2);
+          }
+          return resolve({ users: rows, total: countResult.count });
+        });
+      }
+    });
+  });
 }
 
 // update a single club value
@@ -685,7 +820,7 @@ async function getTeachersOrStudentsInClub(clubId, userType) {
   const users = await getAllTeachersOrStudents(userType);
 
   const clubRoster = await users.filter(
-    (user) => user.clubId === parseInt(clubId)
+    (user) => Number(user.clubId) === Number(clubId)
   );
 
   return clubRoster;
@@ -897,7 +1032,6 @@ function get(sql, params = []) {
         console.log(`${action} ${name} failed: ${err.message}`);
         reject(err);
       } else {
-        console.log(`Fetched ${row ? "1 row" : "no rows"} from ${name}`);
         resolve(row);
       }
     });
@@ -975,12 +1109,14 @@ async function createRandomGuys(numberOfAccounts) {
       clubPreferences,
       progress: ((i + 1) / numberOfAccounts) * 100,
     };
-    wss.clients.forEach((client) => {
-      if (client.readyState === WebSocket.OPEN) {
-        createdUser.type = "student";
-        client.send(JSON.stringify(createdUser));
-      }
-    });
+    if (wss) {
+      wss.clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+          createdUser.type = "student";
+          client.send(JSON.stringify(createdUser));
+        }
+      });
+    }
   }
   console.log(`${numberOfAccounts} random accounts created.`);
   return true;
@@ -1033,12 +1169,14 @@ async function createRandomTeachers(numberOfAccounts) {
       };
 
       // Additional code related to createdUser or primaryTeacherId
-      wss.clients.forEach((client) => {
-        if (client.readyState === WebSocket.OPEN) {
-          createdUser.type = "teacher";
-          client.send(JSON.stringify(createdUser));
-        }
-      });
+      if (wss) {
+        wss.clients.forEach((client) => {
+          if (client.readyState === WebSocket.OPEN) {
+            createdUser.type = "teacher";
+            client.send(JSON.stringify(createdUser));
+          }
+        });
+      }
     });
 
 
@@ -1114,12 +1252,14 @@ async function createRandomClubs(numberOfClubs, teacherId) {
       };
 
       await updateUserValue(newClubInfo.primaryTeacherId, 'clubId', this.lastID)
-      wss.clients.forEach((client) => {
-        if (client.readyState === WebSocket.OPEN) {
-          createdClub.type = "club";
-          client.send(JSON.stringify(createdClub));
-        }
-      });
+      if (wss) {
+        wss.clients.forEach((client) => {
+          if (client.readyState === WebSocket.OPEN) {
+            createdClub.type = "club";
+            client.send(JSON.stringify(createdClub));
+          }
+        });
+      }
     });
 
 
@@ -1138,6 +1278,38 @@ async function getAttendanceFromDate(dateString) {
       } else {
         return resolve(rows);
       }
+    });
+  });
+}
+
+// Fetch all attendance rows
+async function getAllAttendanceRecords() {
+  return new Promise((resolve, reject) => {
+    const sql = `SELECT clubId, date, studentsPresent, studentsAbsent FROM attendance`;
+    db.all(sql, [], (err, rows) => {
+      if (err) {
+        return reject(err);
+      } else {
+        return resolve(rows || []);
+      }
+    });
+  });
+}
+
+// Stats: on-campus (clubId NULL or >=0) students' preference completion
+async function getOnCampusPreferencesStats() {
+  return new Promise((resolve, reject) => {
+    const totalSql = `SELECT COUNT(*) as total FROM users WHERE isTeacher = 0 AND (clubId IS NULL OR clubId >= 0)`;
+    const prefsSql = `SELECT COUNT(*) as withPrefs FROM users WHERE isTeacher = 0 AND (clubId IS NULL OR clubId >= 0) AND clubPreferences IS NOT NULL AND TRIM(clubPreferences) <> ''`;
+
+    db.get(totalSql, [], (e1, r1) => {
+      if (e1) return reject(e1);
+      db.get(prefsSql, [], (e2, r2) => {
+        if (e2) return reject(e2);
+        const total = (r1 && r1.total) || 0;
+        const withPrefs = (r2 && r2.withPrefs) || 0;
+        resolve({ total, withPrefs });
+      });
     });
   });
 }
@@ -1188,7 +1360,11 @@ module.exports = {
   resetUserPassword,
   createRandomTeachers,
   getAttendanceFromDate,
+  getAllAttendanceRecords,
   addStudentFromSpreadsheet,
-  addStudentsBulk
+  addStudentsBulk,
+  getStudentsWithoutPreferences,
+  getStudentsWithoutPreferencesPagination,
+  getOnCampusPreferencesStats
   // Export other database functions here
 };

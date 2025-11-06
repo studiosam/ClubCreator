@@ -3,7 +3,7 @@ const clubProposals = document.querySelector("#clubProposalList");
 const socket = new WebSocket(`ws://${serverAddress}:8008`);
 let oldDbFile = null;
 let xlsFile = null;
-async function deleteAllUserClubs() {
+async function deleteAllUserClubs(notify = true) {
   const response = await fetch(`http://${serverAddress}:3000/admin-erase`, {
     method: "POST",
     headers: {
@@ -14,7 +14,7 @@ async function deleteAllUserClubs() {
     }),
   });
   const clubs = await response.json();
-  if (clubs.body === "Success") {
+  if (notify && clubs.body === "Success") {
     UIkit.notification({
       message: "All User Clubs Deleted!",
       status: "success",
@@ -158,7 +158,156 @@ let teachers;
   if (approvedClubList) {
     await getAllApprovedClubs();
   }
+  // Update preferences completion progress (on-campus)
+  try { await updatePrefsProgress(); } catch (_) {}
 })();
+
+// Prepare irreversible delete-all-clubs confirmation
+function setupDeleteAllClubsTrigger() {
+  const trigger = document.getElementById("delete-all-clubs-trigger");
+  if (!trigger) return;
+  trigger.addEventListener("click", () => {
+    const body = document.querySelector("#delete-confirmation-body");
+    if (body) {
+      body.innerHTML = `<span class=\"red\">Delete ALL clubs?</span> This action cannot be undone.`;
+    }
+    const btn = document.querySelector("#delete-btn");
+    if (btn) {
+      btn.setAttribute("onClick", `executeDeleteAllClubs()`);
+      btn.textContent = "Delete";
+    }
+  });
+}
+
+async function executeDeleteAllClubs() {
+  try {
+    await deleteAllClubs();
+    if (approvedClubList) {
+      await getAllApprovedClubs();
+    }
+  } catch (_) {
+    // no-op; notifications handled in deleteAllClubs
+  }
+}
+
+// setupDeleteAllClubsTrigger(); // disabled for now (kept for future use)
+
+// Remove all student clubs (confirmation)
+function setupDeleteAllStudentClubsTrigger() {
+  const trigger = document.getElementById("delete-all-student-clubs-trigger");
+  if (!trigger) return;
+  trigger.addEventListener("click", () => {
+    const body = document.querySelector("#delete-confirmation-body");
+    if (body) {
+      body.innerHTML = `<span class=\"red\">Remove clubs from ALL students?</span> This action cannot be undone.`;
+    }
+    const btn = document.querySelector("#delete-btn");
+    if (btn) {
+      btn.setAttribute("onClick", `executeDeleteAllStudentClubs()`);
+      btn.textContent = "Delete";
+    }
+  });
+}
+
+async function executeDeleteAllStudentClubs() {
+  try {
+    await deleteAllUserClubs(false);
+    UIkit.notification({
+      message: "All student clubs removed!",
+      status: "success",
+      pos: "top-center",
+      timeout: 5000,
+    });
+  } catch (e) {
+    UIkit.notification({
+      message: "Failed to remove student clubs",
+      status: "danger",
+      pos: "top-center",
+      timeout: 5000,
+    });
+  }
+}
+
+setupDeleteAllStudentClubsTrigger();
+
+// Restore last snapshot of assignments
+function setupRestoreAssignmentsTrigger() {
+  const trigger = document.getElementById("restore-assignments-trigger");
+  if (!trigger) return;
+  trigger.addEventListener("click", () => {
+    const body = document.querySelector("#delete-confirmation-body");
+    if (body) {
+      body.innerHTML = `Restore the <span class="blue">last saved assignments</span>? This will overwrite current assignments for all users in the snapshot.`;
+    }
+    const btn = document.querySelector("#delete-btn");
+    if (btn) {
+      btn.setAttribute("onClick", `executeRestoreAssignments()`);
+      btn.textContent = "Restore";
+    }
+  });
+}
+
+async function executeRestoreAssignments() {
+  try {
+    const response = await fetch(`http://${serverAddress}:3000/admin-restore-last-assignments`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ isAdmin: user.isAdmin }),
+    });
+    if (!response.ok) {
+      const txt = await response.text();
+      throw new Error(txt || "Restore failed");
+    }
+    const json = await response.json();
+    UIkit.notification({
+      message: `Restored assignments from ${json.file} (updated ${json.applied}).`,
+      status: "success",
+      pos: "top-center",
+      timeout: 5000,
+    });
+  } catch (e) {
+    UIkit.notification({
+      message: "Restore failed or no snapshot found.",
+      status: "danger",
+      pos: "top-center",
+      timeout: 5000,
+    });
+  }
+}
+
+setupRestoreAssignmentsTrigger();
+
+// Assign clubs (confirmation)
+function setupAssignClubsTrigger() {
+  const trigger = document.getElementById("assign-students");
+  if (!trigger) return;
+  trigger.addEventListener("click", () => {
+    const body = document.querySelector("#delete-confirmation-body");
+    if (body) {
+      body.innerHTML = `Assign clubs to all students? A restore point will be created automatically.`;
+    }
+    const btn = document.querySelector("#delete-btn");
+    if (btn) {
+      btn.textContent = "Assign";
+      btn.setAttribute("onClick", `executeAssignClubs()`);
+    }
+  });
+}
+
+async function executeAssignClubs() {
+  try {
+    await assignClubs();
+  } catch (e) {
+    UIkit.notification({
+      message: "Failed to assign clubs",
+      status: "danger",
+      pos: "top-center",
+      timeout: 5000,
+    });
+  }
+}
+
+setupAssignClubsTrigger();
 
 async function getAllApprovedClubs() {
   const response = await fetch(`http://${serverAddress}:3000/getAllClubs`);
@@ -232,12 +381,11 @@ async function getAllApprovedClubs() {
           approvedClubList.innerHTML += `<form class="approved-clubs uk-width-1-2@m" id="form${club.clubId
             }"><div id="club-${club.clubId}" class="uk-card ${isPrimaryId}">
     <div id="${club.clubId
-            }" class=" uk-card uk-card-default uk-card-body uk-card-hover">
+            }" class=" uk-card uk-card-default uk-card-body">
     <div class="uk-card-badge uk-label ${badgeType}">${clubStatus}</div>
     <div class="uk-background-blend-multiply uk-background-secondary" id="cover-photo-card" style="background-image : url('${club.coverPhoto
             }')">   
-    <a class="cover-card-text" href="./club-info.html?club-id=${club.clubId
-            }"><p class="roboto uk-text-bold clubName" id="${club.clubId
+    <a class="cover-card-text" href="./club-info.html?club-id=${club.clubId}"><p class="roboto uk-text-bold clubName" id="${club.clubId
             }clubName">${club.clubName}</p></a>
     <input type="hidden" name="clubName" value="${club.clubName}">
     </div> 
@@ -323,14 +471,17 @@ async function getAllApprovedClubs() {
             }" class ="isApproved" type="checkbox" checked>
     </div>
         
-        <div class="text-center">
-        <button type="button" id="approve${club.clubId
+    <div class="text-center">
+    <button type="button" id="approve${club.clubId
             }" class="uk-button uk-button-secondary uk-width-1 approveBtn">Confirm</button>
-        <button class="delete" uk-toggle="target: #delete-confirmation" type="button">
+    <div class="admin-cancel-row uk-margin-small-top">
+      <button type="button" id="cancel-${club.clubId}" class="uk-button uk-button-danger cancel-edit-button">Cancel</button>
+      <button class="delete" uk-toggle="target: #delete-confirmation" type="button" aria-label="Delete Club">
         <img id="delete-link-${club.clubId
             }" src="/img/trash-can.png" width="40px">
-        </button>
-        </div>
+      </button>
+    </div>
+    </div>
         
         </div>
         
@@ -356,6 +507,36 @@ async function getAllApprovedClubs() {
     } catch (error) {
       console.error(error);
     }
+  }
+}
+
+// Fetch and render on-campus preferences completion progress
+async function updatePrefsProgress() {
+  const textEl = document.getElementById('prefs-progress-text');
+  const barEl = document.getElementById('prefs-progress-bar');
+  const metaEl = document.getElementById('prefs-progress-meta');
+  try {
+    const res = await fetch(`http://${serverAddress}:3000/stats/preferences-on-campus`);
+    if (!res.ok) throw new Error('Failed');
+    const { total, withPrefs, percent } = await res.json();
+    if (textEl) textEl.textContent = `${percent}%`;
+    if (barEl) {
+      barEl.value = percent; barEl.max = 100;
+      const tip = `${withPrefs} of ${total} students have selected their club preferences`;
+      // Only use the custom hover tip above the bar (no native tooltip)
+      try {
+        if (barEl.hasAttribute('title')) barEl.removeAttribute('title');
+        if (barEl.hasAttribute('uk-tooltip')) barEl.removeAttribute('uk-tooltip');
+      } catch (_) {}
+      const hoverEl = document.getElementById('prefs-progress-hover');
+      if (hoverEl) hoverEl.textContent = tip;
+    }
+    if (metaEl) metaEl.textContent = `${withPrefs}/${total} students`;
+  } catch (e) {
+    if (textEl) textEl.textContent = '—';
+    if (barEl) { try { barEl.removeAttribute('uk-tooltip'); barEl.removeAttribute('title'); } catch (_) {} }
+    const hoverEl = document.getElementById('prefs-progress-hover');
+    if (hoverEl) hoverEl.textContent = '';
   }
 }
 
@@ -491,12 +672,10 @@ async function getAllUnapprovedClubs(clubs) {
     // Render the club proposal
     clubProposals.innerHTML += `
       <div id="club-${club.clubId}" class="uk-card uk-width-1-2 club-proposals uk-container-expand">
-        <div class="uk-card uk-card-default uk-card-body uk-card-hover">
+        <div class="uk-card uk-card-default uk-card-body">
           <div class="uk-card-badge uk-label uk-label-warning">Unapproved</div>
           <div class="uk-background-blend-multiply uk-background-secondary" id="cover-photo-card" style="background-image : url('${club.coverPhoto}')"> 
-            <a href="./club-info.html?club-id=${club.clubId}">
-              <h2 id="${club.clubId}clubName" class="roboto uk-card-title cover-card-text">${club.clubName}</h2>
-            </a>
+            <a class="cover-card-text" href="./club-info.html?club-id=${club.clubId}"><h2 id="${club.clubId}clubName" class="roboto uk-card-title">${club.clubName}</h2></a>
           </div> 
           <div class="uk-card-body">
             <p class="uk-text-bold">${club.clubDescription}</p>
@@ -522,10 +701,12 @@ async function getAllUnapprovedClubs(clubs) {
       const clubName = document.querySelector(`#club-${clubId} h2`).innerHTML;
       document.querySelector(
         "#delete-confirmation-body"
-      ).innerHTML = `<span class="red">Delete</span> ${clubName}?`;
+      ).innerHTML = `<span class=\"red\">Delete ${clubName}?</span>`;
       document
         .querySelector("#delete-btn")
         .setAttribute("onClick", `deleteClub(${clubId},"${clubName}")`);
+      const btn1 = document.querySelector("#delete-btn");
+      if (btn1) btn1.textContent = "Delete";
     });
   });
 }
@@ -608,6 +789,19 @@ async function attachEventListeners() {
     });
   });
 
+  // Cancel editing: collapse details and bring back Edit button
+  document.querySelectorAll(".cancel-edit-button").forEach((element) => {
+    element.addEventListener("click", (e) => {
+      const m = e.target.id.match(/\D(\d+)$/);
+      if (!m) return;
+      const clubId = m[1];
+      const body = document.getElementById(`club-card-body-${clubId}`);
+      if (body) body.classList.add("hidden");
+      const editBtn = document.getElementById(`club-edit-button-${clubId}`);
+      if (editBtn) editBtn.style.display = "";
+    });
+  });
+
   document.querySelectorAll(".delete").forEach((element) => {
     element.addEventListener("click", (e) => {
       console.log("Delete!");
@@ -616,17 +810,19 @@ async function attachEventListeners() {
       console.log(clubName);
       document.querySelector(
         "#delete-confirmation-body"
-      ).innerHTML = `<span class="red">Delete</span> ${clubName}?`;
+      ).innerHTML = `<span class=\"red\">Delete ${clubName}?</span>`;
       document
         .querySelector("#delete-btn")
         .setAttribute("onClick", `deleteClub(${clubId},"${clubName}")`);
+      const btn2 = document.querySelector("#delete-btn");
+      if (btn2) btn2.textContent = "Delete";
     });
   });
 }
 
 async function assignClubs() {
   const respose = await fetch(
-    `http://${serverAddress}:3000/admin-club-assignment`
+    `http://${serverAddress}:3000/admin-club-assignment?isAdmin=${encodeURIComponent(user.isAdmin)}`
   );
   const json = await respose.json();
   if (json.body === "Success") {
@@ -719,7 +915,7 @@ async function importTeachersFromOldDb() {
   if (statusEl) statusEl.innerHTML = '<div class="uk-alert-primary" uk-alert>Uploading old database…</div>';
   const formData = new FormData();
   formData.append("olddb", oldDbFile);
-  formData.append("isAdmin", user.isAdmin ? "true" : "false");
+  formData.append("isAdmin", String(user.isAdmin || 0));
   let result;
   const res = await fetch(`http://${serverAddress}:3000/admin-import-teachers`, {
     method: "POST",
@@ -751,7 +947,7 @@ async function importStudentsFromXls() {
   if (statusEl) statusEl.innerHTML = '<div class="uk-alert-primary" uk-alert>Uploading student spreadsheet…</div>';
   const formData = new FormData();
   formData.append("studentsXls", xlsFile);
-  formData.append("isAdmin", user.isAdmin ? "true" : "false");
+  formData.append("isAdmin", String(user.isAdmin || 0));
   let result;
   const res = await fetch(`http://${serverAddress}:3000/admin-import-students-xls`, {
     method: "POST",

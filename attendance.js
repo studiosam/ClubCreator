@@ -110,15 +110,23 @@ async function displayAttendance(attendance) {
         return;
     }
     attendanceDiv.innerHTML = ""
-    const fetchPromises = attendance.attendance.flatMap(club =>
-        club.studentsAbsent ? club.studentsAbsent.split(',').map(student =>
-            fetch(`http://${serverAddress}:3000/usersInfo/${student}`)
-                .then(response => response.json())
-        )
-            : []
-    );
+    const fetchPromises = attendance.attendance.flatMap((club) => {
+        let ids = [];
+        if (!club) return [];
+        if (Array.isArray(club.studentsAbsent)) {
+            ids = club.studentsAbsent.map(s => String(s).trim()).filter(Boolean);
+        } else {
+            const raw = club && club.studentsAbsent ? String(club.studentsAbsent) : '';
+            ids = raw.split(',').map(s => String(s).trim()).filter(Boolean);
+        }
+        return ids.map((studentId) =>
+            fetch(`http://${serverAddress}:3000/usersInfo/${encodeURIComponent(studentId)}`)
+                .then(response => response.ok ? response.json() : null)
+                .catch(() => null)
+        );
+    });
 
-    const studentNames = await Promise.all(fetchPromises);
+    const studentNames = (await Promise.all(fetchPromises)).filter(Boolean);
 
 
     studentNames.sort((a, b) => {

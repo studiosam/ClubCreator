@@ -11,6 +11,7 @@ const nodemailer = require("nodemailer");
 const PORT = 3000;
 const fs = require("node:fs");
 const fsPromises = require("node:fs/promises");
+const os = require("os");
 const sqlite3 = require("sqlite3").verbose();
 const ip = require("ip");
 const serverAddress = ip.address("public");
@@ -54,11 +55,24 @@ function shortToken(token) {
   const t = String(token);
   return t.length <= 10 ? t : `${t.slice(0, 4)}…${t.slice(-4)}`;
 }
-// Disable structured JSON logs; keep human-friendly console lines only
+// Disable structured JSON logs to console, but add a small file logger for specific events
 function log() { /* no-op */ }
 const logInfo = () => {};
 const logWarn = () => {};
 const logError = () => {};
+
+// Append a line to a daily password-reset success log
+async function logPasswordResetSuccess({ userId, email }) {
+  try {
+    await ensureBackupsDir();
+    const day = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+    const file = `backups/password-reset-success-${day}.log`;
+    const line = `${new Date().toLocaleString()} | userId=${userId} | email=${maskEmail(email)}`;
+    await fsPromises.appendFile(file, line + "\n", "utf8");
+  } catch (e) {
+    console.log("Password reset log write failed:", String(e));
+  }
+}
 const storage = multer.diskStorage({
   destination: async (req, file, cb) => {
     try {
@@ -81,6 +95,33 @@ app.use(express.urlencoded({ extended: true }));
 
 // CORS middleware for allowing cross-origin requests
 app.use(cors());
+
+// Assignment snapshots (for one-step rollback)
+async function ensureBackupsDir() {
+  try { await fsPromises.mkdir("backups", { recursive: true }); } catch (_) {}
+}
+function tsStamp() {
+  const d = new Date();
+  const pad = (n) => String(n).padStart(2, "0");
+  return d.getFullYear().toString() + pad(d.getMonth()+1) + pad(d.getDate()) + "-" + pad(d.getHours()) + pad(d.getMinutes()) + pad(d.getSeconds());
+}
+async function snapshotAssignments({ reason = "", affectedUserIds = null } = {}) {
+  try {
+    await ensureBackupsDir();
+    let users = await db.getAllUsers();
+    if (Array.isArray(affectedUserIds) && affectedUserIds.length) {
+      const set = new Set(affectedUserIds.map(String));
+      users = users.filter((u) => set.has(String(u.userId)));
+    }
+    const entries = users.map((u) => ({ userId: u.userId, clubId: u.clubId, isTeacher: !!u.isTeacher }));
+    const payload = { type: "clubAssignmentsSnapshot", createdAt: new Date().toISOString(), reason, total: entries.length, entries };
+    const file = `backups/assignments-${tsStamp()}.json`;
+    await fsPromises.writeFile(file, JSON.stringify(payload, null, 2), "utf8");
+    console.log(`Snapshot saved: ${file} (entries: ${entries.length})`);
+  } catch (e) {
+    console.log("Snapshot failed:", String(e));
+  }
+}
 
 // ------------------------------
 // Gentle in-memory rate limiting
@@ -188,6 +229,292 @@ app.get("/getAllStudents", async (req, res) => {
     res.status(500).send("Error fetching students");
   }
 });
+
+// Students with no club preferences selected
+app.get("/students/no-preferences", async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const search = req.query.search || "";
+    const sortBy = req.query.sortBy || "userId"; // userId, firstName, lastName, email, grade, room, clubId
+    const sortDirection = req.query.sortDirection === "desc" ? "DESC" : "ASC";
+
+    const { users, total } = await db.getStudentsWithoutPreferencesPagination(
+      page,
+      limit,
+      search,
+      sortBy,
+      sortDirection
+    );
+    const totalPages = Math.ceil(total / limit);
+    res.send({ users, total, totalPages });
+  } catch (err) {
+    console.error("Error:", err);
+    res.status(500).send("Error fetching students without preferences");
+  }
+});
+
+// Students assigned to a club that is NOT in their preference list (admin only)
+app.get("/students/assigned-not-in-list", async (req, res) => {
+  try {
+    const level = coerceAdminLevel(req.query && req.query.isAdmin);
+    if (level < 1) return res.status(403).send({ body: 'Error', error: 'Not authorized' });
+
+    const students = await db.getAllTeachersOrStudents(false);
+    const clubs = await db.getAllClubs();
+    const clubById = new Map((clubs || []).map(c => [String(c.clubId), c]));
+
+    const normalizePrefs = (s) => {
+      try {
+        const arr = String(s.clubPreferences || '')
+          .split(',')
+          .map(v => String(v).trim())
+          .filter(v => v && v !== '0');
+        // de-duplicate
+        const out = []; const seen = new Set();
+        for (const id of arr) { if (!seen.has(id)) { seen.add(id); out.push(id); } }
+        return out;
+      } catch (_) { return []; }
+    };
+
+    const isOffCampus = (cid) => (typeof cid === 'number' && cid < 0);
+
+    const list = [];
+    for (const s of students) {
+      const cid = s.clubId;
+      if (cid == null) continue; // not assigned
+      if (isOffCampus(cid)) continue; // ignore off-campus
+      const prefs = normalizePrefs(s);
+      const assignedKey = String(cid);
+      const inList = prefs.some(p => String(p) === assignedKey);
+      if (!inList) {
+        const club = clubById.get(assignedKey);
+        list.push({
+          userId: s.userId,
+          firstName: s.firstName,
+          lastName: s.lastName,
+          email: s.email,
+          grade: s.grade,
+          clubId: cid,
+          clubName: club ? club.clubName : null,
+          preferences: prefs
+        });
+      }
+    }
+
+    // Enrich with latest preferences set time from logs
+    try {
+      const latestMap = await getLatestPrefsMap();
+      for (const r of list) {
+        const k = String(r.userId);
+        if (latestMap.has(k)) r.prefsLastSetAt = latestMap.get(k);
+      }
+    } catch (_) {}
+
+    // sort by lastName then firstName
+    list.sort((a,b)=> String(a.lastName||'').localeCompare(String(b.lastName||'')) || String(a.firstName||'').localeCompare(String(b.firstName||'')));
+
+    res.send({ total: list.length, users: list });
+  } catch (e) {
+    res.status(500).send({ body: 'Error', error: 'Failed to compute list' });
+  }
+});
+
+// Build latest preferences-set timestamp per userId by scanning JSONL and PM2 logs
+async function getLatestPrefsMap() {
+  const map = new Map(); // userId -> ISO string
+  const upd = (uid, tsStr) => {
+    if (!uid || !tsStr) return;
+    let t = Date.parse(tsStr);
+    if (!Number.isFinite(t)) {
+      // Try to parse locale date like "10/23/2025, 1:12:03 PM"
+      const d = new Date(tsStr);
+      t = d && !isNaN(d.getTime()) ? d.getTime() : 0;
+    }
+    if (!t) return;
+    const prev = map.get(String(uid));
+    if (!prev || Date.parse(prev) < t) map.set(String(uid), new Date(t).toISOString());
+  };
+
+  try {
+    await ensureBackupsDir();
+    const files = await fsPromises.readdir('backups');
+    const targets = files.filter(f => typeof f === 'string' && f.startsWith('prefs-history-') && f.endsWith('.log'))
+                         .sort().reverse();
+    for (const f of targets) {
+      try {
+        const raw = await fsPromises.readFile(`backups/${f}`, 'utf8');
+        const lines = raw.split(/\r?\n/).filter(Boolean);
+        for (let i = lines.length - 1; i >= 0; i--) {
+          try {
+            const rec = JSON.parse(lines[i]);
+            upd(rec && rec.userId, rec && rec.ts);
+          } catch (_) {}
+        }
+      } catch (_) {}
+    }
+  } catch (_) {}
+
+  // PM2 logs
+  try {
+    const logDir = process.env.PM2_LOG_DIR || (os.homedir ? (os.homedir() + (os.platform()==='win32' ? "\\.pm2\\logs" : "/.pm2/logs")) : "");
+    if (logDir) {
+      const lfiles = await fsPromises.readdir(logDir);
+      const logTargets = lfiles.filter(f => /\.log$/i.test(f)).sort().reverse();
+      for (const f of logTargets) {
+        try {
+          const raw = await fsPromises.readFile(path.join(logDir, f), 'utf8');
+          const lines = raw.split(/\r?\n/).filter(l => l.includes('Set Club Prefs:'));
+          for (let i = lines.length - 1; i >= 0; i--) {
+            const line = lines[i];
+            const m = line.match(/^(.*?)\s+-\s+Set Club Prefs: studentId\s+(\d+)\s+count\s+\d+\s+ids\s+([0-9,\s]+)/);
+            if (!m) continue;
+            const when = m[1].trim();
+            const uid = m[2];
+            upd(uid, when);
+          }
+        } catch (_) {}
+      }
+    }
+  } catch (_) {}
+  return map;
+}
+
+// Chronic no-shows (admin only)
+// Flags students whose absences > minMisses and absenceRate >= minRate (%),
+// computed over all attendance, or limited by ?since=YYYY-MM-DD or ?days=N
+app.get("/students/chronic-no-shows", async (req, res) => {
+  try {
+    const level = coerceAdminLevel(req.query && req.query.isAdmin);
+    if (level < 1) return res.status(403).send({ body: 'Error', error: 'Not authorized' });
+
+    const minMisses = Math.max(1, parseInt(req.query.minMisses, 10) || 3);
+    // Optional: only apply minRate if provided explicitly
+    const hasMinRate = req.query && Object.prototype.hasOwnProperty.call(req.query, 'minRate');
+    const minRate = hasMinRate ? Math.min(100, Math.max(0, parseInt(req.query.minRate, 10) || 0)) : null;
+    // Optional time window: ?since=YYYY-MM-DD or ?days=N (relative to today)
+    const sinceParam = (req.query && req.query.since) ? String(req.query.since) : null;
+    const daysParam = (req.query && req.query.days) ? parseInt(req.query.days, 10) : null;
+
+    const rowsAll = await db.getAllAttendanceRecords();
+    // Filter rows by date window if provided
+    let rows = Array.isArray(rowsAll) ? rowsAll.slice() : [];
+    const asDateStr = (dt) => {
+      try {
+        const d = new Date(dt);
+        const y = d.getFullYear();
+        const m = String(d.getMonth()+1).padStart(2,'0');
+        const da = String(d.getDate()).padStart(2,'0');
+        return `${y}-${m}-${da}`;
+      } catch(_) { return String(dt||''); }
+    };
+    let sinceDate = null;
+    if (sinceParam && /^\d{4}-\d{2}-\d{2}$/.test(sinceParam)) {
+      sinceDate = sinceParam;
+    } else if (Number.isInteger(daysParam) && daysParam > 0) {
+      const now = new Date();
+      now.setDate(now.getDate() - (daysParam - 1));
+      sinceDate = asDateStr(now);
+    }
+    if (sinceDate) {
+      rows = rows.filter(r => String(r.date||'') >= sinceDate);
+    }
+
+    // Build unique set of club days across filtered rows
+    const clubDays = new Set(rows.map(r => String(r.date||'').trim()).filter(Boolean));
+
+    // Per-student aggregated counts with per-day tracking
+    // userId -> { present, absent, lastPresent, dates: Set<date> }
+    const counts = new Map();
+    const norm = (raw) => String(raw||'').split(',').map(s=>s.trim()).filter(Boolean);
+    for (const r of rows) {
+      const d = String(r.date||'');
+      const present = norm(r.studentsPresent);
+      const absent = norm(r.studentsAbsent);
+      for (const uid of present) {
+        const rec = counts.get(uid) || { present:0, absent:0, lastPresent:null, dates:new Set() };
+        rec.present++;
+        rec.lastPresent = d && (!rec.lastPresent || d > rec.lastPresent) ? d : rec.lastPresent;
+        if (d) rec.dates.add(d);
+        counts.set(uid, rec);
+      }
+      for (const uid of absent) {
+        const rec = counts.get(uid) || { present:0, absent:0, lastPresent:null, dates:new Set() };
+        rec.absent++;
+        // Do not update lastPresent on absences; we only track last present date
+        if (d) rec.dates.add(d);
+        counts.set(uid, rec);
+      }
+    }
+
+    const students = await db.getAllTeachersOrStudents(false);
+
+    const flagged = [];
+    for (const s of students) {
+      if (!s || s.isTeacher) continue; // students only
+      const uid = String(s.userId);
+      const base = counts.get(uid) || { present:0, absent:0, lastPresent:null, dates:new Set() };
+      // Consider only on-campus students for unassigned counting (negative clubId = off-campus/opt-out)
+      const onCampus = !(typeof s.clubId === 'number' && s.clubId < 0);
+      const isUnassigned = onCampus && (s.clubId == null);
+      let unassignedExtra = 0;
+      if (isUnassigned) {
+        const recordedDays = (base.dates && typeof base.dates.size === 'number') ? base.dates.size : 0;
+        unassignedExtra = Math.max(0, clubDays.size - recordedDays);
+      }
+      const totalAbsent = (base.absent || 0) + unassignedExtra;
+      const totalPresent = base.present || 0;
+      const total = totalAbsent + totalPresent;
+      if (!total) continue; // no club days under consideration
+      const rate = Math.round((totalAbsent / total) * 100);
+      const meetsMisses = totalAbsent >= minMisses;
+      const meetsRate = (minRate == null) ? true : (rate >= minRate);
+      if (meetsMisses && meetsRate) {
+        flagged.push({
+          userId: s.userId,
+          firstName: s.firstName,
+          lastName: s.lastName,
+          email: s.email,
+          grade: s.grade,
+          clubId: s.clubId,
+          present: totalPresent,
+          absent: totalAbsent,
+          unassignedAbsent: unassignedExtra,
+          absenceRate: rate,
+          lastDate: base.lastPresent
+        });
+      }
+    }
+
+    flagged.sort((a,b)=> (b.absenceRate - a.absenceRate) || (b.absent - a.absent) || String(a.lastName||'').localeCompare(String(b.lastName||'')) );
+
+    res.send({
+      generatedAt: new Date().toISOString(),
+      thresholds: { minMisses, minRate: (minRate==null? undefined : minRate) },
+      totalFlagged: flagged.length,
+      items: flagged
+    });
+  } catch (e) {
+    res.status(500).send({ body: 'Error', error: 'Failed to compute chronic no-shows' });
+  }
+});
+
+// Students who are on-campus, have preferences, but are currently unassigned (admin only)
+app.get("/students/unassigned-with-preferences", async (req, res) => {
+  try {
+    const level = coerceAdminLevel(req.query && req.query.isAdmin);
+    if (level < 1) return res.status(403).send({ body: 'Error', error: 'Not authorized' });
+    const students = await db.getAllTeachersOrStudents(false);
+    const onCampus = students.filter((s) => !(typeof s.clubId === 'number' && s.clubId < 0));
+    const unassigned = onCampus.filter((s) => s.clubId == null);
+    const withPrefs = unassigned.filter((s) => {
+      try { return !!(s && s.clubPreferences && String(s.clubPreferences).trim().length); } catch (_) { return false; }
+    });
+    res.send({ total: withPrefs.length, students: withPrefs });
+  } catch (e) {
+    res.status(500).send({ body: 'Error', error: 'Failed to fetch list' });
+  }
+});
 app.get("/getAllStudentsPagination", async (req, res) => {
   try {
     let isTeacher = false;
@@ -261,6 +588,260 @@ app.get("/getAllClubs", async (req, res) => {
   }
 });
 
+// Fast clubs summary for clubsList: one request with teacher name and assigned counts
+app.get("/clubs/summary", async (req, res) => {
+  try {
+    const clubs = await db.getAllClubs();
+    const users = await db.getAllUsers(); // teachers + students
+    const byId = new Map(users.map(u => [String(u.userId), u]));
+    const students = users.filter(u => !u.isTeacher);
+    const counts = new Map();
+    for (const s of students) {
+      const cid = s && s.clubId;
+      if (cid == null) continue;
+      const key = String(cid);
+      counts.set(key, (counts.get(key) || 0) + 1);
+    }
+    const summary = clubs.map(c => {
+      const teacher = byId.get(String(c.primaryTeacherId)) || {};
+      const assigned = counts.get(String(c.clubId)) || 0;
+      const maxSlots = parseInt(c.maxSlots, 10);
+      return {
+        clubId: c.clubId,
+        clubName: c.clubName,
+        room: c.room || null,
+        primaryTeacherId: c.primaryTeacherId,
+        teacherFirstName: teacher.firstName || null,
+        teacherLastName: teacher.lastName || null,
+        maxSlots: Number.isNaN(maxSlots) ? null : maxSlots,
+        assigned
+      };
+    });
+    res.send({ clubs: summary });
+  } catch (err) {
+    const ts = new Date().toLocaleString();
+    console.log(`Route /clubs/summary failed: ${String(err)} at ${ts}`);
+    res.status(500).send({ body: "Error fetching summary" });
+  }
+});
+
+// Preferences completion stats for on-campus students
+app.get("/stats/preferences-on-campus", async (req, res) => {
+  try {
+    const { total, withPrefs } = await db.getOnCampusPreferencesStats();
+    const percent = total > 0 ? Math.round((withPrefs / total) * 100) : 0;
+    res.send({ total, withPrefs, percent });
+  } catch (e) {
+    res.status(500).send({ body: "Error", error: "Failed to compute stats" });
+  }
+});
+
+// Compute assignment metrics (overall, by grade, by club)
+async function computeAssignmentMetrics() {
+  // Load data
+  const students = await db.getAllTeachersOrStudents(false);
+  const teachers = await db.getAllTeachersOrStudents(true);
+  const clubs = await db.getAllClubs();
+  const clubMap = new Map((clubs || []).map((c) => [String(c.clubId), c]));
+
+  // Helpers
+  const normalizePrefs = (s) => {
+    try {
+      return String(s.clubPreferences || "")
+        .split(",")
+        .map((v) => String(v).trim())
+        .filter((v) => v && v !== "0");
+    } catch (_) { return []; }
+  };
+  const rankOf = (prefs, cid) => {
+    const i = prefs.findIndex((x) => String(x) === String(cid));
+    return i >= 0 ? i + 1 : 0; // 1..5, 0 means not in list
+  };
+  const grades = [9,10,11,12];
+
+  // Demand by club and rank
+  const demand = new Map(); // clubId -> {1:count,...5}
+  for (const s of students) {
+    if (typeof s.clubId === 'number' && s.clubId < 0) continue; // off-campus not part of demand
+    const prefs = normalizePrefs(s);
+    for (let r=1; r<=5; r++) {
+      const cid = prefs[r-1];
+      if (!cid) continue;
+      const key = String(cid);
+      const d = demand.get(key) || {1:0,2:0,3:0,4:0,5:0};
+      d[r]++;
+      demand.set(key, d);
+    }
+  }
+
+  // Assignment stats
+  const onCampus = students.filter((s) => !(typeof s.clubId === 'number' && s.clubId < 0));
+  const assigned = onCampus.filter((s) => s.clubId != null);
+  const unassigned = onCampus.filter((s) => s.clubId == null);
+  const offCampus = students.filter((s) => typeof s.clubId === 'number' && s.clubId < 0);
+
+  const ranks = [];
+  const byGrade = new Map(); // grade -> {count, rankCounts, notInList, assigned}
+  for (const s of assigned) {
+    const prefs = normalizePrefs(s);
+    const r = rankOf(prefs, s.clubId);
+    ranks.push(r);
+    const g = String(s.grade || '');
+    const rec = byGrade.get(g) || { assigned:0, rankCounts:{1:0,2:0,3:0,4:0,5:0,0:0} };
+    rec.assigned++;
+    if (r>=1 && r<=5) rec.rankCounts[r]++;
+    else rec.rankCounts[0]++;
+    byGrade.set(g, rec);
+  }
+
+  const pct = (num, den) => (den > 0 ? Math.round((num/den)*100) : 0);
+  const top1 = ranks.filter((r) => r===1).length;
+  const top2 = ranks.filter((r) => r>0 && r<=2).length;
+  const top3 = ranks.filter((r) => r>0 && r<=3).length;
+  const notIn = ranks.filter((r) => r===0).length;
+  const positiveRanks = ranks.filter(r=>r>0);
+  const avgRank = positiveRanks.length ? (positiveRanks.reduce((a,b)=>a+b,0)/positiveRanks.length) : 0;
+  const sortedRanks = ranks.filter(r=>r>0).sort((a,b)=>a-b);
+  const medianRank = sortedRanks.length ? sortedRanks[Math.floor((sortedRanks.length-1)/2)] : 0;
+  // Satisfaction index (1:100,2:80,3:60,4:40,5:20, else 0)
+  const score = (r) => r===1?100:r===2?80:r===3?60:r===4?40:r===5?20:0;
+  const satisfaction = ranks.length ? Math.round(sortedRanks.concat(ranks.filter(r=>r===0)).reduce((a,r)=>a+score(r),0)/ranks.length) : 0;
+
+  // Build teacher counts per club (advisors/co-sponsors assigned to a club)
+  const teacherCounts = new Map(); // clubId -> count
+  try {
+    for (const t of (teachers || [])) {
+      const cid = t && t.clubId;
+      if (cid == null) continue;
+      if (typeof cid === 'number' && cid < 0) continue; // ignore negative/off-campus codes
+      const key = String(cid);
+      teacherCounts.set(key, (teacherCounts.get(key) || 0) + 1);
+    }
+  } catch (_) {}
+
+  // Per-club stats
+  const byClub = [];
+  for (const c of clubs) {
+    const cid = String(c.clubId);
+    const roster = assigned.filter((s) => Number(s.clubId) === Number(c.clubId));
+    const cap = parseInt(c.maxSlots,10); const capN = Number.isNaN(cap)?0:cap;
+    const fillRatio = capN ? Math.round((roster.length/capN)*100) : null;
+    const d = demand.get(cid) || {1:0,2:0,3:0,4:0,5:0};
+    const gradeMix = {9:0,10:0,11:0,12:0};
+    roster.forEach((s)=>{ const g=parseInt(s.grade,10); if(gradeMix[g]!=null) gradeMix[g]++; });
+    const meetsMin = {
+      9: capBool(gradeMix[9], c.minSlots9),
+      10: capBool(gradeMix[10], c.minSlots10),
+      11: capBool(gradeMix[11], c.minSlots11),
+      12: capBool(gradeMix[12], c.minSlots12)
+    };
+    const tCount = teacherCounts.get(cid) || 0;
+    const studentsPerTeacher = tCount > 0 ? Number((roster.length / tCount).toFixed(1)) : null;
+    byClub.push({
+      clubId: c.clubId,
+      clubName: c.clubName,
+      assigned: roster.length,
+      capacity: capN,
+      fillRatio,
+      demand: d,
+      gradeMix,
+      meetsMin,
+      teacherCount: tCount,
+      studentsPerTeacher
+    });
+  }
+
+  function capBool(actual, minReq) {
+    const m = parseInt(minReq,10); if (Number.isNaN(m) || m<=0) return true; return actual >= m;
+  }
+
+  // Overall teacher coverage and student/teacher ratio (for clubs that have teachers)
+  const totalTeachersWithClubs = Array.from(teacherCounts.values()).reduce((a,b)=>a+b,0);
+  const overallStudentsPerTeacher = totalTeachersWithClubs>0 ? Number((assigned.length/totalTeachersWithClubs).toFixed(1)) : null;
+
+  const out = {
+    generatedAt: new Date().toISOString(),
+    totals: {
+      students: students.length,
+      onCampus: onCampus.length,
+      assigned: assigned.length,
+      unassigned: unassigned.length,
+      offCampus: offCampus.length,
+      top1Rate: pct(top1, assigned.length),
+      top2Rate: pct(top2, assigned.length),
+      top3Rate: pct(top3, assigned.length),
+      notInListRate: pct(notIn, assigned.length),
+      avgRank: Number.isFinite(avgRank) ? Number(avgRank.toFixed(2)) : 0,
+      medianRank,
+      satisfaction,
+      teachers: totalTeachersWithClubs,
+      studentsPerTeacher: overallStudentsPerTeacher
+    },
+    byGrade: Array.from(byGrade.entries()).map(([g, rec]) => ({
+      grade: g,
+      assigned: rec.assigned,
+      top1Rate: pct(rec.rankCounts[1], rec.assigned),
+      top2Rate: pct(rec.rankCounts[1]+rec.rankCounts[2], rec.assigned),
+      top3Rate: pct(rec.rankCounts[1]+rec.rankCounts[2]+rec.rankCounts[3], rec.assigned),
+      notInListRate: pct(rec.rankCounts[0], rec.assigned)
+    })),
+    byClub
+  };
+  return out;
+}
+
+// Save metrics to backups and 'latest' file
+async function saveMetricsSnapshot(metrics) {
+  try { await fsPromises.mkdir('backups', { recursive: true }); } catch (_) {}
+  const ts = new Date().toISOString().replace(/[:.]/g, '-');
+  const latest = 'backups/metrics-latest.json';
+  const file = `backups/metrics-${ts}.json`;
+  await fsPromises.writeFile(file, JSON.stringify(metrics, null, 2), 'utf-8');
+  await fsPromises.writeFile(latest, JSON.stringify(metrics, null, 2), 'utf-8');
+  return { file };
+}
+
+// Run metrics now (admin only)
+function coerceAdminLevel(v) {
+  if (v === true || v === 'true') return 1;
+  const n = Number(v);
+  return Number.isFinite(n) && n > 0 ? n : 0;
+}
+
+app.post('/admin-metrics/run', async (req, res) => {
+  try {
+    const raw = req.body && req.body.isAdmin;
+    const level = coerceAdminLevel(raw);
+    if (level < 1) return res.status(403).send({ body: 'Error', error: 'Not authorized' });
+    const m = await computeAssignmentMetrics();
+    const { file } = await saveMetricsSnapshot(m);
+    res.send({ body: 'Success', metrics: m, file });
+  } catch (e) {
+    res.status(500).send({ body: 'Error', error: 'Failed to compute metrics' });
+  }
+});
+
+// Fetch latest metrics (admin only)
+app.get('/admin-metrics/latest', async (req, res) => {
+  try {
+    const adminParam = req.query && req.query.isAdmin;
+    const level = coerceAdminLevel(adminParam);
+    if (level < 1) return res.status(403).send({ body: 'Error', error: 'Not authorized' });
+    const latest = 'backups/metrics-latest.json';
+    let fileRaw = null;
+    try { fileRaw = await fsPromises.readFile(latest, 'utf-8'); } catch (_) {}
+    if (fileRaw) {
+      try { return res.send(JSON.parse(fileRaw)); } catch (_) {}
+    }
+    // Compute fresh if no latest
+    const m = await computeAssignmentMetrics();
+    await saveMetricsSnapshot(m);
+    res.send(m);
+  } catch (e) {
+    res.status(500).send({ body: 'Error', error: 'Failed to load metrics' });
+  }
+});
+
 app.get("/getClubById", async (req, res) => {
   try {
     const clubId = req.query.club;
@@ -282,8 +863,8 @@ app.get("/club-info/:club", async (req, res) => {
       const clubInfo = await db.getClubInfo(clubId);
       const getAllStudents = await db.getAllUsers();
 
-      const getClubStudents = getAllStudents.filter(
-        (user) => user.clubId === clubId && !user.isTeacher
+    const getClubStudents = getAllStudents.filter(
+        (user) => Number(user.clubId) === Number(clubId) && !user.isTeacher
       );
 
       res.send({ clubInfo: clubInfo, clubStudents: getClubStudents });
@@ -299,6 +880,8 @@ app.get("/club-info/:club", async (req, res) => {
 
 app.get("/users/delete/:id", async (req, res) => {
   try {
+    const level = coerceAdminLevel(req.query && req.query.isAdmin);
+    if (level < 1) return res.status(403).send({ body: "Error", error: "Not authorized" });
     let userId = req.params.id;
     const ts = new Date().toLocaleString();
     console.log(`Delete User Attempt: userId ${userId}`);
@@ -334,6 +917,14 @@ app.get("/users/update/:user/:club/", async (req, res) => {
     console.log(`Assign Club Attempt: userId ${userId} clubId ${clubId}`);
     const club = await db.getClubInfo(clubId);
     const user = await db.getUser(userId);
+    // If target is a student, require admin; allow teacher self-assignment as before
+    const level = coerceAdminLevel(req.query && req.query.isAdmin);
+    if (!user || !user.isTeacher) {
+      if (level < 1) return res.status(403).send({ body: "Error", error: "Not authorized" });
+    }
+    const actorId = (req.query && req.query.actorId) || null;
+    const beforeClub = user ? user.clubId : null;
+    await snapshotAssignments({ reason: `before users/update ${userId} -> ${clubId}`, affectedUserIds: [userId] });
     const allClubs = await db.getAllClubs();
     allClubs.forEach(async (club) => {
       if (club.primaryTeacherId === user.userId) {
@@ -346,6 +937,7 @@ app.get("/users/update/:user/:club/", async (req, res) => {
     const added = await db.assignClub(userId, clubId, user.isTeacher);
     if (added) {
       console.log(`Assign Club Success: userId ${user.userId} clubId ${clubId}`);
+      try { await logAssignmentHistory({ actorId, targetUserId: user.userId, beforeClubId: beforeClub, afterClubId: clubId, actorLevel: level, route: '/users/update' }); } catch (_) {}
       res.send({ body: true, club });
     }
   } catch (e) {
@@ -357,15 +949,20 @@ app.get("/users/update/:user/:club/", async (req, res) => {
 
 app.get("/users/updateStudentClub/:user/:club", async (req, res) => {
   try {
+    const level = coerceAdminLevel(req.query && req.query.isAdmin);
+    if (level < 1) return res.status(403).send({ body: "Error", error: "Not authorized" });
     let userId = req.params.user;
     let clubId = req.params.club;
     const ts = new Date().toLocaleString();
     console.log(`Assign Student Club Attempt: userId ${userId} clubId ${clubId}`);
-
+    await snapshotAssignments({ reason: `before users/updateStudentClub ${userId} -> ${clubId}`, affectedUserIds: [userId] });
+    const actorId = (req.query && req.query.actorId) || null;
+    let beforeClub = null; try { const u = await db.getUser(userId); beforeClub = u && u.clubId; } catch (_) {}
     const added = await db.assignClubToStudent(userId, clubId);
 
     if (added) {
       console.log(`Assign Student Club Success: userId ${userId} clubId ${clubId}`);
+      try { await logAssignmentHistory({ actorId, targetUserId: userId, beforeClubId: beforeClub, afterClubId: clubId, route: '/users/updateStudentClub' }); } catch (_) {}
       res.send({ body: "Success" });
     }
   } catch (e) {
@@ -418,6 +1015,7 @@ app.post("/deleteClub", async (req, res) => {
     console.log(`Delete Club Attempt: clubId ${clubId}`);
     const allUsers = await db.getAllUsersInClub(clubId);
     const usersInClub = allUsers.filter((user) => user.clubId === clubId);
+    await snapshotAssignments({ reason: `before deleteClub ${clubId}`, affectedUserIds: usersInClub.map(u => u.userId) });
     const deleted = await db.deleteClub(clubId);
     if (deleted) {
       console.log(`Delete Club Success: clubId ${clubId}`);
@@ -497,9 +1095,10 @@ app.post("/updateClub", async (req, res) => {
 
 app.post("/submit-attendance", async (req, res) => {
   try {
-    const { presentStudents, absentStudents, clubId, date } = req.body;
-    const ts = new Date().toLocaleString();
-    console.log(`Submit Attendance: clubId ${clubId} date ${date}`);
+    const { presentStudents, absentStudents, clubId, date, submittedBy, submittedByName } = req.body;
+    const ts = new Date();
+    const tsLocal = ts.toLocaleString();
+    console.log(`Submit Attendance: clubId ${clubId} date ${date} by ${submittedBy || 'unknown'}`);
     const success = await db.submitAttendance(
       presentStudents,
       absentStudents,
@@ -507,15 +1106,15 @@ app.post("/submit-attendance", async (req, res) => {
       date
     );
     if (success) {
-      console.log(`Submit Attendance Success: clubId ${clubId} date ${date}`);
-      res.send({ body: "Success" });
+      console.log(`Submit Attendance Success: clubId ${clubId} date ${date} by ${submittedBy || 'unknown'}`);
+      res.send({ body: "Success", savedAt: tsLocal, submittedBy, submittedByName });
     } else {
       res.send({ body: "Error" });
     }
   } catch (e) {
     const timestamp = new Date().toLocaleString();
     console.log(`Route /submit-attendance failed: ${String(e)} at ${timestamp}`);
-    res.send("Error. Contact admin")
+    res.send({ body: "Error" });
   }
 });
 
@@ -566,14 +1165,147 @@ app.post("/setClubPrefs", async (req, res) => {
     const clubPrefs = req.body.clubOrder;
     const studentId = req.body.student;
     const ts = new Date().toLocaleString();
-    console.log(`Set Club Prefs: studentId ${studentId} count ${Array.isArray(clubPrefs) ? clubPrefs.length : (clubPrefs || '').toString().split(',').filter(Boolean).length}`);
+    const idsArray = Array.isArray(clubPrefs)
+      ? clubPrefs
+      : (clubPrefs || '')
+          .toString()
+          .split(',')
+          .map(s => s.trim())
+          .filter(Boolean);
+    const idsJoined = idsArray.join(',');
+    console.log(`Set Club Prefs: studentId ${studentId} count ${idsArray.length} ids ${idsJoined}`);
+    // Load previous record for logging
+    let before = null;
+    try { before = await db.getUser(studentId); } catch (_) {}
     const updateUser = await db.updateClubPrefs(clubPrefs, studentId);
+    // Append to preferences history log (JSONL per month)
+    try {
+      const after = before ? { ...before, clubPreferences: idsJoined } : null;
+      await logPreferencesHistory({ studentId, beforePrefs: before && before.clubPreferences, afterPrefs: idsJoined });
+    } catch (_) {}
     //console.log(updateUser)
     res.send({ body: "Success", updatedUserData: updateUser });
   } catch (e) {
     const ts = new Date().toLocaleString();
     console.log(`Route /setClubPrefs failed: ${String(e)} at ${ts}`);
     res.send("Error. Contact admin")
+  }
+});
+
+// Append a JSON line with a preferences change event
+async function logPreferencesHistory({ studentId, beforePrefs, afterPrefs }) {
+  try {
+    await ensureBackupsDir();
+    const user = await db.getUser(studentId);
+    const day = new Date().toISOString().slice(0, 7); // YYYY-MM
+    const file = `backups/prefs-history-${day}.log`;
+    const rec = {
+      ts: new Date().toISOString(),
+      userId: user && user.userId ? user.userId : studentId,
+      firstName: user && user.firstName,
+      lastName: user && user.lastName,
+      email: user && user.email,
+      grade: user && user.grade,
+      before: (beforePrefs || null),
+      after: (afterPrefs || null)
+    };
+    await fsPromises.appendFile(file, JSON.stringify(rec) + "\n", 'utf8');
+  } catch (e) {
+    console.log('Preferences history log failed:', String(e));
+  }
+}
+
+// Super-admin: search preferences history log files
+app.get('/admin/prefs-history', async (req, res) => {
+  try {
+    const level = coerceAdminLevel(req.query && req.query.isAdmin);
+    if (level < 2) return res.status(403).send({ body: 'Error', error: 'Not authorized' });
+    const q = (req.query && req.query.q ? String(req.query.q) : '').toLowerCase();
+    const limit = Math.min(500, Math.max(1, parseInt(req.query && req.query.limit, 10) || 200));
+    await ensureBackupsDir();
+    const files = await fsPromises.readdir('backups');
+    const targets = files.filter(f => typeof f === 'string' && f.startsWith('prefs-history-') && f.endsWith('.log'))
+                         .sort().reverse();
+    const out = [];
+    const pushRec = (rec) => {
+      try {
+        const hay = [rec.userId, rec.firstName, rec.lastName, rec.email, rec.before, rec.after]
+          .map(v => String(v || '').toLowerCase()).join(' ');
+        if (!q || hay.includes(q)) out.push(rec);
+      } catch (_) {}
+    };
+    for (const f of targets) {
+      try {
+        const raw = await fsPromises.readFile(`backups/${f}`, 'utf8');
+        const lines = raw.split(/\r?\n/).filter(Boolean);
+        for (let i = lines.length - 1; i >= 0; i--) {
+          try {
+            const rec = JSON.parse(lines[i]);
+            pushRec(rec);
+            if (out.length >= limit) break;
+          } catch (_) {}
+        }
+        if (out.length >= limit) break;
+      } catch (_) {}
+    }
+    // If still under limit, scan PM2 logs for historical entries
+    if (out.length < limit) {
+      try {
+        const logDir = process.env.PM2_LOG_DIR || (os.homedir ? (os.homedir() + (os.platform()==='win32' ? "\\.pm2\\logs" : "/.pm2/logs")) : "");
+        if (logDir) {
+          const lfiles = await fsPromises.readdir(logDir);
+          const logTargets = lfiles.filter(f => /\.log$/i.test(f)).sort().reverse();
+          for (const f of logTargets) {
+            try {
+              const raw = await fsPromises.readFile(path.join(logDir, f), 'utf8');
+              const lines = raw.split(/\r?\n/).filter(l => l.includes('Set Club Prefs:'));
+              for (let i = lines.length - 1; i >= 0; i--) {
+                const line = lines[i];
+                const m = line.match(/^(.*?)\s+-\s+Set Club Prefs: studentId\s+(\d+)\s+count\s+\d+\s+ids\s+([0-9,\s]+)/);
+                if (!m) continue;
+                const when = m[1].trim();
+                const uid = m[2];
+                const afterPrefs = m[3].trim();
+                let u = null; try { u = await db.getUser(uid); } catch (_) {}
+                const rec = {
+                  ts: new Date(when).toString() === 'Invalid Date' ? when : new Date(when).toISOString(),
+                  userId: u && u.userId ? u.userId : parseInt(uid,10),
+                  firstName: u && u.firstName,
+                  lastName: u && u.lastName,
+                  email: u && u.email,
+                  grade: u && u.grade,
+                  before: null,
+                  after: afterPrefs
+                };
+                pushRec(rec);
+                if (out.length >= limit) break;
+              }
+              if (out.length >= limit) break;
+            } catch (_) {}
+          }
+        }
+      } catch (_) {}
+    }
+    // Enrich with current assigned club for each record
+    try {
+      const clubs = await db.getAllClubs();
+      const clubById = new Map((clubs||[]).map(c => [String(c.clubId), c]));
+      for (const rec of out) {
+        try {
+          const u = await db.getUser(rec.userId);
+          if (u) {
+            rec.clubId = u.clubId;
+            const key = u.clubId==null ? null : String(u.clubId);
+            const club = key ? clubById.get(key) : null;
+            rec.clubName = club ? club.clubName : null;
+          }
+        } catch (_) {}
+      }
+    } catch (_) {}
+
+    res.send({ total: out.length, items: out });
+  } catch (e) {
+    res.status(500).send({ body: 'Error', error: 'Failed to read prefs history' });
   }
 });
 
@@ -661,7 +1393,7 @@ app.post("/login", async (req, res) => {
   const timestamp = new Date().toLocaleString();
   try {
     const rawEmail = req.body.email;
-    console.log(`Login Attempt : ${rawEmail}`);
+    //console.log(`Login Attempt : ${rawEmail}`);
     const wait = loginPrecheck(rawEmail);
     if (wait > 0) {
       console.log(`Login Rate Limited : ${rawEmail} wait ${wait}s`);
@@ -682,13 +1414,19 @@ app.post("/login", async (req, res) => {
         registerLoginSuccess(email);
         res.send({ body: true, userObject });
       } else {
-
+        // Invalid password. Include role hint so client can tailor messaging
         logWarn("auth.login.failed", { emailMasked: maskEmail(email), reason: "invalid_password" });
         console.log(`Login Failed (invalid password) : ${email}`);
         registerLoginFailure(email);
+        let isTeacher = null;
+        try {
+          const info = await db.getUserInfo(email, "email");
+          isTeacher = info ? (parseInt(info.isTeacher, 10) === 1) : null;
+        } catch (_) { /* ignore */ }
         res.send({
           body: false,
           error: "Your password is incorrect. Please try again.",
+          isTeacher,
         });
       }
     } else {
@@ -710,9 +1448,11 @@ app.post("/login", async (req, res) => {
 
 app.post("/admin-erase", async (req, res) => {
   try {
-    if (req.body.isAdmin) {
+    const level = parseInt(req.body && req.body.isAdmin, 10) || 0;
+    if (level > 1) {
       const ts = new Date().toLocaleString();
       console.log(`Admin Erase Student Clubs Attempt`);
+      await snapshotAssignments({ reason: "before admin-erase (remove all student clubs)" });
       const deleted = await db.deleteAllStudentClubs();
       if (deleted) {
         console.log(`Admin Erase Student Clubs Success`);
@@ -728,9 +1468,11 @@ app.post("/admin-erase", async (req, res) => {
 
 app.post("/admin-erase-all-clubs", async (req, res) => {
   try {
-    if (req.body.isAdmin) {
+    const level = parseInt(req.body && req.body.isAdmin, 10) || 0;
+    if (level > 1) {
       const ts = new Date().toLocaleString();
       console.log(`Admin Erase All Clubs Attempt`);
+      await snapshotAssignments({ reason: "before admin-erase-all-clubs (delete all clubs)" });
       const deleted = await db.deleteAllClubs();
       if (deleted) {
         console.log(`Admin Erase All Clubs Success`);
@@ -741,6 +1483,107 @@ app.post("/admin-erase-all-clubs", async (req, res) => {
     const ts = new Date().toLocaleString();
     console.log(`Route /admin-erase-all-clubs failed: ${String(e)} at ${ts}`);
     res.send("Error. Contact admin")
+  }
+});
+
+// All club rosters (admin only)
+app.get('/clubs/rosters', async (req, res) => {
+  try {
+    // Reuse same admin-gating pattern as metrics
+    const adminParam = req.query && req.query.isAdmin;
+    const level = (function coerce(v){ if (v === true || v === 'true') return 1; const n=Number(v); return Number.isFinite(n)&&n>0?n:0; })(adminParam);
+    if (level < 1) return res.status(403).send({ body: 'Error', error: 'Not authorized' });
+
+    const clubs = await db.getAllClubs();
+    const users = await db.getAllUsers();
+
+    // Map of userId -> user for teacher lookups
+    const byId = new Map(users.map(u => [String(u.userId), u]));
+    const students = users.filter(u => !u.isTeacher);
+
+    // Group students by clubId
+    const grouped = new Map();
+    for (const s of students) {
+      const cid = s && s.clubId;
+      if (cid == null) continue;
+      const key = String(cid);
+      if (!grouped.has(key)) grouped.set(key, []);
+      grouped.get(key).push({
+        userId: s.userId,
+        firstName: s.firstName || '',
+        lastName: s.lastName || '',
+        grade: s.grade == null ? null : Number(s.grade)
+      });
+    }
+
+    const rosters = clubs.map(c => {
+      const teacher = byId.get(String(c.primaryTeacherId)) || {};
+      const list = (grouped.get(String(c.clubId)) || []).sort((a,b)=>{
+        const ln = String(a.lastName||'').localeCompare(String(b.lastName||''));
+        if (ln !== 0) return ln;
+        return String(a.firstName||'').localeCompare(String(b.firstName||''));
+      });
+      return {
+        clubId: c.clubId,
+        clubName: c.clubName,
+        room: c.room || null,
+        teacherFirstName: teacher.firstName || null,
+        teacherLastName: teacher.lastName || null,
+        students: list,
+        count: list.length
+      };
+    }).filter(r => r.count > 0)
+      .sort((a,b)=> String(a.clubName||'').localeCompare(String(b.clubName||'')));
+
+    res.send({ generatedAt: new Date().toLocaleString(), rosters });
+  } catch (e) {
+    const ts = new Date().toLocaleString();
+    console.log(`Route /clubs/rosters failed: ${String(e)} at ${ts}`);
+    res.status(500).send({ body: 'Error', error: 'Failed to fetch rosters' });
+  }
+});
+
+// Restore last saved club assignments snapshot
+app.post("/admin-restore-last-assignments", async (req, res) => {
+  try {
+    const level = parseInt(req.body && req.body.isAdmin, 10) || 0;
+    if (level <= 1) {
+      return res.status(403).send({ body: "Error", error: "Not authorized" });
+    }
+    await ensureBackupsDir();
+    const files = await fsPromises.readdir("backups");
+    const candidates = (files || [])
+      .filter((f) => typeof f === "string" && f.startsWith("assignments-") && f.endsWith(".json"))
+      .sort((a, b) => b.localeCompare(a));
+    if (!candidates.length) {
+      return res.status(404).send({ body: "Error", error: "No snapshots found" });
+    }
+    const latest = candidates[0];
+    const raw = await fsPromises.readFile(`backups/${latest}`, "utf8");
+    let data;
+    try { data = JSON.parse(raw); } catch (_) { return res.status(400).send({ body: "Error", error: "Invalid snapshot file" }); }
+    const entries = Array.isArray(data.entries) ? data.entries : [];
+    let applied = 0;
+    for (const e of entries) {
+      if (!e || typeof e.userId === "undefined") continue;
+      const userId = e.userId;
+      const clubId = (e.clubId === null || e.clubId === undefined || e.clubId === "") ? null : e.clubId;
+      await db.updateUserValue(userId, "clubId", clubId);
+      applied++;
+    }
+    console.log(`Assignments restored from ${latest} (applied ${applied})`);
+    // Recompute metrics after restore so UI reflects latest assignments
+    try {
+      const metrics = await computeAssignmentMetrics();
+      await saveMetricsSnapshot(metrics);
+      console.log(`Admin Restore Metrics saved`);
+    } catch (e) {
+      console.log(`Metrics computation failed after restore: ${String(e)}`);
+    }
+    res.send({ body: "Success", file: latest, applied });
+  } catch (e) {
+    console.log("Restore failed:", String(e));
+    res.status(500).send({ body: "Error", error: "Restore failed" });
   }
 });
 
@@ -804,9 +1647,8 @@ app.post("/admin-create-teachers", async (req, res) => {
 // Import teachers from an uploaded old SQLite database
 app.post("/admin-import-teachers", upload.single("olddb"), async (req, res) => {
   try {
-    const adminFlag = String(req.body.isAdmin || "").toLowerCase();
-    const isAdmin = ["true", "1", "yes", "on"].includes(adminFlag);
-    if (!isAdmin) {
+    const level = parseInt(req.body && req.body.isAdmin, 10) || 0;
+    if (level <= 1) {
       return res.status(403).send({ body: "Error", error: "Not authorized" });
     }
     if (!req.file) {
@@ -880,9 +1722,8 @@ app.post("/admin-import-teachers", upload.single("olddb"), async (req, res) => {
 // Import students from uploaded XLS file (drag-and-drop)
 app.post("/admin-import-students-xls", upload.single("studentsXls"), async (req, res) => {
   try {
-    const adminFlag = String(req.body.isAdmin || "").toLowerCase();
-    const isAdmin = ["true", "1", "yes", "on"].includes(adminFlag);
-    if (!isAdmin) {
+    const level = parseInt(req.body && req.body.isAdmin, 10) || 0;
+    if (level <= 1) {
       return res.status(403).send({ body: "Error", error: "Not authorized" });
     }
     if (!req.file) {
@@ -930,25 +1771,108 @@ app.post("/admin-import-students-xls", upload.single("studentsXls"), async (req,
     };
 
     // Preprocess + hash in parallel (limited by libuv threadpool)
-    const candidates = records.filter((r) => r.First_Name);
+    // Helpers to read fields robustly regardless of header variations
+    const normalizeKey = (k) => String(k || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
+    const getField = (row, candidates) => {
+      const map = new Map(Object.keys(row).map((k) => [normalizeKey(k), k]));
+      for (const name of candidates) {
+        const hit = map.get(normalizeKey(name));
+        if (hit) return row[hit];
+      }
+      return undefined;
+    };
+
+    const candidates = records.filter((r) => getField(r, ['First_Name','First Name','First']) );
     const prepared = await Promise.all(
       candidates.map(async (student) => {
-        const firstName = (student.First_Name || "").toString();
-        const lastName = (student.Last_Name || "").toString();
-        const email = (student.Student_Email_DONOTUSE || "").toString().toLowerCase();
-        const gradeRaw = student.Grade_Level;
-        const grade =
-          gradeRaw === "" || gradeRaw == null ? null : parseInt(gradeRaw);
-        const dob = (student.DOB || "").toString();
+        // Preserve names exactly as provided (no case/spacing changes)
+        const firstName = (getField(student, ['First_Name','First Name','First']) ?? '').toString();
+        const lastName = (getField(student, ['Last_Name','Last Name','Last']) ?? '').toString();
+        const emailRaw = getField(student, ['Student_Email_DONOTUSE','Student_Email','Student Email','Email']) ?? '';
+        const email = String(emailRaw).toLowerCase();
+        const gradeRaw = getField(student, ['Grade_Level','Grade Level','Grade']);
+        const grade = gradeRaw === '' || gradeRaw == null ? null : parseInt(gradeRaw);
+        const dob = (getField(student, ['DOB','Date of Birth']) ?? '').toString();
         const passwordDate = formatDOBToMMDDYYYY(dob);
         const firstThree = firstName.replace("'", "").substring(0, 3).toLowerCase();
         const passwordPlain = `${passwordDate}${firstThree}`;
         const password = await encryptPassword(passwordPlain);
-        return { firstName, lastName, email, grade, password };
+        // Off-campus detection (tolerate stray edge spaces, but do not store modified)
+        const homeRoomRaw = (getField(student, ['Home_Room','Home Room','Homeroom','HomeRoom']) ?? '').toString();
+        // Normalize only for comparison; do not store modified text
+        const norm = homeRoomRaw.toLowerCase().replace(/\./g, '').replace(/\s+/g,' ').trim();
+        const offCampus = (
+          norm === 'may, olivia laura-ann' ||
+          norm === 'may olivia laura-ann' ||
+          norm.includes('gsp') ||
+          norm.includes('univ high') ||
+          norm.includes('university high') ||
+          norm.includes('chatt st') ||
+          norm.includes('iea student; do not withdraw') ||
+          norm.includes('mechatronics @ vw') ||
+          norm.includes('opportunity high')
+        );
+        return { firstName, lastName, email, grade, password, offCampus };
       })
     );
 
+    // 1) Insert new rows (does not overwrite existing rows)
     const { imported, skipped } = await db.addStudentsBulk(prepared);
+
+    // Log a quick count for visibility when importing
+    try {
+      const offCount = prepared.filter(s=>s.offCampus).length;
+      console.log(`Import Students: detected off-campus rows ${offCount}`);
+      if (offCount === 0) {
+        // Log a small sample of distinct homeroom headers/values for troubleshooting
+        const sample = records.slice(0,3).map(r => ({ keys: Object.keys(r).slice(0,6) }));
+        console.log('Import hint: first row keys sample', sample);
+      }
+    } catch (_) {}
+
+    // 2) Update existing (and newly inserted) rows with latest name/grade (do not touch password, club prefs, roles)
+    await db.run("BEGIN");
+    try {
+      for (const s of prepared) {
+        if (!s.email) continue;
+        await db.run(
+          "UPDATE users SET firstName = ?, lastName = ?, grade = ? WHERE email = ? AND isTeacher = 0",
+          [s.firstName, s.lastName, s.grade == null || Number.isNaN(s.grade) ? null : s.grade, s.email]
+        );
+      }
+      await db.run("COMMIT");
+    } catch (e) {
+      await db.run("ROLLBACK");
+      throw e;
+    }
+
+    // 3) Off-campus toggling every import
+    const offSet = prepared.filter((s) => s.offCampus && s.email).map((s) => s.email);
+    const onSet = prepared.filter((s) => !s.offCampus && s.email).map((s) => s.email);
+
+    // Helper to run IN() batches safely
+    async function runInBatches(emails, sqlBase, batchSize = 500) {
+      for (let i = 0; i < emails.length; i += batchSize) {
+        const batch = emails.slice(i, i + batchSize);
+        if (!batch.length) continue;
+        const placeholders = batch.map(() => '?').join(',');
+        // Ensure parameter values are lowercase to match LOWER(email)
+        const params = batch.map((e) => String(e).toLowerCase());
+        await db.run(sqlBase.replace('@@IN@@', placeholders), params);
+      }
+    }
+
+    // Set clubId = -1 for off-campus (overrides existing assignment)
+    await runInBatches(
+      offSet,
+      "UPDATE users SET clubId = -1 WHERE isTeacher = 0 AND LOWER(email) IN (@@IN@@)"
+    );
+
+    // Clear clubId from -1 back to NULL for those no longer off-campus
+    await runInBatches(
+      onSet,
+      "UPDATE users SET clubId = NULL WHERE isTeacher = 0 AND clubId = -1 AND LOWER(email) IN (@@IN@@)"
+    );
     console.log(`Admin Import Students Done: imported ${imported} skipped ${skipped}`);
     res.send({ body: "Success", imported, skipped });
   } catch (e) {
@@ -977,12 +1901,41 @@ app.post("/admin-erase-students", async (req, res) => {
 
 app.get("/admin-club-assignment", async (req, res) => {
   try {
+    const level = parseInt(req.query && req.query.isAdmin, 10) || 0;
+    if (level <= 1) {
+      return res.status(403).send({ body: "Error", error: "Not authorized" });
+    }
     const ts = new Date().toLocaleString();
     console.log(`Admin Club Assignment Begin`);
+    // Count currently assigned on-campus students before run
+    let assignedBefore = 0;
+    try {
+      const all = await db.getAllTeachersOrStudents(false);
+      const onCampus = all.filter((s) => !(typeof s.clubId === 'number' && s.clubId < 0));
+      assignedBefore = onCampus.filter((s) => s.clubId != null).length;
+    } catch (_) {}
+    await snapshotAssignments({ reason: "before admin-club-assignment" });
     const clubAssignment = await ca.main();
     if (clubAssignment) {
-      console.log(`Admin Club Assignment Success`);
-      res.send({ body: "Success" });
+      // Compute and persist metrics after assignment run
+      try {
+        const metrics = await computeAssignmentMetrics();
+        await saveMetricsSnapshot(metrics);
+        console.log(`Admin Club Assignment Metrics saved`);
+      } catch (e) {
+        console.log(`Metrics computation failed after assignment: ${String(e)}`);
+      }
+      // Count assigned after run and compute how many were placed this time
+      let assignedAfter = assignedBefore;
+      try {
+        const all2 = await db.getAllTeachersOrStudents(false);
+        const onCampus2 = all2.filter((s) => !(typeof s.clubId === 'number' && s.clubId < 0));
+        assignedAfter = onCampus2.filter((s) => s.clubId != null).length;
+      } catch (_) {}
+      const placed = Math.max(0, assignedAfter - assignedBefore);
+      console.log(`Admin Club Assignment Success — placed ${placed} students (assigned total: ${assignedAfter})`);
+      try { await logAssignmentRunSummary({ placed, before: assignedBefore, after: assignedAfter }); } catch (_) {}
+      res.send({ body: "Success", placed, assignedTotal: assignedAfter, assignedBefore });
     }
   } catch (e) {
     const ts = new Date().toLocaleString();
@@ -990,6 +1943,24 @@ app.get("/admin-club-assignment", async (req, res) => {
     res.send("Error. Contact admin")
   }
 });
+
+// Append one-line summary for each assignment run
+async function logAssignmentRunSummary({ placed, before, after }) {
+  try {
+    await ensureBackupsDir();
+    const month = new Date().toISOString().slice(0,7); // YYYY-MM
+    const file = `backups/assign-run-summary-${month}.log`;
+    const rec = {
+      ts: new Date().toISOString(),
+      placed: Number(placed||0),
+      assignedBefore: Number(before||0),
+      assignedAfter: Number(after||0)
+    };
+    await fsPromises.appendFile(file, JSON.stringify(rec) + "\n", 'utf8');
+  } catch (e) {
+    console.log('Assign run summary log failed:', String(e));
+  }
+}
 
 // Start the server
 app.listen(PORT, () => {
@@ -1070,14 +2041,16 @@ app.get("/check-reset-email", async (req, res) => {
 
     const userExists = await db.checkUser(email);
     const exists = userExists !== "User does not exist" && userExists && userExists.userExists === true;
-    const ts = new Date().toLocaleString();
-    console.log(`Check Reset Email : ${email} exists=${exists} at ${ts}`);
-    logInfo("reset.checkEmail", { emailMasked: maskEmail(email), exists });
-    res.send({ body: userExists });
+    // Intentionally do not log this pre-check to console to reduce noise
+    // Only surface logs when emails are sent or resets succeed/fail
+    // Return minimal info consumed by the login page for teacher link display
+    if (exists) {
+      res.send({ body: { exists: true, isTeacher: userExists.isTeacher } });
+    } else {
+      res.send({ body: "User does not exist" });
+    }
   } catch (e) {
-    const ts = new Date().toLocaleString();
-    console.log(`Check Reset Email Error : ${String(e)} at ${ts}`);
-    logError("reset.checkEmail.error", { error: String(e) });
+    // Suppress noisy pre-check errors in logs; client will handle UI state
     res.send("Error. Contact admin")
   }
 });
@@ -1086,9 +2059,7 @@ app.post("/request-password-confirm", async (req, res) => {
   try {
     const password = req.body.password;
     const userToken = req.body.token;
-    const ts = new Date().toLocaleString();
-    console.log(`Reset Confirm Begin : token ${shortToken(userToken)}`);
-    logInfo("reset.confirm.begin", { token: shortToken(userToken) });
+    // Do not log begin event; only log success/failure outcomes
     const databaseInfo = await db.checkResetPasswordToken(userToken);
     if (!databaseInfo) {
       console.log(`Reset Confirm Invalid Token : token ${shortToken(userToken)}`);
@@ -1128,6 +2099,8 @@ app.post("/request-password-confirm", async (req, res) => {
       } catch (e) {
         logError("reset.confirm.tokenDelete.error", { userId: databaseInfo.user_id, error: String(e) });
       }
+      // Persistent log entry for successful password resets
+      try { await logPasswordResetSuccess({ userId: databaseInfo.user_id, email: userRecord && userRecord.email }); } catch (_) {}
       console.log(`Reset Confirm Success : userId ${databaseInfo.user_id}`);
       logInfo("reset.confirm.success", { userId: databaseInfo.user_id, token: shortToken(userToken) });
       return res.send({ body: "Success" });
@@ -1137,9 +2110,8 @@ app.post("/request-password-confirm", async (req, res) => {
       return res.status(400).send({ body: "Error", reason: "Expired token" });
     }
   } catch (err) {
-    const ts = new Date().toLocaleString();
+    // Log only as an outcome (unsuccessful reset)
     console.log(`Reset Confirm Error : ${String(err)}`);
-    logError("reset.confirm.error", { error: String(err) });
     res.send({ body: "Error" });
   }
 });
@@ -1149,11 +2121,9 @@ app.post("/request-password-reset", async (req, res) => {
     const email = req.body.email.toLowerCase();
     const userObject = await db.getUserByEmail(email);
     const userId = userObject && userObject.userId;
-    const ts = new Date().toLocaleString();
-    console.log(`Reset Requested : ${email}`);
+    // Do not log request initiation; only log send success/failure
     const resetWait = resetPrecheck(email);
     if (resetWait > 0) {
-      console.log(`Reset Rate Limited : ${email} wait ${resetWait}s`);
       return res.send({ body: "Error", error: `Too many reset requests. Please wait ${resetWait}s and try again.` });
     }
     // record this request toward rate limits regardless of role
@@ -1216,15 +2186,12 @@ app.post("/request-password-reset", async (req, res) => {
         res.send({ body: "Success", email: email });
       });
     } else {
-      // Do not send a token; indicate not allowed
-      console.log(`Reset Request Blocked (not teacher) : ${email}`);
-      logWarn("reset.request.notTeacher", { emailMasked: maskEmail(email), userId, isTeacher: userObject ? userObject.isTeacher : undefined });
+      // Do not send a token; indicate not allowed (no console log)
       return res.send({ body: "NotTeacher" });
     }
   } catch (err) {
-    const ts = new Date().toLocaleString();
+    // Log only if helpful; keep minimal
     console.log(`Reset Request Error : ${String(err)}`);
-    logError("reset.request.error", { error: String(err) });
     res.send({ body: "Error" });
   }
 });

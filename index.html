@@ -4,9 +4,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RBHS Club Manager</title>
+  <title>RBHS Clubs — Login</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/css/uikit.min.css" />
   <link rel="stylesheet" href="./css/styles.css" />
+  <link rel="icon" href="./img/rbhs.png" type="image/png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap" rel="stylesheet" />
@@ -19,7 +20,7 @@
     <a href="index.html" aria-label="Home">
       <img src="./img/rbhs.png" alt="RBHS logo" class="logo" />
     </a>
-    <h1 class="roboto uk-text-bold text-center brand">RBHS Clubs</h1>
+    <h1 class="roboto uk-text-bold text-center brand">RBHS Clubs Login</h1>
 
     <div id="server-status" aria-live="polite"></div>
 
@@ -38,7 +39,11 @@
           <div class="uk-margin-small">
             <div class="uk-inline uk-width-1-1">
               <span class="uk-form-icon" uk-icon="icon: lock"></span>
-              <input class="uk-input" type="password" id="password" name="password" autocomplete="current-password" aria-describedby="errormessage" required />
+              <input class="uk-input" type="password" id="password" name="password" autocomplete="current-password" autocapitalize="none" autocorrect="off" aria-describedby="errormessage" required />
+              <a class="uk-form-icon uk-form-icon-flip" href="#" id="toggle-password" aria-label="Show password" title="Show password" uk-icon="icon: eye"></a>
+            </div>
+            <div class="uk-margin-small-top">
+              <label><input class="uk-checkbox" type="checkbox" id="toggle-password-checkbox"> Show password</label>
             </div>
           </div>
 
@@ -52,7 +57,10 @@
           </div>
         </form>
       </div>
-      <!-- <div class="text-center uk-margin-small-top"><a href="reset.html">Reset Password</a></div> -->
+      <div id="teacher-reset-link" class="text-center uk-margin-small-top hidden">
+        <button id="reset-now" type="button" class="uk-button uk-button-primary btn-wide" aria-label="Reset password">Reset Password</button>
+        <div id="reset-status" class="uk-margin-small-top uk-text-meta hidden" aria-live="polite"></div>
+      </div>
     </div>
 
   </div>

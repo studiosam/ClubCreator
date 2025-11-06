@@ -50,16 +50,16 @@ async function finishStudentDashboard() {
     })
   );
 
-  // Filter the clubs based on the specified conditions
+  // Filter the clubs: do NOT show clubs that are already full
   const clubs = clubStudentCounts.filter((club) => {
-    const minSlotsGrade = club[`minSlots${user.grade}`];
-
-    const totalMinSlots =
-      club.minSlots9 + club.minSlots10 + club.minSlots11 + club.minSlots12;
-
-    const hasAvailableSlots = club.studentCount.students.length < club.maxSlots;
-    console.log(hasAvailableSlots);
-    return minSlotsGrade > 0 || (totalMinSlots === 0 && hasAvailableSlots);
+    const cap = parseInt(club.maxSlots, 10);
+    const count = (club.studentCount && club.studentCount.students) ? club.studentCount.students.length : 0;
+    // Enforce capacity strictly:
+    // - cap > 0: allow only if count < cap
+    // - cap <= 0: treat as closed (students cannot pick these clubs)
+    // - non-numeric/missing cap: allow
+    const hasAvailableSlots = Number.isFinite(cap) ? (cap > 0 && count < cap) : true;
+    return hasAvailableSlots;
   });
   console.log(clubs)
   const myAssignedClub = await respClubs.filter(

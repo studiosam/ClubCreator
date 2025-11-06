@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RBHS Clubs — Missing Preferences</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/css/uikit.min.css" />
+  <link rel="stylesheet" href="./css/styles.css" />
+  <link rel="icon" href="./img/rbhs.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/js/uikit.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/js/uikit-icons.min.js"></script>
+  <style>
+    .count-chip { margin-left: 8px; }
+  </style>
+</head>
+<body>
+  <div class="uk-flex">
+    <div id="side-nav" class="text-center">
+      <img class="uk-margin-medium-top uk-margin-medium-bottom" src="./img/rbhs.png" />
+      <ul class="dash-nav uk-nav uk-margin-small-top">
+        <li class="uk-active">
+          <a id="homepage-link" href="home-teacher.html"><span uk-icon="home"></span>Dashboard</a>
+        </li>
+        <li>
+          <a href="create-club.html"><span uk-icon="plus"></span>Create Club</a>
+        </li>
+        <li>
+          <a href="clubsList.html"><span uk-icon="info"></span>Club List</a>
+        </li>
+      </ul>
+    </div>
+    <div id="right">
+      <div class="menu-panel">
+        <img class="uk-preserve-width uk-border-circle uk-margin-small-right avatar" src="" width="40" height="40" alt="user avatar" />
+        <p id="user-name">Name</p>
+        <button class="uk-button logout-button" onclick="logout()">Logout</button>
+      </div>
+
+      <div class="uk-container uk-width-1-1">
+        <h1 class="uk-margin-medium-left">Students Missing Preferences <span id="nopref-count" class="uk-badge count-chip">0</span></h1>
+        <div id="search-bar" class="uk-margin-left uk-margin-small-bottom uk-flex uk-flex-between uk-flex-middle uk-flex-wrap">
+          <div class="uk-search uk-search-default uk-width-medium">
+            <span uk-search-icon></span>
+            <input id="search-input" class="uk-search-input" type="search" placeholder="Search" aria-label="Search" />
+          </div>
+          <div class="uk-margin-small-top">
+            <button id="print-nopref-btn" class="uk-button uk-button-default">Print Names</button>
+          </div>
+        </div>
+        <div class="uk-overflow-auto">
+          <table class="uk-table uk-table-middle uk-table-divider">
+            <thead>
+              <tr class="table-heading">
+                <th class="uk-table-shrink">Avatar</th>
+                <th class="uk-table-shrink uk-text-nowrap" onclick="sortTable(2, 'userId')">User ID</th>
+                <th class="uk-table-shrink" onclick="sortTable(3, 'firstName')">Name</th>
+                <th class="uk-table-shrink" onclick="sortTable(4, 'email')">Email</th>
+                <th class="uk-table-shrink uk-text-nowrap" onclick="sortTable(5, 'grade')">Grade</th>
+                <th class="uk-table-shrink uk-text-nowrap" onclick="sortTable(6, 'room')">Room</th>
+                <th class="uk-table-shrink uk-text-nowrap" onclick="sortTable(7, 'clubId')">Club</th>
+              </tr>
+            </thead>
+            <tbody id="nopref-table"></tbody>
+          </table>
+          <div id="pagination" class="text-center uk-flex uk-flex-center uk-flex-column uk-margin-top">
+            <div class="text-center" id="page-info"></div>
+            <div class="text-center uk-margin-medium-bottom">
+              <button class="uk-button uk-button-danger uk-width-small" id="prev-button" onclick="previousPage()">Previous</button>
+              <button class="uk-button uk-button-primary uk-width-small" id="next-button" onclick="nextPage()">Next</button>
+            </div>
+          </div>
+          <div id="nopref-empty" class="uk-text-meta uk-margin">Loading…</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="serverVariables.js"></script>
+  <script src="userData.js"></script>
+  <script src="studentsNoPrefs.js"></script>
+</body>
+</html>

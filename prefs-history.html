@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RBHS Clubs — Preferences History</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/css/uikit.min.css" />
+  <link rel="stylesheet" href="./css/styles.css" />
+  <link rel="icon" href="./img/rbhs.png" type="image/png" />
+  <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/js/uikit.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/js/uikit-icons.min.js"></script>
+</head>
+<body>
+  <div class="uk-flex">
+    <div id="side-nav" class="text-center">
+      <img class="uk-margin-medium-top uk-margin-medium-bottom" src="./img/rbhs.png" />
+      <ul class="dash-nav uk-nav uk-margin-small-top">
+        <li class="uk-active"><a id="homepage-link" href="home-teacher.html"><span uk-icon="home"></span>Dashboard</a></li>
+        <li><a href="create-club.html"><span uk-icon="plus"></span>Choose/Create Club</a></li>
+        <li><a href="clubsList.html"><span uk-icon="info"></span>Club List</a></li>
+      </ul>
+    </div>
+    <div id="right">
+      <div class="menu-panel">
+        <img class="uk-preserve-width uk-border-circle uk-margin-small-right avatar" src="" width="40" height="40" alt="user avatar" />
+        <p id="user-name">Name</p>
+        <button class="uk-button logout-button" onclick="logout()">Logout</button>
+      </div>
+
+      <div class="uk-container uk-container-expand uk-padding">
+        <h1 class="roboto">Preferences History</h1>
+        <div class="uk-flex uk-flex-middle uk-margin">
+          <div class="uk-search uk-search-default uk-width-medium">
+            <span uk-search-icon></span>
+            <input id="ph-search" class="uk-search-input" type="search" placeholder="Search (name, email, id)" aria-label="Search" />
+          </div>
+          <button id="ph-refresh" class="uk-button uk-button-primary uk-margin-small-left">Search</button>
+          <button id="ph-print" class="uk-button uk-button-default uk-margin-small-left">Print</button>
+        </div>
+        <div class="uk-overflow-auto">
+          <table class="uk-table uk-table-divider uk-table-small" id="ph-table"></table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="serverVariables.js"></script>
+  <script src="userData.js"></script>
+  <script src="prefsHistory.js"></script>
+</body>
+</html>

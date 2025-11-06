@@ -4,9 +4,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RBHS Teacher Home Page</title>
+  <title>RBHS Clubs — Club Info</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/css/uikit.min.css" />
   <link rel="stylesheet" href="./css/styles.css" />
+  <link rel="icon" href="./img/rbhs.png" type="image/png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap" rel="stylesheet" />
@@ -23,7 +24,7 @@
           <a id="homepage-link" href="home-teacher.html"><span uk-icon="home"></span>Dashboard</a>
         </li>
         <li>
-          <a id="create-link" href="create-club.html"><span uk-icon="plus"></span>Create Club</a>
+          <a id="create-link" href="create-club.html"><span uk-icon="plus"></span>Choose/Create Club</a>
         </li>
         <li>
           <a href="clubsList.html"><span uk-icon="info"></span>Club List</a>
@@ -91,6 +92,18 @@
   <script src="serverVariables.js"></script>
   <script src="clubInfo.js"></script>
   <script src="userData.js"></script>
+  <!-- Unsaved changes modal -->
+  <div id="unsaved-modal" uk-modal>
+    <div class="uk-modal-dialog uk-modal-body">
+      <h3 class="uk-modal-title">Unsaved Attendance</h3>
+      <p>You have changes that aren’t saved yet. Submit attendance before leaving, or leave without saving.</p>
+      <div class="uk-text-right">
+        <button class="uk-button uk-button-default uk-modal-close" type="button">Stay on page</button>
+        <button id="unsaved-leave" class="uk-button uk-button-danger" type="button">Leave without saving</button>
+      </div>
+    </div>
+  </div>
 </body>
 
 </html>
+

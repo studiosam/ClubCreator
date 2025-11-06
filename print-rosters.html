@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RBHS Clubs — Print Rosters</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/css/uikit.min.css" />
+  <link rel="stylesheet" href="./css/styles.css" />
+  <link rel="icon" href="./img/rbhs.png" type="image/png" />
+</head>
+<body>
+  <div class="print-container">
+    <div class="print-controls uk-flex uk-flex-between uk-flex-middle">
+      <h1 class="roboto uk-margin-remove">Club Rosters</h1>
+      <div>
+        <button id="print-all" class="uk-button uk-button-primary uk-border-rounded">Print</button>
+      </div>
+    </div>
+    <div id="generated-at" class="uk-text-meta uk-margin-small"></div>
+    <div id="rosters-root" class="uk-margin"></div>
+  </div>
+
+  <script src="serverVariables.js"></script>
+  <script src="print-rosters.js"></script>
+</body>
+</html>

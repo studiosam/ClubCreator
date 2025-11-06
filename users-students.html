@@ -4,9 +4,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Page</title>
+    <title>RBHS Clubs — Students</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/css/uikit.min.css" />
   <link rel="stylesheet" href="./css/styles.css" />
+  <link rel="icon" href="./img/rbhs.png" type="image/png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap" rel="stylesheet" />
@@ -24,7 +25,7 @@
           <a id="homepage-link" href="home-teacher.html"><span uk-icon="home"></span>Dashboard</a>
         </li>
         <li>
-          <a href="create-club.html"><span uk-icon="plus"></span>Create Club</a>
+          <a href="create-club.html"><span uk-icon="plus"></span>Choose/Create Club</a>
         </li>
         <li>
           <a href="clubsList.html"><span uk-icon="info"></span>Club List</a>
@@ -50,7 +51,7 @@
           <div id="selected-user-name" class="uk-text-meta uk-margin-small-top"></div>
           <ul class="uk-nav uk-nav-default uk-margin-top">
 
-            <li class="uk-margin-medium-top">
+            <li class="uk-margin-medium-top" data-adminonly>
               <p id="assign-label">Assign Student to Club</p>
               <div class="uk-margin-small-top">
                 <select id="club-select" class="uk-select">
@@ -59,7 +60,7 @@
                 <button class="uk-button uk-button-default uk-margin-small-top" onclick="addToClub()">Add</button>
               </div>
             </li>
-            <li style="cursor: pointer;" onclick="deleteSelectedUsers()"><button
+            <li style="cursor: pointer;" data-adminonly onclick="deleteSelectedUsers()"><button
                 class="uk-margin-medium-top uk-button uk-button-danger">Delete User(s)</button><img
                 class="uk-margin-medium-top uk-margin-small-left" width="50px" src="img/trash-can.png" alt=""><span
                 id="deletion-items" class="uk-badge"></span></li>
@@ -68,7 +69,7 @@
 
         </div>
       </div>
-      <h1 class="uk-margin-medium-left">ADMIN MENU</h1>
+      <h1 id="students-page-title" class="uk-margin-medium-left">Students</h1>
       <div class="uk-container uk-width-1-1">
         <div id="search-bar">
           <div class="uk-search uk-search-default uk-width-medium">
@@ -125,3 +126,5 @@
 </body>
 
 </html>
+
+

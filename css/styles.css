@@ -140,6 +140,13 @@ body {
   background-color: #0a0a0a;
 }
 
+/* Print Rosters – screen defaults */
+.print-container { max-width: 1024px; margin: 16px auto; padding: 8px 12px; }
+.print-controls { margin-bottom: 8px; }
+.roster-card { background: #1a1a1a; border: 1px solid #2b2b2b; border-radius: 8px; padding: 12px; margin: 10px 0; }
+.roster-header h2 { margin: 0 0 4px 0; }
+.roster-list { margin: 8px 0 0 20px; }
+
 /* Attendance cards (club-info.html) */
 #club-students .student {
   cursor: pointer;
@@ -200,10 +207,30 @@ body {
 .attendance-actions {
   display: flex;
   justify-content: center;
-  align-items: center;
-  gap: 12px;
+  align-items: flex-start; /* align buttons tops when status text is under submit */
+  gap: 10px;
   margin-top: 12px;
   flex-wrap: wrap;
+}
+
+/* Submit+status vertical stack */
+#attendance-submission { display: flex; flex-direction: column; align-items: center; }
+#attendance-saved-status { min-height: 1.2em; color: var(--muted); }
+
+/* Super-admin gating: hide by default; JS reveals for isAdmin > 1 */
+[data-superonly] { display: none !important; }
+[data-superonly].super-visible { display: inline-block !important; }
+/* Force flex layout when the element itself is a row container */
+[data-superonly].super-visible.super-actions { display: flex !important; }
+/* Keep flex container for super-actions when revealed */
+.super-actions.super-visible { display: flex !important; justify-content: center !important; width: 100% !important; }
+/* Admin-only controls in pages (hidden for teachers by default) */
+[data-adminonly] { display: none !important; }
+[data-adminonly].admin-visible { display: block !important; }
+
+/* Make sortable/clickable table headers show pointer cursor */
+table th[onclick], th.sortable {
+  cursor: pointer;
 }
 .attendance-actions .btn-modern {
   min-width: 220px;
@@ -239,6 +266,89 @@ body {
 .btn-modern.btn-secondary:hover,
 .btn-modern.btn-secondary:focus {
   border-color: var(--muted);
+}
+
+/* Print-friendly styles for metrics (Letter, portrait) */
+@media print {
+  @page {
+    size: Letter portrait;
+    margin: 0.5in;
+  }
+  :root {
+    color-scheme: light;
+  }
+  html, body {
+    background: #ffffff !important;
+  }
+  body {
+    color: #000000 !important;
+    margin: 0 !important;
+    font-family: Arial, Helvetica, sans-serif !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  /* Hide chrome and navigation in print */
+  #side-nav,
+  .menu-panel,
+  .logout-button,
+  .print-hide,
+  [uk-icon] svg,
+  /* Hide UIkit toast notifications (e.g., 'Metrics recalculated') */
+  .uk-notification { display: none !important; }
+  /* Collapse app layout margins */
+  .uk-flex { display: block !important; }
+  #right { margin-left: 0 !important; width: 100% !important; }
+  /* Expand content */
+  .uk-container, .uk-container-expand {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+  }
+  .uk-padding { padding: 0 !important; }
+  h1, h2, h3, h4, h5 { color: #000 !important; }
+  h1.roboto { text-align: center; font-size: 16pt !important; }
+  #metrics-status { float: right; font-size: 9pt !important; color: #444 !important; }
+  /* Print Rosters page: hide controls */
+  .print-controls { display: none !important; }
+  .print-container { margin: 0 !important; padding: 0 !important; }
+  .roster-card { background: #fff !important; border: 1px solid #000 !important; page-break-inside: avoid !important; break-inside: avoid !important; margin: 8px 0 !important; }
+  .roster-header h2 { color: #000 !important; font-size: 14pt !important; }
+  .roster-list { columns: 2; -webkit-columns: 2; column-gap: 18px; font-size: 10pt !important; }
+  .roster-list li { break-inside: avoid; page-break-inside: avoid; line-height: 1.35; }
+  /* Make cards simple boxes in print */
+  .uk-card {
+    box-shadow: none !important;
+    background: #fff !important;
+    border: 1px solid #000 !important;
+  }
+  /* Summary cards layout: two per row */
+  #metrics-summary { display: block !important; }
+  #metrics-summary > div {
+    display: inline-block !important;
+    width: 48% !important;
+    margin: 0 1% 8px 1% !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+  /* Tables: full width, readable borders */
+  .uk-overflow-auto { overflow: visible !important; }
+  table { width: 100% !important; border-collapse: collapse !important; font-size: 10pt !important; margin: 0 !important; }
+  thead { display: table-header-group !important; }
+  #metrics-bygrade th, #metrics-bygrade td,
+  #metrics-byclub th, #metrics-byclub td {
+    border: 1px solid #000 !important;
+    color: #000 !important;
+    background: #fff !important;
+    padding: 4px 6px !important;
+  }
+  /* Right-align numbers for clarity */
+  #metrics-bygrade th:not(:first-child), #metrics-bygrade td:not(:first-child),
+  #metrics-byclub th:not(:first-child), #metrics-byclub td:not(:first-child) {
+    text-align: right !important;
+  }
+  .uk-table-divider > :is(thead,tbody,tfoot) > tr { border-top: 1px solid #000 !important; }
+  /* Avoid breaking inside tables/rows */
+  table, tr, td, th { page-break-inside: avoid !important; break-inside: avoid !important; }
 }
 
 /* Dark variant for print roster */
@@ -516,20 +626,20 @@ a:hover, .uk-link:hover {
   border-radius: 12px;
   border: 1px solid var(--card-border);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
-  width: clamp(280px, 20vw, 400px); /* narrower than before */
-  padding: 20px;                    /* less padding */
+  width: clamp(320px, 85vw, 520px); /* wider base to reduce wrapping */
+  padding: 20px;
   margin: 0 auto;
   font-size: clamp(13px, 0.9vw, 15px); /* smaller text inside */
 }
 
 @media (min-width: 640px) {
-  .auth-page .auth-card { width: clamp(380px, 34vw, 640px); }
+  .auth-page .auth-card { width: clamp(560px, 60vw, 820px); }
 }
 @media (min-width: 960px) {
-  .auth-page .auth-card { width: clamp(420px, 30vw, 700px); padding: 36px; }
+  .auth-page .auth-card { width: clamp(640px, 52vw, 900px); padding: 36px; }
 }
 @media (min-width: 1400px) {
-  .auth-page .auth-card { width: clamp(480px, 26vw, 760px); }
+  .auth-page .auth-card { width: clamp(720px, 44vw, 1000px); }
 }
 
 .auth-card label {
@@ -560,6 +670,24 @@ a:hover, .uk-link:hover {
 
 .auth-card #error {
   border-left: 4px solid #ef4444;
+}
+
+/* Keep each guidance line on a single line (breaks only at <br>) */
+.auth-card #errormessage {
+  white-space: nowrap;
+}
+
+/* Reduce vertical padding/spacing on shorter viewports to avoid scroll */
+@media (max-height: 800px) {
+  .auth-page .wrapper { padding: 2rem 1rem; gap: 0.75rem; }
+  .auth-page .logo { height: clamp(72px, 8vh, 120px); }
+  .auth-page .auth-card { padding: 16px; }
+}
+
+@media (max-height: 640px) {
+  .auth-page .wrapper { padding: 1rem 0.75rem; gap: 0.5rem; }
+  .auth-page .brand { margin: 0.15rem 0 0.5rem; }
+  .auth-page .auth-card { padding: 12px; }
 }
 
 .horizontal {
@@ -737,6 +865,8 @@ tbody tr:hover { background-color: #2b2f36; }
   display: flex;
   justify-content: center;
   align-items: center;
+  border-radius: 12px; /* match card rounding */
+  overflow: hidden;    /* clip inner corners of background */
 }
 
 .student-club-cover { margin-right: 25px; }
@@ -852,3 +982,252 @@ tbody tr:hover { background-color: #2b2f36; }
 html {
   font-size: clamp(12px, 0.9vw, 16px);
 }
+[data-superonly] { display: none !important; }
+[data-superonly].super-visible { display: inline-block !important; }
+
+/* Green button style for Assign Clubs */
+.btn-green {
+  background-color: #16a34a !important; /* Tailwind green-600 */
+  color: #fff !important;
+  border-color: transparent !important;
+}
+.btn-green:hover {
+  background-color: #15803d !important; /* green-700 */
+}
+.btn-green:disabled {
+  opacity: 0.7;
+}
+
+/* Inline admin action buttons */
+/* Centered action rows on Admin Home (consistent rails) */
+.admin-actions, .super-actions {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+  width: min(100%, 1280px); /* wide enough for 4x 300px buttons + gaps */
+  margin-left: auto;
+  margin-right: auto;
+}
+.super-actions.super-visible { /* ensure same layout even when revealed */
+  display: flex !important;
+  justify-content: center !important;
+  width: min(100%, 1280px) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+.admin-actions > *, .super-actions > * { flex: 0 0 auto; }
+.admin-actions button, .super-actions button {
+  width: 260px; /* slimmer so 4 fit on one line at 100% zoom */
+  height: 56px; /* fixed uniform height */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  white-space: nowrap; /* prevent multi-line wrap */
+  overflow: hidden; /* ensure height stays fixed */
+  text-overflow: ellipsis; /* graceful overflow */
+  box-sizing: border-box; /* include borders in width */
+}
+/* Superadmin-only visual cue: red border (deep) except destructive remove button */
+[data-superonly].super-visible .uk-button:not(#delete-all-student-clubs-trigger) { border: 2px solid #FF0000 !important; }
+#delete-all-student-clubs-trigger { border: 2px solid #FF0000 !important; }
+/* Ensure Remove All Student Clubs button keeps its own softer border, not the global superadmin border */
+[data-superonly].super-visible #delete-all-student-clubs-trigger { border: 2px solid #FF0000 !important; }
+
+/* Make Remove All Student Clubs a distinct red (different from border) */
+#delete-all-student-clubs-trigger {
+  background-color: #E15757 !important; /* less saturated fill */
+  border-color: #FF0000 !important; /* bright red border */
+  border-width: 2px !important;
+  border-style: solid !important;
+  color: #fff !important;
+}
+#delete-all-student-clubs-trigger:hover,
+#delete-all-student-clubs-trigger:focus {
+  background-color: #C94747 !important; /* deeper on hover */
+  border-color: #FF0000 !important; /* keep bright red border */
+}
+
+/* Ensure anchors don’t introduce layout variance */
+.admin-actions a, .super-actions a { display: inline-block; }
+
+/* Robust super-admin gating: hide unless explicitly revealed */
+[data-superonly]:not(.super-visible) { display: none !important; }
+[data-superonly].super-visible.super-actions { display: flex !important; }
+[data-superonly].super-visible a, [data-superonly].super-visible button { display: inline-block; }
+
+/* Wide button utility to match dashboard buttons (used on auth pages) */
+.btn-wide {
+  width: 260px;
+  height: 56px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  white-space: nowrap;
+  font-weight: 700;
+}
+/* Hide duplicate Chronic button in super row now that it's placed in admin row */
+.super-actions a[href="chronic-no-shows.html"] { display: none !important; }
+
+/* Chronic No‑Shows toolbar tweaks to match site */
+.cns-toolbar label { display: inline-block; margin: 0 8px 0 0; }
+.cns-toolbar .uk-input { height: 44px; }
+
+/* Slim preferences progress bar */
+.prefs-progress {
+  height: 10px !important;
+  border-radius: 6px;
+}
+
+/* Keep tooltip text on a single line for the progress bar */
+.uk-tooltip.uk-tooltip-nowrap { white-space: nowrap; max-width: none; }
+
+/* Hover tip above progress bar */
+.prefs-wrap { position: relative; }
+.prefs-tip {
+  position: absolute;
+  top: -36px; /* show above bar with same visual gap as labels */
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(80,80,80,0.9);
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 12px; /* match uk-card.uk-border-rounded */
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 120ms ease;
+}
+.prefs-wrap:hover .prefs-tip { opacity: 1; }
+
+/* Align and space subnav badges consistently next to titles */
+/* Home admin subnav: align heading + badge with consistent gap */
+.uk-subnav.notification-wrapper > li > a {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: flex-start !important;
+  gap: 8px;
+}
+.uk-subnav.notification-wrapper > li > a h2 { margin: 0 !important; display: inline-block; }
+.uk-subnav.notification-wrapper > li > a > .uk-badge { margin-left: 6px !important; line-height: 1.1; }
+
+/* Admin Home: make club cards rounded like other cards */
+#approvedClubList .uk-card,
+#clubProposalList .uk-card {
+  border-radius: 12px !important;
+  overflow: hidden;
+}
+.blue-boarder,
+.red-boarder {
+  border-radius: 12px !important;
+  background-color: #ffffff; /* fill gap between border stroke and inner card */
+  overflow: hidden; /* clip inner corners */
+}
+
+/* Admin clubs list: simple link hover (underline + pointer) */
+#approvedClubList a.cover-card-text,
+#clubProposalList a.cover-card-text {
+  text-decoration: none;
+  cursor: pointer;
+}
+#approvedClubList a.cover-card-text:hover,
+#clubProposalList a.cover-card-text:hover {
+  text-decoration: underline;
+}
+
+/* Admin clubs list: keep cards steady on hover; click via explicit buttons only */
+#approvedClubList .uk-card.uk-card-default.uk-card-body,
+#clubProposalList .uk-card.uk-card-default.uk-card-body {
+  cursor: default;
+}
+#approvedClubList .uk-card.uk-card-default.uk-card-body:hover,
+#clubProposalList .uk-card.uk-card-default.uk-card-body:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* Inline row to align Cancel with trash icon */
+.admin-cancel-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Ensure cancel button and trash button share the same height and center content */
+.admin-cancel-row .uk-button,
+.admin-cancel-row .delete {
+  min-height: 44px; /* match normalized button height */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.admin-cancel-row .delete {
+  padding: 0 12px; /* give the icon breathing room */
+  line-height: 1;  /* avoid baseline offsets */
+  margin: 0 !important; /* override global .delete margin-top */
+  align-self: center; /* ensure vertical centering within row */
+}
+.admin-cancel-row .delete img {
+  display: block; /* remove extra baseline gap under images */
+}
+
+/* Keep keyboard focus visible on the link */
+#approvedClubList a.cover-card-text:focus-visible,
+#clubProposalList a.cover-card-text:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  text-decoration: none !important;
+}
+
+/* Club card UX: remove link underline and add clear hover affordance */
+#my-clubs a.uk-link-text,
+#unapproved-clubs a.uk-link-text,
+#cosponsor-clubs a.uk-link-text,
+.student-club-wrapper a.uk-link-text {
+  text-decoration: none !important;
+  border-bottom: none !important;
+}
+#my-clubs a.uk-link-text:hover,
+#unapproved-clubs a.uk-link-text:hover,
+#cosponsor-clubs a.uk-link-text:hover,
+.student-club-wrapper a.uk-link-text:hover {
+  text-decoration: none !important;
+  border-bottom: none !important;
+}
+
+/* Make the whole card feel clickable with a subtle lift */
+#my-clubs .co-sponser-wrapper,
+#unapproved-clubs .co-sponser-wrapper,
+#cosponsor-clubs .co-sponser-wrapper,
+.student-club-wrapper {
+  cursor: pointer;
+  transition: transform 140ms ease, box-shadow 140ms ease, border-color 140ms ease;
+  border: 1px solid var(--card-border);
+  background: var(--card-bg);
+}
+#my-clubs .co-sponser-wrapper:hover,
+#unapproved-clubs .co-sponser-wrapper:hover,
+#cosponsor-clubs .co-sponser-wrapper:hover,
+.student-club-wrapper:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+  border-color: var(--muted);
+}
+
+/* Keep keyboard accessibility clear on links */
+#my-clubs a.uk-link-text:focus-visible,
+#unapproved-clubs a.uk-link-text:focus-visible,
+#cosponsor-clubs a.uk-link-text:focus-visible,
+.student-club-wrapper a.uk-link-text:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  text-decoration: none !important;
+}
+/* Chronic No-Shows toolbar alignment */
+.cns-toolbar { gap: 8px; }
+.cns-toolbar .uk-input { min-height: 44px; }

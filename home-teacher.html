@@ -10,9 +10,10 @@
   <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
   <meta http-equiv="pragma" content="no-cache" />
 
-  <title>RBHS Teacher Home Page</title>
+  <title>RBHS Clubs — Teacher Home</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/css/uikit.min.css" />
   <link rel="stylesheet" href="./css/styles.css" />
+  <link rel="icon" href="./img/rbhs.png" type="image/png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap" rel="stylesheet" />
@@ -47,24 +48,6 @@
         </button>
       </div>
       <!--MAIN DASHBOARD PANEL START-->
-      <div id="main-dashboard-panel" class="uk-container uk-container-expand uk-padding uk-margin-remove">
-
-        <ul id="dashboard-overview" class="horizontal">
-          <li>
-            <div class="uk-card uk-card-default uk-card-body text-center uk-border-rounded">
-              <h3 class="uk-card-title uk-text-bold roboto blue">CURRENT CLUBS</h3>
-              <p id="current-clubs" class="dash-num">0</p">
-            </div>
-          </li>
-          <li>
-            <div class="uk-card uk-card-default uk-card-body text-center uk-border-rounded">
-              <h3 class="uk-card-title uk-text-bold roboto gold">PENDING CLUB APPROVALS</h3>
-              <p id="pending-clubs" class="dash-num">0</p">
-            </div>
-          </li>
-        </ul>
-
-      </div>
       <div class="menu-container">
         <div class="uk-section uk-padding-remove-bottom uk-margin-medium-bottom">
           <div class="uk-container uk-margin-remove">
@@ -72,6 +55,7 @@
               <div class="uk-card uk-card-default uk-border-rounded">
                 <div class="uk-card-header">
                   <h3 class="uk-card-title roboto">My Club</h3>
+                  <div class="uk-text-meta">Click on your club to view the roster and edit attendance.</div>
                 </div>
                 <div id="my-clubs" class="uk-card-body"></div>
                 <div class="uk-card-footer"></div>

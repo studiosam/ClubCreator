@@ -1,0 +1,13 @@
+{
+  "type": "clubAssignmentsSnapshot",
+  "createdAt": "2025-11-06T15:53:41.549Z",
+  "reason": "before users/updateStudentClub 1631 -> 27",
+  "total": 1,
+  "entries": [
+    {
+      "userId": 1631,
+      "clubId": 27,
+      "isTeacher": false
+    }
+  ]
+}

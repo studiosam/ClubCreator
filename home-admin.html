@@ -4,9 +4,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Page</title>
+  <title>RBHS Clubs — Admin Home</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/css/uikit.min.css" />
   <link rel="stylesheet" href="./css/styles.css" />
+  <link rel="icon" href="./img/rbhs.png" type="image/png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap" rel="stylesheet" />
@@ -43,24 +44,32 @@
       </div>
       <!--MAIN DASHBOARD PANEL START-->
       <h1 class="roboto uk-margin-medium-left">ADMIN MENU</h1>
-      <div class="uk-flex uk-margin-medium-left">
-        <div>
-
-          <div class="uk-flex uk-flex-column">
-            <button class="uk-button uk-button-primary uk-margin uk-width-medium" id="assign-students"
-              onclick="assignClubs()">
-              Assign Clubs
-            </button>
-          </div>
-          <div class="uk-flex uk-flex-column">
-            <a href="attendance.html">
-              <button class="uk-button uk-button-primary uk-margin uk-width-medium" id="assign-students">
-                Get Absences
-              </button>
-            </a>
-          </div>
+      <!-- Admin row (centered) -->
+      <div class="admin-actions">
+        <a href="attendance.html"><button class="uk-button uk-button-primary">Get Absences For Date</button></a>
+        <a href="students-no-preferences.html"><button class="uk-button uk-button-primary">Missing Club Selections</button></a>
+        <a href="assigned-not-in-list.html"><button class="uk-button uk-button-primary">Assigned Club Not In Their List</button></a>
+        <a href="chronic-no-shows.html"><button class="uk-button uk-button-primary">Chronic No-Shows</button></a>
+      </div>
+      <!-- Super-admin row (centered, below) -->
+      <div class="super-actions" data-superonly>
+        <a href="prefs-history.html"><button class="uk-button uk-button-default">Preferences History</button></a>
+        <button class="uk-button btn-green" id="assign-students" uk-toggle="target: #delete-confirmation">Assign Student Clubs</button>
+        <button class="uk-button uk-button-danger" id="delete-all-student-clubs-trigger" uk-toggle="target: #delete-confirmation">Remove All Student Clubs</button>
+        <button class="uk-button uk-button-secondary" id="restore-assignments-trigger" uk-toggle="target: #delete-confirmation">Restore Last Assignments</button>
+      </div>
+      <!-- Preferences completion progress (label + percent + slim bar) -->
+      <div class="uk-margin-medium-left uk-margin-medium-right">
+        <div class="uk-flex uk-flex-between uk-flex-middle">
+          <span class="roboto uk-text-meta">Club Preference Submission Rate</span>
+          <span id="prefs-progress-text" class="roboto uk-text-meta">0%</span>
+        </div>
+        <div class="prefs-wrap uk-margin-small-top">
+          <div id="prefs-progress-hover" class="prefs-tip" role="note" aria-live="polite"></div>
+          <progress id="prefs-progress-bar" class="uk-progress prefs-progress" value="0" max="100"></progress>
         </div>
       </div>
+      
       <div class="uk-container" uk-filter="target: .js-filter; animation: slide">
         <ul class="uk-subnav uk-subnav-divider notification-wrapper uk-subnav-pill">
           <li uk-filter-control="filter: .club-proposals">
@@ -87,53 +96,19 @@
           No Approved Clubs
         </div>
         <hr class="uk-margin-large">
-        <div class="uk-grid-small uk-child-width-1-2@m uk-grid" uk-grid>
-          <div>
-            <div class="uk-card uk-card-default uk-card-body uk-border-rounded">
-              <h3 class="roboto">Import Teachers (old .db)</h3>
-              <div id="olddb-drop" class="uk-placeholder uk-text-center uk-border-rounded">
-                <span uk-icon="icon: database"></span>
-                <span class="uk-text-middle">Drag and drop old SQLite DB here or</span>
-                <div uk-form-custom>
-                  <input type="file" id="olddb-input" accept=".db,.sqlite" />
-                  <span class="uk-link">select a file</span>
-                </div>
-              </div>
-              <p id="olddb-selected" class="uk-text-small uk-text-muted"></p>
-              <button class="uk-button uk-button-primary" id="import-teachers-btn">Import Teachers</button>
-            </div>
-          </div>
-          <div>
-            <div class="uk-card uk-card-default uk-card-body uk-border-rounded">
-              <h3 class="roboto">Import Students (.xls)</h3>
-              <div id="xls-drop" class="uk-placeholder uk-text-center uk-border-rounded">
-                <span uk-icon="icon: file-text"></span>
-                <span class="uk-text-middle">Drag and drop XLS here or</span>
-                <div uk-form-custom>
-                  <input type="file" id="xls-input" accept=".xls" />
-                  <span class="uk-link">select a file</span>
-                </div>
-              </div>
-              <p id="xls-selected" class="uk-text-small uk-text-muted"></p>
-              <button class="uk-button uk-button-primary" id="import-students-btn">Import Students</button>
-            </div>
-          </div>
-        </div>
-        <div class="uk-margin-top" id="import-status"></div>
+        
+        <!-- Shared confirmation modal used by admin actions (Assign, Remove, Restore) -->
         <div id="delete-confirmation" uk-modal>
           <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
             <h2 class="uk-modal-title roboto">ARE YOU SURE?</h2>
             <p id="delete-confirmation-body">OK</p>
             <p class="uk-text-right">
-              <button class="uk-button uk-button-primary uk-modal-close" type="button">
-                Cancel
-              </button>
-              <button id="delete-btn" class="uk-button uk-button-danger uk-modal-close" type="button">
-                Delete
-              </button>
+              <button class="uk-button uk-button-primary uk-modal-close" type="button">Cancel</button>
+              <button id="delete-btn" class="uk-button uk-button-danger uk-modal-close" type="button">Confirm</button>
             </p>
           </div>
         </div>
+        
       </div>
     </div>
   </div>

@@ -1,0 +1,895 @@
+{
+  "generatedAt": "2025-10-24T12:13:19.859Z",
+  "totals": {
+    "students": 765,
+    "onCampus": 659,
+    "assigned": 629,
+    "unassigned": 30,
+    "offCampus": 106,
+    "top1Rate": 77,
+    "top2Rate": 85,
+    "top3Rate": 89,
+    "notInListRate": 3,
+    "avgRank": 1.47,
+    "medianRank": 1,
+    "satisfaction": 88,
+    "teachers": 52,
+    "studentsPerTeacher": 12.1
+  },
+  "byGrade": [
+    {
+      "grade": "9",
+      "assigned": 170,
+      "top1Rate": 58,
+      "top2Rate": 72,
+      "top3Rate": 81,
+      "notInListRate": 4
+    },
+    {
+      "grade": "10",
+      "assigned": 143,
+      "top1Rate": 84,
+      "top2Rate": 89,
+      "top3Rate": 90,
+      "notInListRate": 3
+    },
+    {
+      "grade": "11",
+      "assigned": 153,
+      "top1Rate": 77,
+      "top2Rate": 87,
+      "top3Rate": 93,
+      "notInListRate": 1
+    },
+    {
+      "grade": "12",
+      "assigned": 163,
+      "top1Rate": 90,
+      "top2Rate": 94,
+      "top3Rate": 94,
+      "notInListRate": 2
+    }
+  ],
+  "byClub": [
+    {
+      "clubId": 2,
+      "clubName": "Interact Club",
+      "assigned": 23,
+      "capacity": 30,
+      "fillRatio": 77,
+      "demand": {
+        "1": 19,
+        "2": 6,
+        "3": 8,
+        "4": 16,
+        "5": 15
+      },
+      "gradeMix": {
+        "9": 6,
+        "10": 7,
+        "11": 3,
+        "12": 7
+      },
+      "meetsMin": {
+        "9": false,
+        "10": false,
+        "11": false,
+        "12": false
+      },
+      "teacherCount": 3,
+      "studentsPerTeacher": 7.7
+    },
+    {
+      "clubId": 3,
+      "clubName": "Puzzle Club",
+      "assigned": 19,
+      "capacity": 30,
+      "fillRatio": 63,
+      "demand": {
+        "1": 16,
+        "2": 16,
+        "3": 24,
+        "4": 16,
+        "5": 28
+      },
+      "gradeMix": {
+        "9": 5,
+        "10": 8,
+        "11": 3,
+        "12": 3
+      },
+      "meetsMin": {
+        "9": false,
+        "10": true,
+        "11": false,
+        "12": false
+      },
+      "teacherCount": 1,
+      "studentsPerTeacher": 19
+    },
+    {
+      "clubId": 4,
+      "clubName": "Street Soccer Club",
+      "assigned": 38,
+      "capacity": 40,
+      "fillRatio": 95,
+      "demand": {
+        "1": 59,
+        "2": 7,
+        "3": 13,
+        "4": 11,
+        "5": 8
+      },
+      "gradeMix": {
+        "9": 8,
+        "10": 14,
+        "11": 5,
+        "12": 11
+      },
+      "meetsMin": {
+        "9": true,
+        "10": true,
+        "11": false,
+        "12": true
+      },
+      "teacherCount": 3,
+      "studentsPerTeacher": 12.7
+    },
+    {
+      "clubId": 5,
+      "clubName": "Fantasy Sports Club",
+      "assigned": 12,
+      "capacity": 30,
+      "fillRatio": 40,
+      "demand": {
+        "1": 4,
+        "2": 17,
+        "3": 6,
+        "4": 9,
+        "5": 14
+      },
+      "gradeMix": {
+        "9": 7,
+        "10": 2,
+        "11": 2,
+        "12": 1
+      },
+      "meetsMin": {
+        "9": true,
+        "10": false,
+        "11": false,
+        "12": false
+      },
+      "teacherCount": 3,
+      "studentsPerTeacher": 4
+    },
+    {
+      "clubId": 6,
+      "clubName": "Sign Language Club",
+      "assigned": 23,
+      "capacity": 30,
+      "fillRatio": 77,
+      "demand": {
+        "1": 14,
+        "2": 28,
+        "3": 14,
+        "4": 18,
+        "5": 21
+      },
+      "gradeMix": {
+        "9": 7,
+        "10": 5,
+        "11": 6,
+        "12": 5
+      },
+      "meetsMin": {
+        "9": false,
+        "10": false,
+        "11": false,
+        "12": false
+      },
+      "teacherCount": 2,
+      "studentsPerTeacher": 11.5
+    },
+    {
+      "clubId": 7,
+      "clubName": "Volleyball Club",
+      "assigned": 28,
+      "capacity": 28,
+      "fillRatio": 100,
+      "demand": {
+        "1": 54,
+        "2": 49,
+        "3": 35,
+        "4": 16,
+        "5": 20
+      },
+      "gradeMix": {
+        "9": 6,
+        "10": 7,
+        "11": 7,
+        "12": 8
+      },
+      "meetsMin": {
+        "9": true,
+        "10": true,
+        "11": true,
+        "12": true
+      },
+      "teacherCount": 2,
+      "studentsPerTeacher": 14
+    },
+    {
+      "clubId": 9,
+      "clubName": "Hispanic Heritage Club",
+      "assigned": 14,
+      "capacity": 36,
+      "fillRatio": 39,
+      "demand": {
+        "1": 8,
+        "2": 9,
+        "3": 16,
+        "4": 4,
+        "5": 8
+      },
+      "gradeMix": {
+        "9": 7,
+        "10": 1,
+        "11": 4,
+        "12": 2
+      },
+      "meetsMin": {
+        "9": false,
+        "10": false,
+        "11": false,
+        "12": false
+      },
+      "teacherCount": 2,
+      "studentsPerTeacher": 7
+    },
+    {
+      "clubId": 10,
+      "clubName": "Beta Club",
+      "assigned": 18,
+      "capacity": 50,
+      "fillRatio": 36,
+      "demand": {
+        "1": 7,
+        "2": 14,
+        "3": 8,
+        "4": 12,
+        "5": 14
+      },
+      "gradeMix": {
+        "9": 5,
+        "10": 1,
+        "11": 6,
+        "12": 6
+      },
+      "meetsMin": {
+        "9": true,
+        "10": true,
+        "11": true,
+        "12": true
+      },
+      "teacherCount": 1,
+      "studentsPerTeacher": 18
+    },
+    {
+      "clubId": 11,
+      "clubName": "Fugglers Craft Club",
+      "assigned": 17,
+      "capacity": 18,
+      "fillRatio": 94,
+      "demand": {
+        "1": 26,
+        "2": 34,
+        "3": 21,
+        "4": 13,
+        "5": 20
+      },
+      "gradeMix": {
+        "9": 1,
+        "10": 7,
+        "11": 5,
+        "12": 4
+      },
+      "meetsMin": {
+        "9": true,
+        "10": true,
+        "11": true,
+        "12": true
+      },
+      "teacherCount": 2,
+      "studentsPerTeacher": 8.5
+    },
+    {
+      "clubId": 12,
+      "clubName": "Yearbook Staff",
+      "assigned": 28,
+      "capacity": 30,
+      "fillRatio": 93,
+      "demand": {
+        "1": 46,
+        "2": 34,
+        "3": 24,
+        "4": 18,
+        "5": 19
+      },
+      "gradeMix": {
+        "9": 4,
+        "10": 2,
+        "11": 6,
+        "12": 16
+      },
+      "meetsMin": {
+        "9": true,
+        "10": false,
+        "11": true,
+        "12": true
+      },
+      "teacherCount": 2,
+      "studentsPerTeacher": 14
+    },
+    {
+      "clubId": 13,
+      "clubName": "Art Club",
+      "assigned": 25,
+      "capacity": 30,
+      "fillRatio": 83,
+      "demand": {
+        "1": 21,
+        "2": 48,
+        "3": 36,
+        "4": 43,
+        "5": 30
+      },
+      "gradeMix": {
+        "9": 7,
+        "10": 3,
+        "11": 9,
+        "12": 6
+      },
+      "meetsMin": {
+        "9": true,
+        "10": false,
+        "11": true,
+        "12": true
+      },
+      "teacherCount": 1,
+      "studentsPerTeacher": 25
+    },
+    {
+      "clubId": 14,
+      "clubName": "Video Game Club",
+      "assigned": 36,
+      "capacity": 40,
+      "fillRatio": 90,
+      "demand": {
+        "1": 48,
+        "2": 54,
+        "3": 46,
+        "4": 40,
+        "5": 32
+      },
+      "gradeMix": {
+        "9": 8,
+        "10": 13,
+        "11": 7,
+        "12": 8
+      },
+      "meetsMin": {
+        "9": true,
+        "10": true,
+        "11": false,
+        "12": true
+      },
+      "teacherCount": 2,
+      "studentsPerTeacher": 18
+    },
+    {
+      "clubId": 18,
+      "clubName": "True Crime Club",
+      "assigned": 28,
+      "capacity": 30,
+      "fillRatio": 93,
+      "demand": {
+        "1": 32,
+        "2": 36,
+        "3": 55,
+        "4": 37,
+        "5": 18
+      },
+      "gradeMix": {
+        "9": 9,
+        "10": 7,
+        "11": 5,
+        "12": 7
+      },
+      "meetsMin": {
+        "9": true,
+        "10": false,
+        "11": false,
+        "12": false
+      },
+      "teacherCount": 2,
+      "studentsPerTeacher": 14
+    },
+    {
+      "clubId": 19,
+      "clubName": "Intramurals Club",
+      "assigned": 38,
+      "capacity": 40,
+      "fillRatio": 95,
+      "demand": {
+        "1": 37,
+        "2": 66,
+        "3": 41,
+        "4": 28,
+        "5": 22
+      },
+      "gradeMix": {
+        "9": 8,
+        "10": 8,
+        "11": 9,
+        "12": 13
+      },
+      "meetsMin": {
+        "9": true,
+        "10": true,
+        "11": true,
+        "12": true
+      },
+      "teacherCount": 2,
+      "studentsPerTeacher": 19
+    },
+    {
+      "clubId": 20,
+      "clubName": "Craft Club",
+      "assigned": 23,
+      "capacity": 30,
+      "fillRatio": 77,
+      "demand": {
+        "1": 19,
+        "2": 28,
+        "3": 44,
+        "4": 44,
+        "5": 37
+      },
+      "gradeMix": {
+        "9": 7,
+        "10": 6,
+        "11": 4,
+        "12": 6
+      },
+      "meetsMin": {
+        "9": true,
+        "10": true,
+        "11": false,
+        "12": true
+      },
+      "teacherCount": 1,
+      "studentsPerTeacher": 23
+    },
+    {
+      "clubId": 21,
+      "clubName": "Youth In Government",
+      "assigned": 18,
+      "capacity": 0,
+      "fillRatio": null,
+      "demand": {
+        "1": 15,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0
+      },
+      "gradeMix": {
+        "9": 2,
+        "10": 9,
+        "11": 5,
+        "12": 2
+      },
+      "meetsMin": {
+        "9": true,
+        "10": true,
+        "11": true,
+        "12": true
+      },
+      "teacherCount": 1,
+      "studentsPerTeacher": 18
+    },
+    {
+      "clubId": 22,
+      "clubName": "Silent Reading Club",
+      "assigned": 12,
+      "capacity": 30,
+      "fillRatio": 40,
+      "demand": {
+        "1": 7,
+        "2": 8,
+        "3": 10,
+        "4": 18,
+        "5": 14
+      },
+      "gradeMix": {
+        "9": 4,
+        "10": 4,
+        "11": 1,
+        "12": 3
+      },
+      "meetsMin": {
+        "9": true,
+        "10": true,
+        "11": true,
+        "12": true
+      },
+      "teacherCount": 1,
+      "studentsPerTeacher": 12
+    },
+    {
+      "clubId": 23,
+      "clubName": "Chess Club",
+      "assigned": 12,
+      "capacity": 30,
+      "fillRatio": 40,
+      "demand": {
+        "1": 5,
+        "2": 8,
+        "3": 13,
+        "4": 27,
+        "5": 17
+      },
+      "gradeMix": {
+        "9": 9,
+        "10": 0,
+        "11": 3,
+        "12": 0
+      },
+      "meetsMin": {
+        "9": true,
+        "10": true,
+        "11": true,
+        "12": true
+      },
+      "teacherCount": 2,
+      "studentsPerTeacher": 6
+    },
+    {
+      "clubId": 25,
+      "clubName": "Fellowship of Christian Athletes",
+      "assigned": 38,
+      "capacity": 40,
+      "fillRatio": 95,
+      "demand": {
+        "1": 33,
+        "2": 22,
+        "3": 41,
+        "4": 27,
+        "5": 15
+      },
+      "gradeMix": {
+        "9": 5,
+        "10": 6,
+        "11": 22,
+        "12": 5
+      },
+      "meetsMin": {
+        "9": true,
+        "10": true,
+        "11": true,
+        "12": true
+      },
+      "teacherCount": 2,
+      "studentsPerTeacher": 19
+    },
+    {
+      "clubId": 26,
+      "clubName": "Karaoke Club",
+      "assigned": 12,
+      "capacity": 30,
+      "fillRatio": 40,
+      "demand": {
+        "1": 4,
+        "2": 8,
+        "3": 7,
+        "4": 13,
+        "5": 6
+      },
+      "gradeMix": {
+        "9": 2,
+        "10": 0,
+        "11": 4,
+        "12": 6
+      },
+      "meetsMin": {
+        "9": true,
+        "10": true,
+        "11": true,
+        "12": true
+      },
+      "teacherCount": 1,
+      "studentsPerTeacher": 12
+    },
+    {
+      "clubId": 27,
+      "clubName": "Girls Basketball Team",
+      "assigned": 10,
+      "capacity": 0,
+      "fillRatio": null,
+      "demand": {
+        "1": 10,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0
+      },
+      "gradeMix": {
+        "9": 3,
+        "10": 0,
+        "11": 4,
+        "12": 3
+      },
+      "meetsMin": {
+        "9": true,
+        "10": true,
+        "11": true,
+        "12": true
+      },
+      "teacherCount": 2,
+      "studentsPerTeacher": 5
+    },
+    {
+      "clubId": 28,
+      "clubName": "Uno Club",
+      "assigned": 25,
+      "capacity": 30,
+      "fillRatio": 83,
+      "demand": {
+        "1": 23,
+        "2": 32,
+        "3": 56,
+        "4": 93,
+        "5": 76
+      },
+      "gradeMix": {
+        "9": 9,
+        "10": 2,
+        "11": 9,
+        "12": 5
+      },
+      "meetsMin": {
+        "9": true,
+        "10": true,
+        "11": true,
+        "12": true
+      },
+      "teacherCount": 2,
+      "studentsPerTeacher": 12.5
+    },
+    {
+      "clubId": 29,
+      "clubName": "Dungeons & Dragons Club",
+      "assigned": 14,
+      "capacity": 16,
+      "fillRatio": 88,
+      "demand": {
+        "1": 22,
+        "2": 10,
+        "3": 5,
+        "4": 11,
+        "5": 6
+      },
+      "gradeMix": {
+        "9": 2,
+        "10": 2,
+        "11": 2,
+        "12": 8
+      },
+      "meetsMin": {
+        "9": true,
+        "10": true,
+        "11": true,
+        "12": true
+      },
+      "teacherCount": 1,
+      "studentsPerTeacher": 14
+    },
+    {
+      "clubId": 30,
+      "clubName": "Coloring Club",
+      "assigned": 22,
+      "capacity": 30,
+      "fillRatio": 73,
+      "demand": {
+        "1": 13,
+        "2": 36,
+        "3": 43,
+        "4": 47,
+        "5": 66
+      },
+      "gradeMix": {
+        "9": 7,
+        "10": 5,
+        "11": 6,
+        "12": 4
+      },
+      "meetsMin": {
+        "9": false,
+        "10": false,
+        "11": false,
+        "12": false
+      },
+      "teacherCount": 1,
+      "studentsPerTeacher": 22
+    },
+    {
+      "clubId": 31,
+      "clubName": "Sports Analysis Club",
+      "assigned": 12,
+      "capacity": 30,
+      "fillRatio": 40,
+      "demand": {
+        "1": 0,
+        "2": 6,
+        "3": 10,
+        "4": 13,
+        "5": 31
+      },
+      "gradeMix": {
+        "9": 5,
+        "10": 7,
+        "11": 0,
+        "12": 0
+      },
+      "meetsMin": {
+        "9": false,
+        "10": true,
+        "11": false,
+        "12": false
+      },
+      "teacherCount": 2,
+      "studentsPerTeacher": 6
+    },
+    {
+      "clubId": 32,
+      "clubName": "Debate Debacles Club",
+      "assigned": 20,
+      "capacity": 30,
+      "fillRatio": 67,
+      "demand": {
+        "1": 15,
+        "2": 9,
+        "3": 9,
+        "4": 7,
+        "5": 21
+      },
+      "gradeMix": {
+        "9": 8,
+        "10": 8,
+        "11": 3,
+        "12": 1
+      },
+      "meetsMin": {
+        "9": true,
+        "10": true,
+        "11": false,
+        "12": false
+      },
+      "teacherCount": 1,
+      "studentsPerTeacher": 20
+    },
+    {
+      "clubId": 33,
+      "clubName": "Auto Enthusiasts Club",
+      "assigned": 13,
+      "capacity": 30,
+      "fillRatio": 43,
+      "demand": {
+        "1": 4,
+        "2": 7,
+        "3": 7,
+        "4": 19,
+        "5": 14
+      },
+      "gradeMix": {
+        "9": 7,
+        "10": 1,
+        "11": 3,
+        "12": 2
+      },
+      "meetsMin": {
+        "9": true,
+        "10": false,
+        "11": false,
+        "12": false
+      },
+      "teacherCount": 2,
+      "studentsPerTeacher": 6.5
+    },
+    {
+      "clubId": 34,
+      "clubName": "Insight Meditation",
+      "assigned": 10,
+      "capacity": 20,
+      "fillRatio": 50,
+      "demand": {
+        "1": 0,
+        "2": 2,
+        "3": 2,
+        "4": 9,
+        "5": 15
+      },
+      "gradeMix": {
+        "9": 4,
+        "10": 0,
+        "11": 2,
+        "12": 4
+      },
+      "meetsMin": {
+        "9": true,
+        "10": false,
+        "11": false,
+        "12": true
+      },
+      "teacherCount": 1,
+      "studentsPerTeacher": 10
+    },
+    {
+      "clubId": 35,
+      "clubName": "Tri-M Club",
+      "assigned": 11,
+      "capacity": 25,
+      "fillRatio": 44,
+      "demand": {
+        "1": 10,
+        "2": 5,
+        "3": 7,
+        "4": 2,
+        "5": 9
+      },
+      "gradeMix": {
+        "9": 1,
+        "10": 0,
+        "11": 1,
+        "12": 9
+      },
+      "meetsMin": {
+        "9": false,
+        "10": false,
+        "11": false,
+        "12": true
+      },
+      "teacherCount": 2,
+      "studentsPerTeacher": 5.5
+    },
+    {
+      "clubId": 36,
+      "clubName": "Basketball Club",
+      "assigned": 30,
+      "capacity": 30,
+      "fillRatio": 100,
+      "demand": {
+        "1": 58,
+        "2": 25,
+        "3": 23,
+        "4": 13,
+        "5": 27
+      },
+      "gradeMix": {
+        "9": 7,
+        "10": 8,
+        "11": 7,
+        "12": 8
+      },
+      "meetsMin": {
+        "9": true,
+        "10": true,
+        "11": true,
+        "12": true
+      },
+      "teacherCount": 2,
+      "studentsPerTeacher": 15
+    }
+  ]
+}

@@ -1,5 +1,8 @@
-if (user.isAdmin === 0) {
-  document.body.innerHTML = "<h1>NOT AN ADMIN</h1>";
+// Allow admins and teachers to view; restrict actions to admins
+const isAdmin = Number(user && user.isAdmin ? user.isAdmin : 0) > 0;
+const isTeacher = !!(user && user.isTeacher);
+if (!isAdmin && !isTeacher) {
+  document.body.innerHTML = "<h1>Not authorized</h1>";
 }
 const studentsTable = document.querySelector("#students-table");
 const sidePanel = document.getElementById("side-panel");
@@ -54,8 +57,8 @@ function selectUserAndOpenPanel(userId, name) {
 }
 
 function showSidePanel() {
+  if (!isAdmin) return; // teachers view-only
   UIkit.offcanvas(sidePanel).show();
-  // sidePanel.style.display = "block";
 }
 
 // Function to hide side panel
@@ -74,8 +77,9 @@ async function deleteSelectedUsers() {
       )
     ) {
       try {
+        const level = currentAdminLevel();
         const deleteRequests = selectedUserIds.map((userId) =>
-          fetch(`http://${serverAddress}:3000/users/delete/${userId}`, {})
+          fetch(`http://${serverAddress}:3000/users/delete/${userId}?isAdmin=${encodeURIComponent(level)}`, {})
         );
 
         await Promise.all(deleteRequests);
@@ -130,14 +134,34 @@ async function populateClubSelect() {
   }
 }
 
+function currentAdminLevel() {
+  try {
+    if (typeof user !== 'undefined' && user && (user.isAdmin || user.isAdmin === 0)) {
+      const n = Number(user.isAdmin);
+      return Number.isFinite(n) ? n : (user.isAdmin ? 1 : 0);
+    }
+  } catch (_) {}
+  try {
+    const u = JSON.parse(localStorage.getItem('user') || '{}');
+    const n = Number(u && u.isAdmin);
+    return Number.isFinite(n) ? n : (u && u.isAdmin ? 1 : 0);
+  } catch (_) { return 0; }
+}
+
 async function addToClub() {
+  if (!isAdmin) {
+    UIkit.notification({ message: 'Only admins can change clubs', status: 'warning', pos: 'top-center' });
+    return;
+  }
   const clubId = clubSelect.value;
   const selectedUserIds = getSelectedUserIds();
 
   if (selectedUserIds.length > 0 && clubId) {
     try {
+      const level = currentAdminLevel();
+      const actor = (user && user.userId) || (JSON.parse(localStorage.getItem('user')||'{}').userId);
       const updateRequests = selectedUserIds.map((userId) =>
-        fetch(`http://${serverAddress}:3000/users/updateStudentClub/${userId}/${clubId}`)
+        fetch(`http://${serverAddress}:3000/users/updateStudentClub/${userId}/${clubId}?isAdmin=${encodeURIComponent(level)}&actorId=${encodeURIComponent(actor)}`)
       );
 
       await Promise.all(updateRequests);
@@ -207,9 +231,9 @@ async function displayStudents(page, searchQuery = "") {
 
     students.forEach((student) => {
       const club = clubs.find((obj) => obj.clubId === student.clubId);
-      console.log(club);
       const clubRoom = club ? club.room : "Cafeteria";
       const clubName = club ? club.clubName : "None";
+      const offCampus = typeof student.clubId === 'number' && student.clubId < 0;
       let avatarUrl = `https://ui-avatars.com/api/?name=${student.firstName}+${student.lastName}&background=005DB4&color=fff`;
       if (student.avatar) {
         avatarUrl = `${student.avatar}`;
@@ -223,8 +247,10 @@ async function displayStudents(page, searchQuery = "") {
           <td>${student.email}</td>
           <td class="uk-text-nowrap">${student.grade || "None"}</td>
           <td class="uk-text-nowrap">${clubRoom}</td>
-          <td class="uk-text-nowrap uk-table-link"><a href="./club-info.html?club-id=${student.clubId
-        }">${clubName}</a></td>
+          <td class="uk-text-nowrap uk-table-link">${club
+            ? `<a href="./club-info.html?club-id=${student.clubId}">${clubName}</a>`
+            : `<a class=\"uk-link-text\" href=\"javascript:void(0)\" style=\"pointer-events:none;\">${offCampus ? 'Off-campus' : 'None'}</a>`}
+          </td>
         </tr>`;
     });
     updatePaginationInfo(page, data.total, totalPages);
@@ -274,20 +300,29 @@ document.getElementById("search-input").addEventListener("input", () => {
 });
 
 async function init() {
-  await populateClubSelect();
+  // Reveal admin-only controls
+  if (isAdmin) {
+    try { document.querySelectorAll('[data-adminonly]').forEach(el => el.classList.add('admin-visible')); } catch (_) {}
+  } else {
+    // Hide side panel entirely for teachers
+    try { if (sidePanel) sidePanel.style.display = 'none'; } catch (_) {}
+  }
+  if (isAdmin) await populateClubSelect();
   await displayStudents(currentPage);
 }
 
 init();
 // Delegate clicks on the name cell
-studentsTable.addEventListener("click", (e) => {
-  const cell = e.target.closest('.student-name');
-  if (cell && studentsTable.contains(cell)) {
-    const id = cell.getAttribute('data-user-id');
-    const name = cell.textContent.trim();
-    if (id) {
-      e.preventDefault();
-      selectUserAndOpenPanel(id, name);
+if (isAdmin) {
+  studentsTable.addEventListener("click", (e) => {
+    const cell = e.target.closest('.student-name');
+    if (cell && studentsTable.contains(cell)) {
+      const id = cell.getAttribute('data-user-id');
+      const name = cell.textContent.trim();
+      if (id) {
+        e.preventDefault();
+        selectUserAndOpenPanel(id, name);
+      }
     }
-  }
-});
+  });
+}

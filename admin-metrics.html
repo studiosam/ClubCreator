@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RBHS Clubs — Assignment Metrics</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/css/uikit.min.css" />
+  <link rel="stylesheet" href="./css/styles.css" />
+  <link rel="icon" href="./img/rbhs.png" type="image/png" />
+  <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/js/uikit.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/js/uikit-icons.min.js"></script>
+</head>
+<body>
+  <div class="uk-flex">
+    <div id="side-nav" class="text-center">
+      <img class="uk-margin-medium-top uk-margin-medium-bottom" src="./img/rbhs.png" />
+      <ul class="dash-nav uk-nav uk-margin-small-top">
+        <li class="uk-active"><a id="homepage-link" href="home-teacher.html"><span uk-icon="home"></span>Dashboard</a></li>
+        <li><a href="create-club.html"><span uk-icon="plus"></span>Choose/Create Club</a></li>
+        <li><a href="clubsList.html"><span uk-icon="info"></span>Club List</a></li>
+      </ul>
+    </div>
+    <div id="right">
+      <div class="menu-panel">
+        <img class="uk-preserve-width uk-border-circle uk-margin-small-right avatar" src="" width="40" height="40" alt="user avatar" />
+        <p id="user-name">Name</p>
+        <button class="uk-button logout-button" onclick="logout()">Logout</button>
+      </div>
+      <div class="uk-container uk-container-expand uk-padding">
+        <div class="uk-flex uk-flex-between uk-flex-middle print-hide">
+          <h1 class="roboto uk-margin-remove">Assignment Metrics</h1>
+          <div>
+            <button id="recalc-btn" class="uk-button uk-button-primary uk-border-rounded">
+              <span uk-icon="refresh"></span>
+              Recalculate Metrics
+            </button>
+            <button id="print-btn" class="uk-button uk-button-default uk-border-rounded uk-margin-small-left">
+              <span uk-icon="print"></span>
+              Print
+            </button>
+          </div>
+        </div>
+        <div class="uk-margin-small">
+          <span id="metrics-status" class="uk-text-meta"></span>
+        </div>
+        <div id="metrics-summary" class="uk-grid-small uk-child-width-1-2@m uk-grid" uk-grid></div>
+        <hr />
+        <h3 class="roboto">By Grade</h3>
+        <div class="uk-overflow-auto"><table class="uk-table uk-table-divider uk-table-small" id="metrics-bygrade"></table></div>
+        <hr />
+        <h3 class="roboto">By Club</h3>
+        <div class="uk-overflow-auto"><table class="uk-table uk-table-divider uk-table-small" id="metrics-byclub"></table></div>
+      </div>
+    </div>
+  </div>
+  <script src="serverVariables.js"></script>
+  <script src="userData.js"></script>
+  <script src="metrics.js"></script>
+</body>
+</html>

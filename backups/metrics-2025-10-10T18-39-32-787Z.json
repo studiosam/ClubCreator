@@ -1,0 +1,833 @@
+{
+  "generatedAt": "2025-10-10T18:39:32.787Z",
+  "totals": {
+    "students": 765,
+    "onCampus": 659,
+    "assigned": 623,
+    "unassigned": 36,
+    "offCampus": 106,
+    "top1Rate": 82,
+    "top2Rate": 90,
+    "top3Rate": 92,
+    "notInListRate": 4,
+    "avgRank": 1.25,
+    "medianRank": 1,
+    "satisfaction": 91
+  },
+  "byGrade": [
+    {
+      "grade": "9",
+      "assigned": 168,
+      "top1Rate": 65,
+      "top2Rate": 86,
+      "top3Rate": 90,
+      "notInListRate": 3
+    },
+    {
+      "grade": "10",
+      "assigned": 140,
+      "top1Rate": 84,
+      "top2Rate": 88,
+      "top3Rate": 90,
+      "notInListRate": 6
+    },
+    {
+      "grade": "11",
+      "assigned": 152,
+      "top1Rate": 81,
+      "top2Rate": 89,
+      "top3Rate": 92,
+      "notInListRate": 6
+    },
+    {
+      "grade": "12",
+      "assigned": 163,
+      "top1Rate": 97,
+      "top2Rate": 97,
+      "top3Rate": 97,
+      "notInListRate": 3
+    }
+  ],
+  "byClub": [
+    {
+      "clubId": 2,
+      "clubName": "Interact Club",
+      "assigned": 24,
+      "capacity": 30,
+      "fillRatio": 80,
+      "demand": {
+        "1": 24,
+        "2": 5,
+        "3": 10,
+        "4": 15,
+        "5": 14
+      },
+      "gradeMix": {
+        "9": 5,
+        "10": 7,
+        "11": 5,
+        "12": 7
+      },
+      "meetsMin": {
+        "9": false,
+        "10": false,
+        "11": false,
+        "12": false
+      }
+    },
+    {
+      "clubId": 3,
+      "clubName": "Puzzle Club",
+      "assigned": 19,
+      "capacity": 30,
+      "fillRatio": 63,
+      "demand": {
+        "1": 17,
+        "2": 16,
+        "3": 24,
+        "4": 15,
+        "5": 27
+      },
+      "gradeMix": {
+        "9": 5,
+        "10": 7,
+        "11": 4,
+        "12": 3
+      },
+      "meetsMin": {
+        "9": false,
+        "10": false,
+        "11": false,
+        "12": false
+      }
+    },
+    {
+      "clubId": 4,
+      "clubName": "Street Soccer Club",
+      "assigned": 40,
+      "capacity": 40,
+      "fillRatio": 100,
+      "demand": {
+        "1": 57,
+        "2": 9,
+        "3": 12,
+        "4": 11,
+        "5": 7
+      },
+      "gradeMix": {
+        "9": 8,
+        "10": 15,
+        "11": 5,
+        "12": 12
+      },
+      "meetsMin": {
+        "9": true,
+        "10": true,
+        "11": false,
+        "12": true
+      }
+    },
+    {
+      "clubId": 5,
+      "clubName": "Fantasy Sports Club",
+      "assigned": 9,
+      "capacity": 30,
+      "fillRatio": 30,
+      "demand": {
+        "1": 3,
+        "2": 20,
+        "3": 6,
+        "4": 9,
+        "5": 15
+      },
+      "gradeMix": {
+        "9": 5,
+        "10": 3,
+        "11": 0,
+        "12": 1
+      },
+      "meetsMin": {
+        "9": false,
+        "10": false,
+        "11": false,
+        "12": false
+      }
+    },
+    {
+      "clubId": 6,
+      "clubName": "Sign Language Club",
+      "assigned": 18,
+      "capacity": 30,
+      "fillRatio": 60,
+      "demand": {
+        "1": 15,
+        "2": 28,
+        "3": 15,
+        "4": 18,
+        "5": 19
+      },
+      "gradeMix": {
+        "9": 4,
+        "10": 4,
+        "11": 6,
+        "12": 4
+      },
+      "meetsMin": {
+        "9": false,
+        "10": false,
+        "11": false,
+        "12": false
+      }
+    },
+    {
+      "clubId": 7,
+      "clubName": "Volleyball Club",
+      "assigned": 40,
+      "capacity": 40,
+      "fillRatio": 100,
+      "demand": {
+        "1": 54,
+        "2": 50,
+        "3": 32,
+        "4": 13,
+        "5": 22
+      },
+      "gradeMix": {
+        "9": 7,
+        "10": 8,
+        "11": 13,
+        "12": 12
+      },
+      "meetsMin": {
+        "9": false,
+        "10": true,
+        "11": true,
+        "12": true
+      }
+    },
+    {
+      "clubId": 9,
+      "clubName": "Hispanic Heritage Club",
+      "assigned": 10,
+      "capacity": 36,
+      "fillRatio": 28,
+      "demand": {
+        "1": 8,
+        "2": 9,
+        "3": 16,
+        "4": 4,
+        "5": 8
+      },
+      "gradeMix": {
+        "9": 2,
+        "10": 1,
+        "11": 5,
+        "12": 2
+      },
+      "meetsMin": {
+        "9": false,
+        "10": false,
+        "11": false,
+        "12": false
+      }
+    },
+    {
+      "clubId": 10,
+      "clubName": "Beta Club",
+      "assigned": 9,
+      "capacity": 50,
+      "fillRatio": 18,
+      "demand": {
+        "1": 7,
+        "2": 15,
+        "3": 8,
+        "4": 12,
+        "5": 14
+      },
+      "gradeMix": {
+        "9": 2,
+        "10": 1,
+        "11": 3,
+        "12": 3
+      },
+      "meetsMin": {
+        "9": true,
+        "10": true,
+        "11": true,
+        "12": true
+      }
+    },
+    {
+      "clubId": 11,
+      "clubName": "Fugglers Craft Club",
+      "assigned": 18,
+      "capacity": 18,
+      "fillRatio": 100,
+      "demand": {
+        "1": 28,
+        "2": 32,
+        "3": 18,
+        "4": 15,
+        "5": 20
+      },
+      "gradeMix": {
+        "9": 1,
+        "10": 7,
+        "11": 5,
+        "12": 5
+      },
+      "meetsMin": {
+        "9": true,
+        "10": true,
+        "11": true,
+        "12": true
+      }
+    },
+    {
+      "clubId": 12,
+      "clubName": "Yearbook Staff",
+      "assigned": 30,
+      "capacity": 30,
+      "fillRatio": 100,
+      "demand": {
+        "1": 45,
+        "2": 35,
+        "3": 22,
+        "4": 19,
+        "5": 18
+      },
+      "gradeMix": {
+        "9": 4,
+        "10": 2,
+        "11": 6,
+        "12": 18
+      },
+      "meetsMin": {
+        "9": true,
+        "10": false,
+        "11": true,
+        "12": true
+      }
+    },
+    {
+      "clubId": 13,
+      "clubName": "Art Club",
+      "assigned": 30,
+      "capacity": 30,
+      "fillRatio": 100,
+      "demand": {
+        "1": 24,
+        "2": 44,
+        "3": 38,
+        "4": 41,
+        "5": 32
+      },
+      "gradeMix": {
+        "9": 14,
+        "10": 4,
+        "11": 7,
+        "12": 5
+      },
+      "meetsMin": {
+        "9": true,
+        "10": false,
+        "11": true,
+        "12": false
+      }
+    },
+    {
+      "clubId": 14,
+      "clubName": "Video Game Club",
+      "assigned": 40,
+      "capacity": 40,
+      "fillRatio": 100,
+      "demand": {
+        "1": 50,
+        "2": 51,
+        "3": 43,
+        "4": 38,
+        "5": 33
+      },
+      "gradeMix": {
+        "9": 10,
+        "10": 15,
+        "11": 7,
+        "12": 8
+      },
+      "meetsMin": {
+        "9": true,
+        "10": true,
+        "11": false,
+        "12": true
+      }
+    },
+    {
+      "clubId": 18,
+      "clubName": "True Crime Club",
+      "assigned": 30,
+      "capacity": 30,
+      "fillRatio": 100,
+      "demand": {
+        "1": 34,
+        "2": 37,
+        "3": 53,
+        "4": 38,
+        "5": 16
+      },
+      "gradeMix": {
+        "9": 11,
+        "10": 7,
+        "11": 5,
+        "12": 7
+      },
+      "meetsMin": {
+        "9": true,
+        "10": false,
+        "11": false,
+        "12": false
+      }
+    },
+    {
+      "clubId": 19,
+      "clubName": "Intramurals Club",
+      "assigned": 40,
+      "capacity": 40,
+      "fillRatio": 100,
+      "demand": {
+        "1": 38,
+        "2": 63,
+        "3": 39,
+        "4": 30,
+        "5": 23
+      },
+      "gradeMix": {
+        "9": 10,
+        "10": 8,
+        "11": 10,
+        "12": 12
+      },
+      "meetsMin": {
+        "9": true,
+        "10": true,
+        "11": true,
+        "12": true
+      }
+    },
+    {
+      "clubId": 20,
+      "clubName": "Craft Club",
+      "assigned": 23,
+      "capacity": 30,
+      "fillRatio": 77,
+      "demand": {
+        "1": 15,
+        "2": 28,
+        "3": 49,
+        "4": 42,
+        "5": 38
+      },
+      "gradeMix": {
+        "9": 8,
+        "10": 6,
+        "11": 3,
+        "12": 6
+      },
+      "meetsMin": {
+        "9": true,
+        "10": true,
+        "11": false,
+        "12": true
+      }
+    },
+    {
+      "clubId": 21,
+      "clubName": "Youth In Government",
+      "assigned": 16,
+      "capacity": 0,
+      "fillRatio": null,
+      "demand": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0
+      },
+      "gradeMix": {
+        "9": 2,
+        "10": 7,
+        "11": 5,
+        "12": 2
+      },
+      "meetsMin": {
+        "9": true,
+        "10": true,
+        "11": true,
+        "12": true
+      }
+    },
+    {
+      "clubId": 22,
+      "clubName": "Silent Reading Club",
+      "assigned": 8,
+      "capacity": 30,
+      "fillRatio": 27,
+      "demand": {
+        "1": 7,
+        "2": 11,
+        "3": 8,
+        "4": 17,
+        "5": 13
+      },
+      "gradeMix": {
+        "9": 2,
+        "10": 3,
+        "11": 1,
+        "12": 2
+      },
+      "meetsMin": {
+        "9": true,
+        "10": true,
+        "11": true,
+        "12": true
+      }
+    },
+    {
+      "clubId": 23,
+      "clubName": "Chess Club",
+      "assigned": 13,
+      "capacity": 30,
+      "fillRatio": 43,
+      "demand": {
+        "1": 5,
+        "2": 9,
+        "3": 13,
+        "4": 24,
+        "5": 18
+      },
+      "gradeMix": {
+        "9": 9,
+        "10": 0,
+        "11": 4,
+        "12": 0
+      },
+      "meetsMin": {
+        "9": true,
+        "10": true,
+        "11": true,
+        "12": true
+      }
+    },
+    {
+      "clubId": 25,
+      "clubName": "Fellowship of Christian Athletes",
+      "assigned": 39,
+      "capacity": 40,
+      "fillRatio": 98,
+      "demand": {
+        "1": 33,
+        "2": 24,
+        "3": 38,
+        "4": 29,
+        "5": 15
+      },
+      "gradeMix": {
+        "9": 9,
+        "10": 6,
+        "11": 19,
+        "12": 5
+      },
+      "meetsMin": {
+        "9": true,
+        "10": true,
+        "11": true,
+        "12": true
+      }
+    },
+    {
+      "clubId": 26,
+      "clubName": "Karaoke Club",
+      "assigned": 8,
+      "capacity": 30,
+      "fillRatio": 27,
+      "demand": {
+        "1": 4,
+        "2": 9,
+        "3": 7,
+        "4": 12,
+        "5": 6
+      },
+      "gradeMix": {
+        "9": 2,
+        "10": 0,
+        "11": 2,
+        "12": 4
+      },
+      "meetsMin": {
+        "9": true,
+        "10": true,
+        "11": true,
+        "12": true
+      }
+    },
+    {
+      "clubId": 27,
+      "clubName": "Girls Basketball Team",
+      "assigned": 10,
+      "capacity": 0,
+      "fillRatio": null,
+      "demand": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0
+      },
+      "gradeMix": {
+        "9": 3,
+        "10": 0,
+        "11": 4,
+        "12": 3
+      },
+      "meetsMin": {
+        "9": true,
+        "10": true,
+        "11": true,
+        "12": true
+      }
+    },
+    {
+      "clubId": 28,
+      "clubName": "Uno Club",
+      "assigned": 30,
+      "capacity": 30,
+      "fillRatio": 100,
+      "demand": {
+        "1": 24,
+        "2": 34,
+        "3": 59,
+        "4": 91,
+        "5": 74
+      },
+      "gradeMix": {
+        "9": 14,
+        "10": 3,
+        "11": 8,
+        "12": 5
+      },
+      "meetsMin": {
+        "9": true,
+        "10": true,
+        "11": true,
+        "12": true
+      }
+    },
+    {
+      "clubId": 29,
+      "clubName": "Dungeons & Dragons Club",
+      "assigned": 16,
+      "capacity": 16,
+      "fillRatio": 100,
+      "demand": {
+        "1": 23,
+        "2": 9,
+        "3": 6,
+        "4": 9,
+        "5": 8
+      },
+      "gradeMix": {
+        "9": 3,
+        "10": 2,
+        "11": 1,
+        "12": 10
+      },
+      "meetsMin": {
+        "9": true,
+        "10": true,
+        "11": true,
+        "12": true
+      }
+    },
+    {
+      "clubId": 30,
+      "clubName": "Coloring Club",
+      "assigned": 18,
+      "capacity": 30,
+      "fillRatio": 60,
+      "demand": {
+        "1": 11,
+        "2": 36,
+        "3": 43,
+        "4": 50,
+        "5": 66
+      },
+      "gradeMix": {
+        "9": 4,
+        "10": 4,
+        "11": 6,
+        "12": 4
+      },
+      "meetsMin": {
+        "9": false,
+        "10": false,
+        "11": false,
+        "12": false
+      }
+    },
+    {
+      "clubId": 31,
+      "clubName": "Sports Analysis Club",
+      "assigned": 6,
+      "capacity": 30,
+      "fillRatio": 20,
+      "demand": {
+        "1": 0,
+        "2": 8,
+        "3": 12,
+        "4": 14,
+        "5": 26
+      },
+      "gradeMix": {
+        "9": 3,
+        "10": 3,
+        "11": 0,
+        "12": 0
+      },
+      "meetsMin": {
+        "9": false,
+        "10": false,
+        "11": false,
+        "12": false
+      }
+    },
+    {
+      "clubId": 32,
+      "clubName": "Debate Debacles Club",
+      "assigned": 18,
+      "capacity": 30,
+      "fillRatio": 60,
+      "demand": {
+        "1": 16,
+        "2": 8,
+        "3": 10,
+        "4": 8,
+        "5": 19
+      },
+      "gradeMix": {
+        "9": 7,
+        "10": 8,
+        "11": 2,
+        "12": 1
+      },
+      "meetsMin": {
+        "9": true,
+        "10": true,
+        "11": false,
+        "12": false
+      }
+    },
+    {
+      "clubId": 33,
+      "clubName": "Auto Enthusiasts Club",
+      "assigned": 10,
+      "capacity": 30,
+      "fillRatio": 33,
+      "demand": {
+        "1": 6,
+        "2": 6,
+        "3": 7,
+        "4": 21,
+        "5": 15
+      },
+      "gradeMix": {
+        "9": 4,
+        "10": 1,
+        "11": 3,
+        "12": 2
+      },
+      "meetsMin": {
+        "9": false,
+        "10": false,
+        "11": false,
+        "12": false
+      }
+    },
+    {
+      "clubId": 34,
+      "clubName": "Insight Meditation",
+      "assigned": 1,
+      "capacity": 20,
+      "fillRatio": 5,
+      "demand": {
+        "1": 0,
+        "2": 2,
+        "3": 2,
+        "4": 9,
+        "5": 16
+      },
+      "gradeMix": {
+        "9": 1,
+        "10": 0,
+        "11": 0,
+        "12": 0
+      },
+      "meetsMin": {
+        "9": false,
+        "10": false,
+        "11": false,
+        "12": false
+      }
+    },
+    {
+      "clubId": 35,
+      "clubName": "Tri-M Club",
+      "assigned": 10,
+      "capacity": 25,
+      "fillRatio": 40,
+      "demand": {
+        "1": 10,
+        "2": 5,
+        "3": 8,
+        "4": 2,
+        "5": 8
+      },
+      "gradeMix": {
+        "9": 1,
+        "10": 0,
+        "11": 0,
+        "12": 9
+      },
+      "meetsMin": {
+        "9": false,
+        "10": false,
+        "11": false,
+        "12": true
+      }
+    },
+    {
+      "clubId": 36,
+      "clubName": "Basketball Club",
+      "assigned": 40,
+      "capacity": 40,
+      "fillRatio": 100,
+      "demand": {
+        "1": 63,
+        "2": 18,
+        "3": 23,
+        "4": 15,
+        "5": 31
+      },
+      "gradeMix": {
+        "9": 8,
+        "10": 8,
+        "11": 13,
+        "12": 11
+      },
+      "meetsMin": {
+        "9": true,
+        "10": true,
+        "11": true,
+        "12": true
+      }
+    }
+  ]
+}

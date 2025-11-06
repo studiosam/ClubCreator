@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RBHS Clubs — Chronic No-Shows</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/css/uikit.min.css" />
+  <link rel="stylesheet" href="./css/styles.css" />
+  <link rel="icon" href="./img/rbhs.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/js/uikit.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.4/dist/js/uikit-icons.min.js"></script>
+</head>
+<body>
+  <div class="uk-flex">
+    <div id="side-nav" class="text-center">
+      <img class="uk-margin-medium-top uk-margin-medium-bottom" src="./img/rbhs.png" />
+      <ul class="dash-nav uk-nav uk-margin-small-top">
+        <li class="uk-active"><a id="homepage-link" href="home-teacher.html"><span uk-icon="home"></span>Dashboard</a></li>
+        <li><a href="create-club.html"><span uk-icon="plus"></span>Choose/Create Club</a></li>
+        <li><a href="clubsList.html"><span uk-icon="info"></span>Club List</a></li>
+      </ul>
+    </div>
+    <div id="right">
+      <div class="menu-panel">
+        <img class="uk-preserve-width uk-border-circle uk-margin-small-right avatar" src="" width="40" height="40" alt="user avatar" />
+        <p id="user-name">Name</p>
+        <button class="uk-button logout-button" onclick="logout()">Logout</button>
+      </div>
+
+      <div class="uk-container uk-container-expand uk-padding">
+        <h1 class="roboto uk-text-center">Chronic No-Shows</h1>
+        <div class="cns-toolbar uk-flex uk-flex-center uk-flex-middle uk-flex-wrap uk-margin-small">
+          <div class="uk-flex uk-flex-middle">
+            <label for="cns-min-misses" class="roboto uk-text-small uk-text-muted uk-margin-small-right">Minimum Absences</label>
+            <input id="cns-min-misses" class="uk-input uk-form-width-small" type="number" value="3" min="1" />
+          </div>
+          <button id="cns-print" class="uk-button uk-button-secondary">Print</button>
+        </div>
+        <div class="uk-overflow-auto">
+          <table class="uk-table uk-table-divider uk-table-middle uk-table-small" id="cns-table"></table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="serverVariables.js"></script>
+  <script src="userData.js"></script>
+  <script src="chronicNoShows.js"></script>
+</body>
+</html>

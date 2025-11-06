@@ -89,7 +89,7 @@ async function getAllClubs() {
 
 async function addToClub(clubId) {
   const response = await fetch(
-    `http://${serverAddress}:3000/users/update/${user.userId}/${clubId}`
+    `http://${serverAddress}:3000/users/update/${user.userId}/${clubId}?actorId=${encodeURIComponent(user.userId)}`
   );
 
   const responseStatus = await response.json()

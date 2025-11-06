@@ -1,0 +1,4153 @@
+{
+  "type": "clubAssignmentsSnapshot",
+  "createdAt": "2025-10-09T12:14:44.445Z",
+  "reason": "before admin-club-assignment",
+  "total": 829,
+  "entries": [
+    {
+      "userId": 1,
+      "clubId": 14,
+      "isTeacher": true
+    },
+    {
+      "userId": 3,
+      "clubId": null,
+      "isTeacher": true
+    },
+    {
+      "userId": 4,
+      "clubId": 4,
+      "isTeacher": true
+    },
+    {
+      "userId": 5,
+      "clubId": 22,
+      "isTeacher": true
+    },
+    {
+      "userId": 6,
+      "clubId": 5,
+      "isTeacher": true
+    },
+    {
+      "userId": 7,
+      "clubId": 26,
+      "isTeacher": true
+    },
+    {
+      "userId": 8,
+      "clubId": 23,
+      "isTeacher": true
+    },
+    {
+      "userId": 9,
+      "clubId": 10,
+      "isTeacher": true
+    },
+    {
+      "userId": 10,
+      "clubId": 2,
+      "isTeacher": true
+    },
+    {
+      "userId": 11,
+      "clubId": 35,
+      "isTeacher": true
+    },
+    {
+      "userId": 12,
+      "clubId": 35,
+      "isTeacher": true
+    },
+    {
+      "userId": 14,
+      "clubId": 3,
+      "isTeacher": true
+    },
+    {
+      "userId": 15,
+      "clubId": 32,
+      "isTeacher": true
+    },
+    {
+      "userId": 16,
+      "clubId": 11,
+      "isTeacher": true
+    },
+    {
+      "userId": 17,
+      "clubId": 28,
+      "isTeacher": true
+    },
+    {
+      "userId": 18,
+      "clubId": 6,
+      "isTeacher": true
+    },
+    {
+      "userId": 19,
+      "clubId": 29,
+      "isTeacher": true
+    },
+    {
+      "userId": 21,
+      "clubId": 6,
+      "isTeacher": true
+    },
+    {
+      "userId": 22,
+      "clubId": 4,
+      "isTeacher": true
+    },
+    {
+      "userId": 23,
+      "clubId": 27,
+      "isTeacher": true
+    },
+    {
+      "userId": 24,
+      "clubId": 23,
+      "isTeacher": true
+    },
+    {
+      "userId": 25,
+      "clubId": 12,
+      "isTeacher": true
+    },
+    {
+      "userId": 26,
+      "clubId": 14,
+      "isTeacher": true
+    },
+    {
+      "userId": 27,
+      "clubId": 12,
+      "isTeacher": true
+    },
+    {
+      "userId": 28,
+      "clubId": 30,
+      "isTeacher": true
+    },
+    {
+      "userId": 29,
+      "clubId": 4,
+      "isTeacher": true
+    },
+    {
+      "userId": 31,
+      "clubId": 20,
+      "isTeacher": true
+    },
+    {
+      "userId": 32,
+      "clubId": null,
+      "isTeacher": true
+    },
+    {
+      "userId": 33,
+      "clubId": null,
+      "isTeacher": true
+    },
+    {
+      "userId": 34,
+      "clubId": null,
+      "isTeacher": true
+    },
+    {
+      "userId": 36,
+      "clubId": null,
+      "isTeacher": true
+    },
+    {
+      "userId": 37,
+      "clubId": 7,
+      "isTeacher": true
+    },
+    {
+      "userId": 38,
+      "clubId": null,
+      "isTeacher": true
+    },
+    {
+      "userId": 42,
+      "clubId": 2,
+      "isTeacher": true
+    },
+    {
+      "userId": 43,
+      "clubId": 9,
+      "isTeacher": true
+    },
+    {
+      "userId": 45,
+      "clubId": 36,
+      "isTeacher": true
+    },
+    {
+      "userId": 46,
+      "clubId": 18,
+      "isTeacher": true
+    },
+    {
+      "userId": 47,
+      "clubId": null,
+      "isTeacher": true
+    },
+    {
+      "userId": 48,
+      "clubId": 5,
+      "isTeacher": true
+    },
+    {
+      "userId": 49,
+      "clubId": null,
+      "isTeacher": true
+    },
+    {
+      "userId": 50,
+      "clubId": 7,
+      "isTeacher": true
+    },
+    {
+      "userId": 51,
+      "clubId": null,
+      "isTeacher": true
+    },
+    {
+      "userId": 52,
+      "clubId": 33,
+      "isTeacher": true
+    },
+    {
+      "userId": 53,
+      "clubId": 31,
+      "isTeacher": true
+    },
+    {
+      "userId": 54,
+      "clubId": 25,
+      "isTeacher": true
+    },
+    {
+      "userId": 55,
+      "clubId": 34,
+      "isTeacher": true
+    },
+    {
+      "userId": 56,
+      "clubId": 31,
+      "isTeacher": true
+    },
+    {
+      "userId": 57,
+      "clubId": null,
+      "isTeacher": true
+    },
+    {
+      "userId": 58,
+      "clubId": 18,
+      "isTeacher": true
+    },
+    {
+      "userId": 59,
+      "clubId": 5,
+      "isTeacher": true
+    },
+    {
+      "userId": 60,
+      "clubId": 11,
+      "isTeacher": true
+    },
+    {
+      "userId": 61,
+      "clubId": null,
+      "isTeacher": true
+    },
+    {
+      "userId": 1587,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1588,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1589,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1590,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1591,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1592,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1593,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1594,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1595,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1596,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1597,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1598,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1599,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1600,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1601,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1602,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1603,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1604,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1605,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1606,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1607,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1608,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1609,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1610,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1611,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1612,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1613,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1614,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1615,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1616,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1617,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1618,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1619,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1620,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1621,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1622,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1623,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1624,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1625,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1626,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1627,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1628,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1629,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1630,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1631,
+      "clubId": 27,
+      "isTeacher": false
+    },
+    {
+      "userId": 1632,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1633,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1634,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1635,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1636,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1637,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1638,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1639,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1640,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1641,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1642,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1643,
+      "clubId": 27,
+      "isTeacher": false
+    },
+    {
+      "userId": 1644,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1645,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1647,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1648,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1649,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1650,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1651,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1652,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1653,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1654,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1655,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1656,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1657,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1658,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1659,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1660,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1661,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1662,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1663,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1664,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1665,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1666,
+      "clubId": 21,
+      "isTeacher": false
+    },
+    {
+      "userId": 1667,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1668,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1669,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1670,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1671,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1672,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1673,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1674,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1675,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1676,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1677,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1678,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1679,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1680,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1681,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1682,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1683,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1684,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1685,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1686,
+      "clubId": 27,
+      "isTeacher": false
+    },
+    {
+      "userId": 1687,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1688,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1689,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1690,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1691,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1692,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1693,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1694,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1695,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1696,
+      "clubId": 20,
+      "isTeacher": false
+    },
+    {
+      "userId": 1697,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1698,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1699,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1700,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1701,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1702,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1703,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1704,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1705,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1706,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1707,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1708,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1709,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1710,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1711,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1712,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1713,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1714,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1715,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1716,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1717,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1718,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1719,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1720,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1721,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1722,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1723,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1724,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1725,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1726,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1727,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1728,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1729,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1730,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1731,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1733,
+      "clubId": 21,
+      "isTeacher": false
+    },
+    {
+      "userId": 1734,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1735,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1736,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1737,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1738,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1739,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1740,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1741,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1742,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1743,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1744,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1745,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1746,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1747,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1748,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1749,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1750,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1751,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1752,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1753,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1755,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1756,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1757,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1758,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1759,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1760,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1761,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1762,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1763,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1764,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1765,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1766,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1767,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1768,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1769,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1770,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1771,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1772,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1773,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1774,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1775,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1776,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1777,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1778,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1780,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1781,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1782,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1783,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1784,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1785,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1786,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1787,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1788,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1789,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1790,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1791,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1792,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1793,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1794,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1795,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1796,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1797,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1798,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1799,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1800,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1801,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1802,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1803,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1804,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1805,
+      "clubId": 21,
+      "isTeacher": false
+    },
+    {
+      "userId": 1806,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1807,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1808,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1809,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1810,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1811,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1812,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1813,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1814,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1815,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1816,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1817,
+      "clubId": 21,
+      "isTeacher": false
+    },
+    {
+      "userId": 1818,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1819,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1820,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1821,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1822,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1823,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1824,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1826,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1827,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1828,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1829,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1830,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1831,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1832,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1833,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1834,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1835,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1836,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1837,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1838,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1839,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1840,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1841,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1842,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1843,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1844,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1845,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1846,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1847,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1848,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1849,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1851,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1852,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1853,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1854,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1855,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1856,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1857,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1858,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1860,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1861,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1862,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1863,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1864,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1865,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1866,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1867,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1868,
+      "clubId": 21,
+      "isTeacher": false
+    },
+    {
+      "userId": 1869,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1870,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1871,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1872,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1873,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1874,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1875,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1876,
+      "clubId": 21,
+      "isTeacher": false
+    },
+    {
+      "userId": 1877,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1878,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1879,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1880,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1881,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1882,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1883,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1884,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1885,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1886,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1887,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1888,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1889,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1890,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1891,
+      "clubId": 21,
+      "isTeacher": false
+    },
+    {
+      "userId": 1892,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1893,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1894,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1895,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1896,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1897,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1898,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1899,
+      "clubId": 21,
+      "isTeacher": false
+    },
+    {
+      "userId": 1900,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1902,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1903,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1904,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1905,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1906,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1907,
+      "clubId": 30,
+      "isTeacher": false
+    },
+    {
+      "userId": 1908,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1909,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1910,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1911,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1912,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1913,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1914,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1915,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1916,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1917,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1918,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1919,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1920,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1921,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1922,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1923,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1924,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1925,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1926,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1927,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1928,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1929,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1930,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1931,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1932,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1933,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1934,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1935,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1936,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1937,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1938,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1939,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1940,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1941,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1942,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1943,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1944,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1945,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1946,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1947,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1948,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1949,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1950,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1951,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1953,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1954,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1955,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1956,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1957,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1958,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1959,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1960,
+      "clubId": 21,
+      "isTeacher": false
+    },
+    {
+      "userId": 1961,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1962,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1963,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1964,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1965,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1966,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1967,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1968,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1969,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1970,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1971,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1972,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1973,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1974,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1975,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1976,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1977,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1978,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1979,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1980,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1981,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1982,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1983,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1984,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1985,
+      "clubId": 27,
+      "isTeacher": false
+    },
+    {
+      "userId": 1986,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1987,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1988,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1989,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1990,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1991,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1992,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1993,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1994,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1995,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1996,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 1997,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1998,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 1999,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2000,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2001,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2003,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2004,
+      "clubId": 27,
+      "isTeacher": false
+    },
+    {
+      "userId": 2005,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2006,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2007,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2008,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2009,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2010,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2011,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2012,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2013,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2014,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2015,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2016,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2017,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2018,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2019,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2020,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2021,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2022,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2023,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2024,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 2025,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2026,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2027,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2028,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2029,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2030,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2031,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2032,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2033,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2034,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2035,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2036,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2037,
+      "clubId": 21,
+      "isTeacher": false
+    },
+    {
+      "userId": 2038,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2039,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2040,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2041,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2042,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2043,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2044,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2045,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 2046,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2047,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2048,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 2049,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2050,
+      "clubId": 21,
+      "isTeacher": false
+    },
+    {
+      "userId": 2051,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 2052,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2053,
+      "clubId": 21,
+      "isTeacher": false
+    },
+    {
+      "userId": 2054,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2055,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2056,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2057,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2058,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2059,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2060,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2061,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2062,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2063,
+      "clubId": 21,
+      "isTeacher": false
+    },
+    {
+      "userId": 2064,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2065,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2066,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2067,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2068,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2069,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2070,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2071,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2072,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2073,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2074,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2075,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2076,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2077,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2078,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 2079,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2080,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2081,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2082,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2083,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2084,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2085,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2086,
+      "clubId": 27,
+      "isTeacher": false
+    },
+    {
+      "userId": 2087,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2088,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 2089,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 2090,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2091,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2092,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2093,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2094,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2095,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2096,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2097,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2098,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2099,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 2100,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2101,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2102,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2103,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2104,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2105,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2106,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2107,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2108,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2109,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2110,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2111,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2112,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2113,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 2114,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2115,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2116,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2117,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2118,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2119,
+      "clubId": 21,
+      "isTeacher": false
+    },
+    {
+      "userId": 2120,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2121,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2122,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2123,
+      "clubId": 27,
+      "isTeacher": false
+    },
+    {
+      "userId": 2124,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2125,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2126,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2127,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2128,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2129,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2130,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2131,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2132,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2133,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2134,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2135,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 2136,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2137,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2138,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2139,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2140,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2141,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2142,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2143,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2144,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2145,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2146,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2147,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2148,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2149,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2150,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2151,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2152,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2153,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2154,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2155,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2156,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2157,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2158,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2159,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2160,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2161,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 2162,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2163,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2164,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2165,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2166,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2167,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2168,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 2169,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2170,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2171,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2172,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2173,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2174,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2175,
+      "clubId": 27,
+      "isTeacher": false
+    },
+    {
+      "userId": 2176,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2177,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2178,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2179,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2180,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2181,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 2182,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2183,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2184,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2185,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 2186,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2187,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2188,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2189,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2190,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2191,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2192,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2193,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2194,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2195,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2196,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2197,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2198,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2199,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2200,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2201,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2202,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2203,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2204,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2205,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2206,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2207,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2208,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2209,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2210,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2211,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 2212,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2213,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2214,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2215,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2216,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2217,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2218,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2219,
+      "clubId": 27,
+      "isTeacher": false
+    },
+    {
+      "userId": 2220,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 2221,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2222,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2223,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 2224,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2225,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2226,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 2227,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2228,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2229,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2230,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2231,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2232,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2233,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2234,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2235,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2236,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2237,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2238,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2239,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2240,
+      "clubId": 21,
+      "isTeacher": false
+    },
+    {
+      "userId": 2241,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2242,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2243,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2244,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2245,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2246,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2247,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 2248,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2249,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2250,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2251,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2252,
+      "clubId": 21,
+      "isTeacher": false
+    },
+    {
+      "userId": 2253,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2254,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2255,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2256,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2257,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2258,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2259,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2260,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2261,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2262,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2263,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2264,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2265,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2266,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2267,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2268,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2269,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2270,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2271,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2272,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2273,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2274,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 2275,
+      "clubId": 27,
+      "isTeacher": false
+    },
+    {
+      "userId": 2276,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2277,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2278,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2279,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2280,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2281,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2282,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 2283,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2284,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2285,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2286,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2287,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2288,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2289,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2290,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2291,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2292,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2293,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2294,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2295,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2296,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2297,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2298,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2299,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2300,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2301,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2302,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2303,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2304,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2305,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2306,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2307,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2308,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2309,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2311,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2312,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 2313,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2314,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2315,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2316,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2317,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2318,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2319,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2320,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2321,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2322,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2323,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2324,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2325,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2326,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 2327,
+      "clubId": 19,
+      "isTeacher": true
+    },
+    {
+      "userId": 2328,
+      "clubId": 13,
+      "isTeacher": true
+    },
+    {
+      "userId": 2329,
+      "clubId": 21,
+      "isTeacher": true
+    },
+    {
+      "userId": 2330,
+      "clubId": 19,
+      "isTeacher": true
+    },
+    {
+      "userId": 2331,
+      "clubId": 9,
+      "isTeacher": true
+    },
+    {
+      "userId": 2333,
+      "clubId": 28,
+      "isTeacher": true
+    },
+    {
+      "userId": 2334,
+      "clubId": 9,
+      "isTeacher": true
+    },
+    {
+      "userId": 2335,
+      "clubId": 27,
+      "isTeacher": true
+    },
+    {
+      "userId": 2336,
+      "clubId": 2,
+      "isTeacher": true
+    },
+    {
+      "userId": 2337,
+      "clubId": 33,
+      "isTeacher": true
+    },
+    {
+      "userId": 2338,
+      "clubId": 36,
+      "isTeacher": true
+    },
+    {
+      "userId": 3135,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 3146,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 3183,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 3200,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 3242,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 3295,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 3296,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 3329,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 3386,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 3395,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 3463,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 3473,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 3475,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 3477,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 3489,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 3502,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 3543,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 3544,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 3570,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 3649,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 3659,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 3673,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 3685,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 3728,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 3734,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 3735,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 3736,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 3751,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 3787,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 3792,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 3793,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 3838,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 3842,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 3845,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 3855,
+      "clubId": -1,
+      "isTeacher": false
+    },
+    {
+      "userId": 10825,
+      "clubId": null,
+      "isTeacher": false
+    },
+    {
+      "userId": 10826,
+      "clubId": null,
+      "isTeacher": false
+    }
+  ]
+}
